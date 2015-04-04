@@ -1,0 +1,2 @@
+class MapManager:
+    pass
