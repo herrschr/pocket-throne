@@ -4,6 +4,7 @@ from core.entities.unit import Unit
 from core.managers.filemanager import FileManager
 
 class UnitManager:
+	_tag = "UnitManager: "
 	# Unit class skeleton (without mp, positions and _id)
 	_skeletons = {}
 	# Unit class array for instanciated units
@@ -32,6 +33,7 @@ class UnitManager:
 				# load skeleton Unit from json and add it skeleton list
 				unit = self.load_unit_skeleton(unit_json)
 				self._skeletons[unit_basename] = unit
+		self.print_skeletons()
 
 	# fill a Unit skeleton with a json dict
 	def load_unit_skeleton(self, unit_json):
@@ -64,6 +66,10 @@ class UnitManager:
 
 		return unit
 
-		def spawn_unit_at(self, unit_basename, (pos_x, pos_y)):
-			pass
+	def spawn_unit_at(self, unit_basename, (pos_x, pos_y)):
+		pass
+
+	def print_skeletons(self):
+		for skeleton in self._skeletons:
+			print self._tag + "skeleton for " + skeleton + " added."
 
