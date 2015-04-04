@@ -8,6 +8,7 @@ class UnitManager:
 	_units = []
 
 	def __init__(self, mod_name):
+		# ignore the mod name, no active modding system
 		load_unit_skeletons("base")
 
 	# load unit skeletons from mods/<mod_name>/units/*.json
