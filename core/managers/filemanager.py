@@ -13,8 +13,9 @@ class FileManager(object):
 		self.img_basepath = path + "/img/"
 		self.mods_basepath = path + "/mods/"
 
+	@classmethod
 	def check_if_initialized(self):
-		if (game_root == ""):
+		if (self.game_root == ""):
 			return None
 
 	@classmethod
@@ -31,5 +32,5 @@ class FileManager(object):
 	# returns the mod folder path
 	@classmethod
 	def mod_path(self):
-		check_if_initialized()
+		self.check_if_initialized()
 		return self.mods_basepath
