@@ -7,6 +7,14 @@ import pygame
 
 screen = None
 
+def events():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            print pos
+
 def pygame_init():
     global screen
     print screen
@@ -54,5 +62,6 @@ while 1==1:
 		gui_position = _mapmanager.pos_to_gui((tile.pos_x, tile.pos_y))
 		image = pygame.image.load(full_img_path)
 		screen.blit(image, gui_position)
+	events()
 	pygame.display.flip()
 
