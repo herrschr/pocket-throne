@@ -1,4 +1,4 @@
-class TileMap:
+class TileMap(object):
 	# static TileMap vars
 	_id = -1
 	name = ""

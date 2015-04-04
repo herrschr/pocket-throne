@@ -25,7 +25,7 @@ class Unit(object):
 	pos_y = -1
 
 	def __init__(self, unit_name):
-		self.name = name
+		self.name = unit_name
 
 	# load values from json skeleton
 	def loadFromJson(json_path):
