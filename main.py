@@ -34,6 +34,6 @@ print "DEBUG MAP: " + str(_mapmanager._map.tiles_at)
 # game loop
 while 1==1:
 	# draw tiles
-	for tile in self._mapmanager._map:
+	for tile in _mapmanager._map.tiles:
 		full_img_path = "img/" + tile._image_path
-		gui_position = self._mapmanager.pos_to_gui(tile.pos_x, tile.pos_y)
+		gui_position = _mapmanager.pos_to_gui((tile.pos_x, tile.pos_y))
