@@ -19,7 +19,7 @@ def events():
 def pygame_init():
 	global screen
 	pygame.init()
-	screen = pygame.display.set_mode((120, 120))
+	screen = pygame.display.set_mode((500, 500))
 	screen.fill((200, 200, 200))
 	pygame.display.update()
 
@@ -29,28 +29,22 @@ screen = None
 pygame_init()
 
 # making fake map class
-_map = TileMap()
-_map.name = "Test Map"
-
-# manually create tiles and add them to map
-_map.add_tile(Tile(0, 0, "W"))
-_map.add_tile(Tile(1, 0, "W"))
-_map.add_tile(Tile(2, 0, "W"))
-_map.add_tile(Tile(0, 1, "D"))
-_map.add_tile(Tile(1, 1, "D"))
-_map.add_tile(Tile(2, 1, "D"))
-_map.add_tile(Tile(0, 2, "G"))
-_map.add_tile(Tile(1, 2, "G"))
-_map.add_tile(Tile(2, 2, "G"))
+_maploader = MapLoader("rostow")
+_map = _maploader.get_map()
 
 # Manager initialization
 _mapmanager = MapManager(_map)
 _unitmanager = UnitManager("base")
+_ingamemanager = IngameManager()
+
+# add two players
+_ingamemanager.add_new_player("Player 1", (255, 0, 0))
+_ingamemanager.add_new_player("Player 2", (0, 0, 255))
 
 # GAME LOOP
 while 1==1:
 	# draw tiles
-	for tile in _mapmanager._map.tiles:
+	for tile in _map.tiles:
 		full_img_path = "img/" + tile._image_path
 		gui_position = _mapmanager.pos_to_gui((tile.pos_x, tile.pos_y))
 		image = pygame.image.load(full_img_path)

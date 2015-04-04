@@ -47,7 +47,7 @@ class UnitManager:
 		unit.health = unit_json["health"]
 		unit.movement = unit_json["movement"]
 
-		# load maximal count per player
+		# load maximal amount per player
 		max_per_player = unit_json["max_per_player"]
 		if (max_per_player == -1):
 			unit.has_player_max = False
@@ -56,7 +56,7 @@ class UnitManager:
 			unit.has_player_max = True
 			unit.max_per_player = max_per_player
 
-		# load maximal count on the whole map
+		# load maximal amount on the whole map
 		max_per_map = unit_json["max_per_map"]
 		if (max_per_map == -1):
 			unit.has_map_max = False
@@ -80,6 +80,6 @@ class UnitManager:
 
 	# debug method; prints all loaded skeletons
 	def print_skeletons(self):
-		for skeleton in self._skeletons:
-			print self._tag + "skeleton for " + skeleton + " added."
+		for unit_name in self._skeletons:
+			print self._tag + "skeleton for " + unit_name + " added."
 
