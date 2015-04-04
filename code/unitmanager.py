@@ -3,13 +3,19 @@ import unit.Unit as Unit
 
 class UnitManager:
 	# Unit class skeleton (without mp, positions and _id)
-	_unitskeletons = {}
-	# array for instanciated units
+	_skeletons = {}
+	# Unit class array for instanciated units
 	_units = []
+	_last_unit_id = -1
 
 	def __init__(self, mod_name):
 		# ignore the mod name, no active modding system
 		load_unit_skeletons("base")
+
+	# returns a new, unused unit id
+	def next_unit_id(self):
+		self._last_unit_id += 1
+		return self._last_unit_id
 
 	# load unit skeletons from mods/<mod_name>/units/*.json
 	def load_unit_skeletons(mod_name):
@@ -23,7 +29,7 @@ class UnitManager:
         				unit_file.close()
         				# load skeleton Unit from json and add it skeleton list
         				unit = load_unit_skeleton(unit_json)
-        				_unitskeletons[unit_basename] = unit
+        				_skeletons[unit_basename] = unit
 
         	# fill a Unit skeleton with a json dict
         	def load_unit_skeleton(unit_json):
@@ -55,3 +61,7 @@ class UnitManager:
         			unit.max_per_map = max_per_map
 
         		return unit
+
+        	def spawn_unit_at(unit_basename, (pos_x, pos_y)):
+
+
