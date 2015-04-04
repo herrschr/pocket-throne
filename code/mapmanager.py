@@ -26,20 +26,3 @@ class MapManager:
         else:
             image = pygame.image.load(building.image)
             screen.blit(image, pos_to_gui(x,y))
-
-    def spawn_landscape(self):
-        if self.lndscp == "NULL":
-            pass
-        elif self.lndscp == "M":
-            image = pygame.image.load("")
-        elif self.lndscp == "F":
-            image = pygame.image.load("")
-        elif self.lndscp == "G":
-            image = pygame.image.load("")
-        elif self.lndscp == "D":
-            image = pygame.image.load("")
-        elif self.lndscp == "W":
-            image = pygame.image.load("")
-        else:
-            print "Fehler. G: Wiese, D: Erde, T: Baum"
-        screen.blit(image, (self.gui_x,self.gui_y))
