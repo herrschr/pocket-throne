@@ -17,16 +17,4 @@ class Tile:
         self.pos_x = x
         self.pos_y = y
         self.lndscp = lndscp
-
-    def img_lndscp():
-        if self.lndscp == "NULL":
-            pass
-        elif self.lndscp == "G":
-            image = pygame.image.load("")
-        elif self.lndscp == "D":
-            image = pygame.image.load("")
-        elif self.lndscp == "T":
-            image = pygame.image.load("")
-        else:
-            print "Fehler. G: Wiese, D: Erde, T: Baum"
-        screen.blit(image, (self.gui_x,self.gui_y))
+        
