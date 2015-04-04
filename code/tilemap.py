@@ -12,6 +12,7 @@ class TileMap:
 	def __init__(self):
 		pass
 
+	# add a Tile (code/tile.py)
 	def add_tile(self, tile_to_add):
 		id_to_add = self.next_tile_id()
 		self.tiles.append(tile_to_add)
