@@ -9,22 +9,23 @@ class MapManager:
             return None
         self._map = tilemap
 
-    def pos_to_gui(self,x,y):
-        self.gui_x = x * self._tilesize
-        self.gui_y = y * self._tilesize
+    def pos_to_gui(self,(x,y)):
+        gui_x = x * self._tilesize
+        gui_y = y * self._tilesize
+        return (gui_x, gui_y)
     
-    def spawn_unit(self):
+    def spawn_unit(self,x,y):
         pass
 
     def move_unit(self):
         pass
 
-    def spawn_building(self, building):
+    def spawn_building(self, building,x,y):
         if building == None:
             pass
         else:
             image = pygame.image.load(building.image)
-            screen.blit(image, (self.gui_x,self.gui_y))
+            screen.blit(image, pos_to_gui(x,y))
 
     def spawn_landscape(self):
         if self.lndscp == "NULL":
