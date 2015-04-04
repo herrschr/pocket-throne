@@ -30,11 +30,15 @@ class MapManager:
     def spawn_landscape(self):
         if self.lndscp == "NULL":
             pass
+        elif self.lndscp == "M":
+            image = pygame.image.load("")
+        elif self.lndscp == "F":
+            image = pygame.image.load("")
         elif self.lndscp == "G":
             image = pygame.image.load("")
         elif self.lndscp == "D":
             image = pygame.image.load("")
-        elif self.lndscp == "T":
+        elif self.lndscp == "W":
             image = pygame.image.load("")
         else:
             print "Fehler. G: Wiese, D: Erde, T: Baum"
