@@ -1,0 +1,23 @@
+{
+	"name": "Swordsman",
+	"name_de": "Wache",
+	"categories": ["INF", "INF_MELEE"]
+
+	"image": "unit_std_swordsman.png",
+	"hp": 8,
+	"size": "1x1",
+
+	"is_owned_by_nature": false,
+	"max_per_player": 0,
+	"max_per_map": 1
+
+	"weapon": {
+		"name": "Sword",
+		"name_de": "Schwert"
+		"value": 1
+		"atk_vs_category": [
+			["INF": 5]
+			["CAV": 3]
+		]
+	}
+}
