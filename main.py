@@ -1,7 +1,22 @@
 from code.mapmanager import MapManager
 from code.tile import Tile
 from code.tilemap import TileMap
+import pygame
 
+#Pygame-Init
+
+screen = None
+
+def pygame_init():
+    global screen
+    print screen
+    pygame.init()
+    screen = pygame.display.set_mode((120, 120))
+    screen.fill((200, 200, 200))
+    pygame.display.update()
+
+pygame_init()
+    
 # making fake map
 _map = TileMap()
 _map.name = "Test Map"
@@ -34,6 +49,9 @@ print "DEBUG MAP: " + str(_mapmanager._map.tiles_at)
 # game loop
 while 1==1:
 	# draw tiles
-	for tile in self._mapmanager._map:
+	for tile in _mapmanager._map.tiles:
 		full_img_path = "img/" + tile._image_path
-		gui_position = self._mapmanager.pos_to_gui(tile.pos_x, tile.pos_y)
+		gui_position = _mapmanager.pos_to_gui((tile.pos_x, tile.pos_y))
+		image = pygame.image.load(full_img_path)
+		screen.blit(image, gui_position)
+	pygame.display.flip()
