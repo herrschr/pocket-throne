@@ -7,13 +7,15 @@ class Unit(object):
 	categories = []
 	image_path = None
 	json_path = None
+	health = 4
 	movement = 2
 	is_owned_by_nature = False
+	weapon = None
 
 	has_player_max = False
 	has_map_max = False
 	max_per_player = -1
-	may_per_map = -1
+	max_per_map = -1
 
 	# changeable building vars
 	playerId = -1
@@ -21,11 +23,9 @@ class Unit(object):
 	mp = movement
 	pos_x = -1
 	pos_y = -1
-	weapon = None
 
 	def __init__(self, unit_name):
 		self.name = name
-		self.categories.add("CAT_INF_MELEE")
 
 	# load values from json skeleton
 	def loadFromJson(json_path):
