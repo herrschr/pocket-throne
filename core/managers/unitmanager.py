@@ -1,7 +1,7 @@
 import os
 import json
 from core.entities.unit import Unit
-from filemanager import FileManager
+from core.managers.filemanager import FileManager
 
 class UnitManager:
 	# Unit class skeleton (without mp, positions and _id)
