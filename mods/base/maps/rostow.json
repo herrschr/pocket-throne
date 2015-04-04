@@ -1,0 +1,28 @@
+{
+	"name": "Rostow",
+	"name_de": "Rostow",
+	"size": "11x11",
+	"tile_size": 40,
+
+	"tile_map":
+	[
+		"WWWWWWWWWWW",
+		"WWWWWWWWWGG",
+		"WWWGGWGGGGG",
+		"GGGGGWWWGGG",
+		"GGGGGWWWGGG",
+		"GGGGWWWGGGG",
+		"GGGGGWGGGGG",
+		"GGGGGWGGGGG",
+		"DGGGGGWGGGD",
+		"DDDGGGGGGGD",
+		"DDDDGGGGGDD"
+	],
+
+	"buildings":
+	[
+		"0 altar 6 10",
+		"1 playerbase 4 4",
+		"2 playerbase 11 3"
+	]
+}
