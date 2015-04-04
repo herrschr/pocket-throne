@@ -1,14 +1,9 @@
 # IMPORTS
-# user lib & system lib import
+# import libraries
+import sys
 import pygame
-
-# manager imports
-from core.managers.mapmanager import MapManager
-from core.managers.unitmanager import UnitManager
-
-# entity imports
-from core.entities.tile import Tile
-from core.entities.tilemap import TileMap
+# import whole core package
+from core import *
 
 # METHODS
 # catch events from game loop and react to them
@@ -19,6 +14,7 @@ def events():
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			pos = pygame.mouse.get_pos()
 			print pos
+
 # initialize pygame & pygame screen
 def pygame_init():
 	global screen
@@ -38,7 +34,7 @@ _map.name = "Test Map"
 
 # manually create tiles and add them to map
 _map.add_tile(Tile(0, 0, "W"))
-_map.add_tile(Tile(1, 0, "W")
+_map.add_tile(Tile(1, 0, "W"))
 _map.add_tile(Tile(2, 0, "W"))
 _map.add_tile(Tile(0, 1, "D"))
 _map.add_tile(Tile(1, 1, "D"))
@@ -63,4 +59,3 @@ while 1==1:
 	events()
 	# redraw display
 	pygame.display.flip()
-
