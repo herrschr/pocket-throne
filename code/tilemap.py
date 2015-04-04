@@ -1,18 +1,24 @@
 class TileMap:
+	# static TileMap vars
 	_id = -1
 	name = ""
 	TILES_SIZE = 40
+
+	# TileMap tile collections
 	tiles = []
 	tiles_at = {}
+	_last_tile_id = -1
 
 	def __init__(self):
 		pass
 
 	def add_tile(self, tile_to_add):
-		tiles.add(tile_to_add)
-		pos_x = tile.pos_x
-		pos_y = tile.pos_y
-		tiles_at[pos_x, pos_y] = tile_to_add
+		id_to_add = self.next_tile_id()
+		self.tiles.append(tile_to_add)
+		pos_x = tile_to_add.pos_x
+		pos_y = tile_to_add.pos_y
+		self.tiles_at[pos_x, pos_y] = tile_to_add
+		return tile_to_add
 
 	def get_tile_at(pos_x, pos_y):
 		return  tiles_at[pos_x, pos_y]
@@ -20,4 +26,9 @@ class TileMap:
 	def remove_tile(self, tile_to_rem):
 		tiles.remove(tile_to_rem)
 		tiles_at.remove(tile_to_rem)
+
+	def next_tile_id(self):
+		self._last_tile_id += 1
+		return self._last_tile_id
+
 
