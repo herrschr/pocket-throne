@@ -1,5 +1,6 @@
 import os
 import json
+import copy
 from core.entities.unit import Unit
 from core.managers.filemanager import FileManager
 
@@ -66,9 +67,18 @@ class UnitManager:
 
 		return unit
 
-	def spawn_unit_at(self, unit_basename, (pos_x, pos_y)):
-		pass
+	# get a prefilled Unit class
+	def get_prefilled_unit(self, unit_basename):
+		return self._skeletons[unit_basename].copy()
 
+	# spawn a new unit with given player and position
+	def spawn_unit_at(self, unit_basename, (pos_x, pos_y)):
+		to_spawn = self.get_prefilled_unit(unit_basename)
+		to_spawn.pos_x = pos_x
+		to_spawn.pos_y = pos_y
+		self._units.append(to_spawn)
+
+	# debug method; prints all loaded skeletons
 	def print_skeletons(self):
 		for skeleton in self._skeletons:
 			print self._tag + "skeleton for " + skeleton + " added."
