@@ -9,7 +9,12 @@ from entities.unit import Unit, Weapon
 from managers.mapmanager import MapManager
 from managers.unitmanager import UnitManager
 from managers.filemanager import FileManager
+from managers.ingamemanager import IngameManager
 
+# tools
+from tools.maploader import MapLoader
+
+# get game root directory on package initialization
 def getGameRoot():
 	import os
 	return os.path.abspath(__file__ + "/../../")

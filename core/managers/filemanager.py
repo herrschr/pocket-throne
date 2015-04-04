@@ -13,11 +13,13 @@ class FileManager(object):
 		self.img_basepath = path + "/img/"
 		self.mods_basepath = path + "/mods/"
 
+	# check if the FileManager is already initialized with set_game_root()
 	@classmethod
 	def check_if_initialized(self):
 		if (self.game_root == ""):
 			return None
 
+	# returns the games root foldervpath
 	@classmethod
 	def game_root(self):
 		check_if_initialized()
@@ -34,3 +36,12 @@ class FileManager(object):
 	def mod_path(self):
 		self.check_if_initialized()
 		return self.mods_basepath
+
+	# open a file and return it's content
+	@classmethod
+	def read_file(self, file_path):
+		content = ""
+		file = open(file_path, "r")
+		content = file.read()
+		file.close()
+		return content
