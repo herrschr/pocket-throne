@@ -12,7 +12,7 @@ class Tile:
         self.pos_x = x
         self.pos_y = y
         self.landscape = landscape
-        self._image_path = get_image_path()
+        self._image_path = self.get_image_path()
 
     def get_image_path(self):
         if (self.landscape == "G"):
