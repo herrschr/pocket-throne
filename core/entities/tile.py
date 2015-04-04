@@ -13,14 +13,19 @@ class Tile:
 
 	# returns the tiles sprite path in /img folder
 	def get_image_path(self):
+		# grass
 		if (self.landscape == "G"):
 			return "tile_grass.png"
+		# dirt
 		elif (self.landscape == "D"):
 			return "tile_dirt.png"
+		# water
 		elif (self.landscape == "W"):
 			return "tile_water.png"
+		# mointains
 		elif (self.landscape == "M"):
 			return "tile_mointain.png"
+		# forest
 		elif (self.landscape == "F"):
 			return "tile_forest.png"
 		else:
