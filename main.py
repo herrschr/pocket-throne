@@ -1,6 +1,7 @@
 from code.mapmanager import MapManager
 from code.tile import Tile
 from code.tilemap import TileMap
+from code.unitmanager import UnitManager
 import pygame
 
 #Pygame-Init
@@ -24,7 +25,7 @@ def pygame_init():
     pygame.display.update()
 
 pygame_init()
-    
+
 # making fake map
 _map = TileMap()
 _map.name = "Test Map"
@@ -49,8 +50,9 @@ _map.add_tile(tile_0_2)
 _map.add_tile(tile_1_2)
 _map.add_tile(tile_2_2)
 
-# add map to MapManager
+# Manager initialization
 _mapmanager = MapManager(_map)
+_unitmanager = UnitManager("base")
 
 print "DEBUG MAP: " + str(_mapmanager._map.tiles_at)
 
