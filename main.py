@@ -52,6 +52,9 @@ while 1==1:
 	for tile in _mapmanager._map.tiles:
 		full_img_path = "img/" + tile._image_path
 		gui_position = _mapmanager.pos_to_gui((tile.pos_x, tile.pos_y))
+<<<<<<< HEAD
 		image = pygame.image.load(full_img_path)
 		screen.blit(image, gui_position)
 	pygame.display.flip()
+=======
+>>>>>>> origin/master

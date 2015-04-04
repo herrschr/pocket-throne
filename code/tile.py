@@ -5,9 +5,6 @@ class Tile:
 	landscape = None
 	_image_path = ""
 
-	def __init__(self):
-		pass
-
 	def __init__(self,x,y,landscape):
 		self.pos_x = x
 		self.pos_y = y
