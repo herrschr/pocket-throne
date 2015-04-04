@@ -1,0 +1,15 @@
+{
+	"_id": 1,
+	"name": "Base"
+	"name_de": "Basis",
+
+	"image": "bld_player_base",
+	"hp": 20,
+	"unit_place_inside": 1,
+	"size": "1x1",
+
+	"is_undestroyable": false,
+	"is_owned_by_nature": false,
+	"max_per_player": 1,
+	"max_per_map": 0
+}

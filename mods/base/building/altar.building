@@ -1,0 +1,15 @@
+{
+	"_id": 0,
+	"name": "Altar",
+	"name_de": "Altar",
+
+	"image": "bld_nature_altar",
+	"hp": 20,
+	"unit_place_inside": 1,
+	"size": "1x1",
+
+	"is_undestroyable": true,
+	"is_owned_by_nature": true,
+	"max_per_player": 0,
+	"max_per_map": 1
+}
