@@ -2,6 +2,8 @@ class TileMap(object):
 	# static TileMap vars
 	_id = -1
 	name = ""
+	size_x = 0
+	size_y = 0
 	TILES_SIZE = 40
 
 	# TileMap tile collections
@@ -12,12 +14,15 @@ class TileMap(object):
 	def __init__(self):
 		pass
 
-	# add a Tile (code/tile.py)
+	# add a Tile (core/entities/tile.py)
 	def add_tile(self, tile_to_add):
+		# generate new id
 		id_to_add = self.next_tile_id()
-		self.tiles.append(tile_to_add)
+		tile_to_add._id = id_to_add
+		# get position and add Tile to tiles & tiles_at
 		pos_x = tile_to_add.pos_x
 		pos_y = tile_to_add.pos_y
+		self.tiles.append(tile_to_add)
 		self.tiles_at[pos_x, pos_y] = tile_to_add
 		return tile_to_add
 
