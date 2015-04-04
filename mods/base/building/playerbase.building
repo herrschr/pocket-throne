@@ -3,7 +3,7 @@
 	"name": "Base"
 	"name_de": "Basis",
 
-	"image": "bld_player_base",
+	"image": "bld_player_base.png",
 	"hp": 20,
 	"unit_place_inside": 1,
 	"size": "1x1",

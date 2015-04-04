@@ -3,7 +3,7 @@
 	"name": "Altar",
 	"name_de": "Altar",
 
-	"image": "bld_nature_altar",
+	"image": "bld_nature_altar.png",
 	"hp": 20,
 	"unit_place_inside": 1,
 	"size": "1x1",
