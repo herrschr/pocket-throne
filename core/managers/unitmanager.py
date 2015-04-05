@@ -1,7 +1,7 @@
 import os
 import json
 import copy
-from core.entities.unit import Unit
+from core.entities.unit import Unit, Weapon
 from core.managers.filemanager import FileManager
 from core.entities.gamestate import GameState
 
@@ -68,7 +68,22 @@ class UnitManager:
 			unit.has_map_max = True
 			unit.max_per_map = max_per_map
 
+		# add weapon & return finished unit
+		weapon = self.load_weapon(unit_json)
+		unit.give_weapon(weapon)
 		return unit
+
+	# load a weapon from a unit's json dict
+	def load_weapon(self, unit_json):
+		weapon_json = unit_json["weapon"]
+		weapon = Weapon()
+		weapon.name = weapon_json["name"]
+		weapon.name_de = weapon_json["name_de"]
+		weapon.value = weapon_json["value"]
+		weapon.distance = weapon_json["distance"]
+		weapon.atk_vs_category = weapon_json["atk_vs_category"]
+		# weapon.image_path = weapon_json["image_path"]
+		return weapon
 
 	# get a prefilled Unit class
 	def get_prefilled_unit(self, unit_basename):

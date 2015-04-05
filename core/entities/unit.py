@@ -32,7 +32,7 @@ class Unit(object):
 		pass
 
 	# set the weapon of this uni
-	def give_weapon(weapon):
+	def give_weapon(self, weapon):
 		self.weapon = weapon
 
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
@@ -41,11 +41,9 @@ class Weapon(object):
 	name = ""
 	name_de = ""
 	value = 1
+	distance = 1
 	atk_vs_category = []
 	image_path = None
-
-	def __init__(self, weapon_name):
-		self.name = weapon_name
 
 
 
