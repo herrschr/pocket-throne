@@ -48,7 +48,6 @@ class MapLoader:
 				pos_x = cursor_x
 				pos_y = cursor_y
 				landscape = row[cursor_x]
-				print "Load Tile x=" + str(pos_x) + " y=" + str(pos_y) + " lds=" + str(landscape)
 				tile = Tile(pos_x, pos_y, landscape)
 				self._map.add_tile(tile)
 				cursor_x += 1
