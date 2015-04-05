@@ -1,6 +1,7 @@
 from core.entities.player import Player
 from core.entities.gamestate import GameState
 
+# Manager class for players & turn methods
 class IngameManager:
 	_tag = "IngameManager: "
 
@@ -17,8 +18,6 @@ class IngameManager:
 		nature.name = "Nature"
 		nature.color = (0, 0, 0)
 		self.add_player(nature)
-		# update player list in gamestate
-		GameState.update_player_list(self.players)
 
 	# add a player by class
 	def add_player(self, player):
