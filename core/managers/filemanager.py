@@ -2,6 +2,7 @@ import os
 
 # static class for accessing game paths and os methods
 class FileManager(object):
+	_initialized = False
 	game_root = ""
 	img_basepath = ""
 	mods_basepath = ""
@@ -12,23 +13,24 @@ class FileManager(object):
 		self.game_root = path
 		self.img_basepath = path + "/img/"
 		self.mods_basepath = path + "/mods/"
+		self._initialized = True
 
 	# check if the FileManager is already initialized with set_game_root()
 	@classmethod
 	def check_if_initialized(self):
-		if (self.game_root == ""):
-			return None
+		if not self._initialized:
+			return
 
 	# returns the games root foldervpath
 	@classmethod
 	def game_root(self):
-		check_if_initialized()
+		self.check_if_initialized()
 		return self.game_root
 
 	# returns the image resource folder path
 	@classmethod
 	def image_path(self):
-		check_if_initialized()
+		self.check_if_initialized()
 		return self.img_basepath
 
 	# returns the mod folder path
