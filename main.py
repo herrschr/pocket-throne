@@ -55,17 +55,16 @@ while 1==1:
 		image = pygame.image.load(full_img_path)
 		screen.blit(image, gui_position)
 
-	# TODO: draw units
+	# draw units
 	for unit in _unitmanager._units:
 		full_img_path = FileManager.image_path() + unit.image_path
-		print "unitpath: " + full_img_path
 		gui_position = _mapmanager.pos_to_gui((unit.pos_x, unit.pos_y))
-		print "guipos: " + str(gui_position)
 		image = pygame.image.load(full_img_path)
 		screen.blit(image, gui_position)
+
 	# TODO: draw buildings
 
-	# catch mouse event
+	# catch mouse events
 	events()
 	# redraw display
 	pygame.display.flip()
