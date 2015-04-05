@@ -1,5 +1,7 @@
 # import libraries
 import sys
+import pygame_sdl2
+pygame_sdl2.import_as_pygame()
 import pygame
 
 # import whole core package
@@ -8,7 +10,7 @@ from core import *
 # initialize pygame & pygame screen
 def pygame_init():
 	global screen
-	pygame.init()
+	pygame_sdl2.init()
 	screen = pygame.display.set_mode((500, 500))
 	screen.fill((255, 255, 255))
 	pygame.display.update()
