@@ -29,9 +29,8 @@ class UnitManager:
 			if file.endswith(".json"):
 				# load json file
 				unit_basename = file.split(".")[0]
-				unit_file = open(unit_folder_path + file)
-				unit_json = json.loads(unit_file.read())
-				unit_file.close()
+				unit_file_path = unit_folder_path + file
+				unit_json = json.loads(FileManager.read_file(unit_file_path))
 				# load skeleton Unit from json and add it skeleton list
 				unit = self.load_unit_skeleton(unit_json)
 				self._skeletons[unit_basename] = unit
