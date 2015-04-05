@@ -3,6 +3,7 @@ import json
 import copy
 from core.entities.unit import Unit
 from core.managers.filemanager import FileManager
+from core.entities.gamestate import GameState
 
 class UnitManager:
 	_tag = "UnitManager: "
@@ -35,6 +36,8 @@ class UnitManager:
 				unit = self.load_unit_skeleton(unit_json)
 				self._skeletons[unit_basename] = unit
 		self.print_skeletons()
+		# add unit blueprints to gamestate
+		GameState.set_unit_skeletons(self._skeletons)
 
 	# fill a Unit skeleton with a json dict
 	def load_unit_skeleton(self, unit_json):
@@ -77,6 +80,8 @@ class UnitManager:
 		to_spawn.pos_x = pos_x
 		to_spawn.pos_y = pos_y
 		self._units.append(to_spawn)
+		# update gamestate
+		GameState.update_unit_list(self._units)
 
 	# debug method; prints all loaded skeletons
 	def print_skeletons(self):
