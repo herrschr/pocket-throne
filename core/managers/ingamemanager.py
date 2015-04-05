@@ -4,6 +4,7 @@ from core.entities.gamestate import GameState
 # Manager class for players & turn methods
 class IngameManager:
 	_tag = "IngameManager: "
+	global _mapmanager
 
 	actual_turn = 0
 	actual_player = None
