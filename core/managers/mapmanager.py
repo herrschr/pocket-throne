@@ -20,12 +20,8 @@ class MapManager:
 		self.has_selected_tile = True
 		return self.selected
 
-	# set tile at given position as selected, accepts two int values for position
-	def select_tile_at(self, pos_x, pos_y):
-		return self.select_tile_at((pos_x, pos_y))
-
 	# revert tile selection
-	unselect_tile(self):
+	def unselect_tile(self):
 		self.has_selected_tile = False
 		self.selected = None
 
