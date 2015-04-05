@@ -36,7 +36,7 @@ _ingamemanager.add_new_player("Player 2", (0, 0, 255))
 # add some units
 
 _unitmanager.spawn_unit_at(1, "swordsman", (2, 9))
-_unitmanager.spawn_unit_at(1, "swordsman", (10, 6))
+_unitmanager.spawn_unit_at(1, "archer", (10, 6))
 
 # catch events from game loop and react to them
 def events():
