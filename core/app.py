@@ -1,9 +1,10 @@
-# import libraries
-import os, sys
-lib_path = os.path.abspath(os.path.join(".", "lib", "unix86"))
+# import python libraries
+import os, sys, imp
+
+# get path of os-dependent libs and import them
+lib_path = os.path.abspath(os.path.join("..", "lib", os.name))
 sys.path.append(lib_path)
-from lib.unix86.pygame_sdl2 import pygame_sdl2
-# pygame_sdl2.import_as_pygame()
+from lib.posix.pygame_sdl2 import pygame_sdl2
 
 # import whole core package
 from core import *
@@ -16,14 +17,12 @@ def pygame_init():
 	screen.fill((255, 255, 255))
 	pygame_sdl2.display.update()
 
-# INIT scripts
 # initialize pygame
 screen = None
 pygame_init()
 
 # making fake map class
-_maploader = MapLoader("rostow")
-_map = _maploader.get_map()
+_map = MapLoader("rostow").get_map()
 
 # Manager initialization
 _mapmanager = MapManager(_map)
@@ -49,6 +48,7 @@ def events():
 			gui_pos = pygame_sdl2.mouse.get_pos()
 			tile_pos = MapManager.gui_to_pos(gui_pos)
 			_mapmanager.select_tile_at(tile_pos)
+
 			print ("selected tile: " + str(tile_pos))
 
 # GAME LOOP
