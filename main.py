@@ -20,7 +20,7 @@ def pygame_init():
 	global screen
 	pygame.init()
 	screen = pygame.display.set_mode((500, 500))
-	screen.fill((200, 200, 200))
+	screen.fill((255, 255, 255))
 	pygame.display.update()
 
 # INIT scripts
@@ -41,6 +41,11 @@ _ingamemanager = IngameManager()
 _ingamemanager.add_new_player("Player 1", (255, 0, 0))
 _ingamemanager.add_new_player("Player 2", (0, 0, 255))
 
+# add some units
+
+_unitmanager.spawn_unit_at(1, "swordsman", (2, 9))
+_unitmanager.spawn_unit_at(1, "swordsman", (10, 6))
+
 # GAME LOOP
 while 1==1:
 	# draw tiles
@@ -51,6 +56,13 @@ while 1==1:
 		screen.blit(image, gui_position)
 
 	# TODO: draw units
+	for unit in _unitmanager._units:
+		full_img_path = FileManager.image_path() + unit.image_path
+		print "unitpath: " + full_img_path
+		gui_position = _mapmanager.pos_to_gui((unit.pos_x, unit.pos_y))
+		print "guipos: " + str(gui_position)
+		image = pygame.image.load(full_img_path)
+		screen.blit(image, gui_position)
 	# TODO: draw buildings
 
 	# catch mouse event
