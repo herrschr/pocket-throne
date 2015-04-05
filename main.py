@@ -45,7 +45,7 @@ def events():
 		# on left mouse press
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			gui_pos = pygame.mouse.get_pos()
-			tile_pos = _mapmanager.gui_to_pos(gui_pos)
+			tile_pos = MapManager.gui_to_pos(gui_pos)
 			_mapmanager.select_tile_at(tile_pos)
 			print "selected tile: " + str(tile_pos)
 
@@ -54,21 +54,21 @@ while 1==1:
 	# draw tiles
 	for tile in _map.tiles:
 		full_img_path = FileManager.image_path() + tile._image_path
-		gui_position = _mapmanager.pos_to_gui((tile.pos_x, tile.pos_y))
+		gui_position = MapManager.pos_to_gui((tile.pos_x, tile.pos_y))
 		image = pygame.image.load(full_img_path)
 		screen.blit(image, gui_position)
 
 	# draw selected tile overlay
 	if (_mapmanager.has_selected_tile):
 		selected_img_path = FileManager.image_path() + "tile_selected.png"
-		selected_gui_pos = _mapmanager.pos_to_gui(_mapmanager.selected.get_position())
+		selected_gui_pos = MapManager.pos_to_gui(_mapmanager.selected.get_position())
 		selected_img = pygame.image.load(selected_img_path)
 		screen.blit(selected_img, selected_gui_pos)
 
 	# draw units
 	for unit in _unitmanager._units:
 		full_img_path = FileManager.image_path() + unit.image_path
-		gui_position = _mapmanager.pos_to_gui((unit.pos_x, unit.pos_y))
+		gui_position = MapManager.pos_to_gui((unit.pos_x, unit.pos_y))
 		image = pygame.image.load(full_img_path)
 		screen.blit(image, gui_position)
 

@@ -30,12 +30,14 @@ class MapManager:
 		self.selected = None
 
 	# translates a TileMap grid position into display size
+	@classmethod
 	def pos_to_gui(self,(x, y)):
 		gui_x = x * self._tilesize
 		gui_y = y * self._tilesize
 		return (gui_x, gui_y)
 
 	# translates a position into the TileMap grid
+	@classmethod
 	def gui_to_pos(self, (x, y)):
 		pos_x = int(x / self._tilesize)
 		pos_y = int(y / self._tilesize)
