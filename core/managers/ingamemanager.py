@@ -1,10 +1,10 @@
 from core.entities.player import Player
 from core.entities.gamestate import GameState
+from core.entities.event import *
 
 # Manager class for players & turn methods
 class IngameManager:
 	_tag = "IngameManager: "
-	global _mapmanager
 
 	actual_turn = 0
 	actual_player = None
@@ -14,7 +14,12 @@ class IngameManager:
 	_last_player_id = -1
 
 	# add nature player (num=0) on the beginning
-	def __init__(self):
+	def __init__(self, eventmanager):
+		#register in EventManager
+		self._eventmgr = eventmanager
+		self._eventmgr.register_listener(self)
+
+		# create nature player
 		nature = Player()
 		nature.name = "Nature"
 		nature.color = (0, 0, 0)
@@ -71,3 +76,8 @@ class IngameManager:
 	def next_player_number(self):
 		self._last_player_id += 1
 		return self._last_player_id
+
+	def on_event(self, event):
+		if isinstance(event, MouseClickedEvent):
+			pass
+

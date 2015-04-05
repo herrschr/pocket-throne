@@ -1,3 +1,5 @@
+from core.entities.event import *
+
 class EventManager:
 	# this object is responsible for coordinating most communication
 	def __init__(self):
@@ -14,6 +16,6 @@ class EventManager:
 
 	def post(self, event ):
 		if not isinstance(event, TickEvent):
-			Debug( "EventManager: Message: " + event.name )
+			print( "EventManager: Message: " + event.name )
 		for listener in self.listeners:
-			listener._notify(event)
+			listener.on_event(event)

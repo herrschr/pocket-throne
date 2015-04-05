@@ -1,4 +1,5 @@
 from core.entities.gamestate import GameState
+from core.entities.event import *
 
 class MapManager:
 	_tilesize = 40
@@ -6,11 +7,15 @@ class MapManager:
 	has_selected_tile = False
 	selected = None
 
-	def __init__(self, tilemap):
+	def __init__(self, eventmanager, tilemap):
+		# register in EventManager
+		self._eventmgr = eventmanager
+		self._eventmgr.register_listener(self)
 		# set self._map
 		if tilemap == None:
 			return None
 		self._map = tilemap
+		self._eventmgr.post(MapLoadedEvent(self._map))
 		# update map in gamestate
 		GameState.set_actual_map(self._map)
 
@@ -21,12 +26,14 @@ class MapManager:
 			self.has_selected_tile = False
 			return None
 		self.has_selected_tile = True
+		self._eventmgr.post(TileSelectedEvent(self.selected))
 		return self.selected
 
 	# revert tile selection
 	def unselect_tile(self):
 		self.has_selected_tile = False
 		self.selected = None
+		self._eventmgr.post(TileUnselectedEvent())
 
 	# translates a TileMap grid position into display size
 	@classmethod
@@ -41,3 +48,11 @@ class MapManager:
 		pos_x = int(x / self._tilesize)
 		pos_y = int(y / self._tilesize)
 		return (pos_x, pos_y)
+
+	def on_event(self, event):
+		# trigger TileSelectedEvent on mouse click
+		if isinstance(event, MouseClickedEvent):
+			grid_pos = self.gui_to_pos(event.pos)
+			selected_tile = self._map.get_tile_at(grid_pos)
+			ev_tile_selected = TileSelectedEvent(selected_tile)
+			self._eventmgr.post(ev_tile_selected)

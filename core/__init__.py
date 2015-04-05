@@ -1,19 +1,24 @@
 # AUTO IMPORT
 # entities
-from entities.building import Building
-from entities.tile import Tile
-from entities.tilemap import TileMap
-from entities.unit import Unit, Weapon
+from core.entities.building import Building
+from core.entities.tile import Tile
+from core.entities.tilemap import TileMap
+from core.entities.unit import Unit, Weapon
 
-from entities.event import *
-from entities.gamestate import GameState
+from core.entities.event import *
+from core.entities.gamestate import GameState
 
 # managers
-from managers.eventmanager import EventManager
-from managers.mapmanager import MapManager
-from managers.unitmanager import UnitManager
-from managers.filemanager import FileManager
-from managers.ingamemanager import IngameManager
+from core.managers.eventmanager import EventManager
+from core.managers.gameloopmanager import GameLoopManager
+
+from core.managers.inputmanager import InputManager
+from core.managers.ingamemanager import IngameManager
+from core.managers.pygameguimanager import PygameGuiManager
+
+from core.managers.mapmanager import MapManager
+from core.managers.unitmanager import UnitManager
+from core.managers.filemanager import FileManager
 
 # tools
 from tools.maploader import MapLoader

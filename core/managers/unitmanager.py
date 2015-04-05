@@ -4,19 +4,26 @@ import copy
 from core.entities.unit import Unit, Weapon
 from core.managers.filemanager import FileManager
 from core.entities.gamestate import GameState
+from core.managers.eventmanager import EventManager
 
 class UnitManager:
 	_tag = "UnitManager: "
-	# Unit class skeleton (without mp, positions and _id)
 	_skeletons = {}
-	# Unit class array for instanciated units
 	_units = []
+	_map = None
 	_last_unit_id = -1
 
-	def __init__(self, mod_name):
+	def __init__(self, eventmanager, tilemap, mod="base"):
+		# register in EventManager
+		self._eventmgr = eventmanager
+		self._eventmgr.register_listener(self)
+
 		# ignore the mod name, no active modding system
 		# load all unit blueprints
 		self.load_unit_skeletons("base")
+
+		# spawn units from map file
+		self._map = tilemap
 
 	# returns a new, unused unit id
 	def next_unit_id(self):
@@ -91,12 +98,15 @@ class UnitManager:
 
 	# spawn a new unit with given player and position
 	def spawn_unit_at(self, player_num, unit_basename, (pos_x, pos_y)):
+		# get prefilled unit and add player, position & unit id
 		to_spawn = self.get_prefilled_unit(unit_basename)
 		to_spawn.player_num = player_num
 		to_spawn.pos_x = pos_x
 		to_spawn.pos_y = pos_y
 		to_spawn._id = self.next_unit_id()
+		# add unit to self._units and _map._units
 		self._units.append(to_spawn)
+		self._map.units.append(to_spawn)
 		# update gamestate
 		GameState.update_unit_list(self._units)
 
@@ -139,10 +149,14 @@ class UnitManager:
 	# remove/kill unit
 	def remove_unit(self, unit):
 		self._units.remove(unit)
+		self._map.units.remove(unit)
 		return unit
 
 	# debug method; prints all loaded skeletons
 	def print_skeletons(self):
 		for unit_name in self._skeletons:
 			print self._tag + "skeleton for " + unit_name + " added."
+
+	def on_event(self, event):
+		pass
 

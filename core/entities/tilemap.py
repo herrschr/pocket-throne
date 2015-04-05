@@ -4,12 +4,17 @@ class TileMap(object):
 	name = ""
 	size_x = 0
 	size_y = 0
-	TILES_SIZE = 40
+	TILESIZE = 40
 
 	# TileMap tile collections
 	tiles = []
 	tiles_at = {}
 	_last_tile_id = -1
+
+	# unit, building and item collections
+	units = []
+	buildings = []
+	items = []
 
 	def __init__(self):
 		pass
