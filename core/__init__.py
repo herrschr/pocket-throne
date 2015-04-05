@@ -5,9 +5,11 @@ from entities.tile import Tile
 from entities.tilemap import TileMap
 from entities.unit import Unit, Weapon
 
+from entities.event import *
 from entities.gamestate import GameState
 
 # managers
+from managers.eventmanager import EventManager
 from managers.mapmanager import MapManager
 from managers.unitmanager import UnitManager
 from managers.filemanager import FileManager

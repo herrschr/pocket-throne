@@ -1,10 +1,8 @@
 # import python libraries
 import os, sys, imp
 
-# get path of os-dependent libs and import them
-lib_path = os.path.abspath(os.path.join("..", "lib", os.name))
-sys.path.append(lib_path)
-from lib.posix.pygame_sdl2 import pygame_sdl2
+# import os-dependant libs
+from core.lib.posix.pygame_sdl2 import pygame_sdl2
 
 # import whole core package
 from core import *
