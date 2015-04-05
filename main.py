@@ -50,7 +50,7 @@ def events():
 			print "selected tile: " + str(tile_pos)
 
 # GAME LOOP
-while 1==1:
+while True:
 	# draw tiles
 	for tile in _map.tiles:
 		full_img_path = FileManager.image_path() + tile._image_path
