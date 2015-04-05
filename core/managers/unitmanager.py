@@ -85,7 +85,7 @@ class UnitManager:
 		# weapon.image_path = weapon_json["image_path"]
 		return weapon
 
-	# get a prefilled Unit class
+	# get a prefilled Unit class from loaded skeleton/blueprint
 	def get_prefilled_unit(self, unit_basename):
 		return self._skeletons[unit_basename].copy()
 
@@ -97,6 +97,11 @@ class UnitManager:
 		self._units.append(to_spawn)
 		# update gamestate
 		GameState.update_unit_list(self._units)
+
+	# remove/kill unit
+	def remove_unit(self, unit):
+		self._units.remove(unit)
+		return unit
 
 	# debug method; prints all loaded skeletons
 	def print_skeletons(self):
