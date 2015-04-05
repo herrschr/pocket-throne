@@ -2,6 +2,8 @@
 class Unit(object):
 	# static unit vars, defaults
 	_id = -1
+	_instanciated = False
+
 	name = ""
 	name_de = ""
 	categories = []
@@ -34,6 +36,12 @@ class Unit(object):
 	# set the weapon of this uni
 	def give_weapon(self, weapon):
 		self.weapon = weapon
+
+	def _id(self):
+		if self._id != -1:
+			return self._id
+		else:
+			return None
 
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
 class Weapon(object):

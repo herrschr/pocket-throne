@@ -15,6 +15,7 @@ class UnitManager:
 
 	def __init__(self, mod_name):
 		# ignore the mod name, no active modding system
+		# load all unit blueprints
 		self.load_unit_skeletons("base")
 
 	# returns a new, unused unit id
@@ -98,6 +99,42 @@ class UnitManager:
 		self._units.append(to_spawn)
 		# update gamestate
 		GameState.update_unit_list(self._units)
+
+	# move unit to absolute position
+	def move_unit_to(self, unit, (to_x, to_y)):
+		# get relative movement
+		rel_x = to_x - unit.pos_x
+		rel_y = to_y - unit.pos_y
+		# weird undocumented movement hacking
+		if rel_x != 0 and rel_y != 0:
+			if rel_x > rel_y:
+				rel_y = 0
+			if rel_y > rel_x:
+				rel_x = 0
+		# move unit relative to it's position
+		self.move_unit(unit, (rel_x, rel_y))
+
+	# unit movement relative to own position; unit movement base method
+	def move_unit(self, unit, (rel_x, rel_y)):
+		# restrict two-direction movement, not allowed yet
+		if rel_x != 0 and rel_y != 0:
+			print ("UnitManager: no two-direction movement of units allowed")
+			return unit
+		# check unit's movement points
+		way = abs(rel_x)
+		if way > unit.mp:
+			print ("UnitManager: unit " + unit.name + " isn't allowed to move " + str(way) + " tiles")
+			return unit
+		# horizontal movement
+		elif rel_x != 0 and rel_y == 0:
+			unit.pos_x += rel_x
+			unit.mp -= abs(rel_x)
+		# vertical movement
+		elif rel_x == 0 and rel_y != 0:
+			unit.pos_y += rel_y
+			unit.mp -= abs(rel_y)
+		GameState.update_unit_list(self._units)
+		return unit
 
 	# remove/kill unit
 	def remove_unit(self, unit):
