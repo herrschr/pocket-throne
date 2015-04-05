@@ -17,6 +17,9 @@ class MapManager:
 	# set tile at given position tuple as selected
 	def select_tile_at(self, (pos_x, pos_y)):
 		self.selected = self._map.get_tile_at((pos_x, pos_y))
+		if self.selected == None:
+			self.has_selected_tile = False
+			return None
 		self.has_selected_tile = True
 		return self.selected
 

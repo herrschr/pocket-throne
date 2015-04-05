@@ -32,7 +32,10 @@ class TileMap(object):
 
 	# returns tile at given position tuple
 	def get_tile_at(self, (pos_x, pos_y)):
-		return  self.tiles_at[pos_x, pos_y]
+		try:
+			return  self.tiles_at[pos_x, pos_y]
+		except:
+			return None
 
 	# remove tile
 	def remove_tile(self, tile_to_rem):
