@@ -26,9 +26,13 @@ class TileMap(object):
 		self.tiles_at[pos_x, pos_y] = tile_to_add
 		return tile_to_add
 
-	# returns tile at given position
-	def get_tile_at(pos_x, pos_y):
-		return  tiles_at[pos_x, pos_y]
+	# returns tile at given position, accepts two ints
+	def get_tile_at(self, pos_x, pos_y):
+		return  self.get_tile_at((pos_x, pos_y))
+
+	# returns tile at given position tuple
+	def get_tile_at(self, (pos_x, pos_y)):
+		return  self.tiles_at[pos_x, pos_y]
 
 	# remove tile
 	def remove_tile(self, tile_to_rem):
