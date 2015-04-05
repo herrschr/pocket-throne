@@ -87,13 +87,15 @@ class UnitManager:
 
 	# get a prefilled Unit class from loaded skeleton/blueprint
 	def get_prefilled_unit(self, unit_basename):
-		return self._skeletons[unit_basename].copy()
+		return copy.deepcopy(self._skeletons[unit_basename])
 
 	# spawn a new unit with given player and position
-	def spawn_unit_at(self, unit_basename, (pos_x, pos_y)):
+	def spawn_unit_at(self, player_num, unit_basename, (pos_x, pos_y)):
 		to_spawn = self.get_prefilled_unit(unit_basename)
+		to_spawn.player_num = player_num
 		to_spawn.pos_x = pos_x
 		to_spawn.pos_y = pos_y
+		to_spawn._id = self.next_unit_id()
 		self._units.append(to_spawn)
 		# update gamestate
 		GameState.update_unit_list(self._units)

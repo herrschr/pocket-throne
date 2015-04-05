@@ -18,7 +18,7 @@ class Unit(object):
 	max_per_map = -1
 
 	# changeable building vars
-	playerId = -1
+	player_num = -1
 	hp = -1
 	mp = movement
 	pos_x = -1
