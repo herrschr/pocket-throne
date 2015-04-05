@@ -30,3 +30,6 @@ class Tile:
 			return "tile_forest.png"
 		else:
 			return None
+
+	def get_position(self):
+		return (self.pos_x, self.pos_y)
