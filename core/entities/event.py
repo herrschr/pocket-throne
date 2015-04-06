@@ -20,17 +20,28 @@ class QuitEvent(Event):
 # MAP EVENTS
 class MapLoadedEvent(Event):
 	def __init__(self, tilemap):
-		self.name = "Map Loaded Event"
+		self.name = "Map Loaded Event: name=" + tilemap.name
 		self.tilemap = tilemap
 
 class TileSelectedEvent(Event):
 	def __init__(self, selected_tile):
-		self.name = "Tile Selected Event"
+		self.name = "Tile Selected Event: x=" + str(selected_tile.pos_x) + " y=" + str(selected_tile.pos_y)
 		self.selected_tile = selected_tile
 
 class TileUnselectedEvent(Event):
 	def __init__(self,):
 		self.name = "Tile Unselected Event"
+
+# TURN EVENTS
+class NextTurnEvent(Event):
+	def __init__(self, turnnumber):
+		self.name = "Next Turn Event"
+		self.turn = turnnumber
+
+class NextOneEvent(Event):
+	def __init__(self, actual_player):
+		self.name = "Next Player Event"
+		self.actual_player = actual_player
 
 # UNIT EVENTS
 class UnitMoveRequest(Event):
@@ -47,5 +58,5 @@ class UnitMovedEvent(Event):
 # INPUT EVENTS
 class MouseClickedEvent(Event):
 	def __init__(self, pos):
-		self.name = "Mouse Clicked Event"
+		self.name = "Mouse Clicked Event: pos=" + str(pos)
 		self.pos = pos
