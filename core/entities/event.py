@@ -5,9 +5,8 @@ class Event:
 
 # SYSTEM EVENTS
 class GameStartedEvent(Event):
-	def __init__(self, game):
+	def __init__(self):
 		self.name = "Game Started Event"
-		self.game = game
 
 class TickEvent(Event):
 	def __init__(self):
@@ -20,12 +19,12 @@ class QuitEvent(Event):
 # MAP EVENTS
 class MapLoadedEvent(Event):
 	def __init__(self, tilemap):
-		self.name = "Map Loaded Event: name=" + tilemap.name
+		self.name = "Map Loaded Event: " + str(tilemap)
 		self.tilemap = tilemap
 
 class TileSelectedEvent(Event):
 	def __init__(self, selected_tile, pos):
-		self.name = "Tile Selected Event: lds= " + selected_tile.landscape +" x=" + str(selected_tile.pos_x) + " y=" + str(selected_tile.pos_y)
+		self.name = "Tile Selected Event: " + str(selected_tile)
 		self.selected_tile = selected_tile
 		self.pos = pos
 
@@ -47,24 +46,24 @@ class NextOneEvent(Event):
 # UNIT EVENTS
 class UnitSpawnedEvent(Event):
 	def __init__(self, unit, (pos_x, pos_y)):
-		self.name = "Unit Spawned Event: unit=" + unit.name + " x=" + str(unit.pos_x) + " y=" + str(unit.pos_y)
+		self.name = "Unit Spawned Event: " + str(unit)
 		self.unit = unit
 		self.pos = (pos_x, pos_y)
 
 class UnitMoveRequest(Event):
 	def __init__(self, unit, (rel_x, rel_y)):
-		self.name = "Unit Move Request"
+		self.name = "Unit Move Request unit=" + str(unit) + " rel=" + str((rel_x, rel_y))
 		self.unit = unit
 		self.pos = (rel_x, rel_y)
 
 class UnitMovedEvent(Event):
 	def __init__(self, unit):
-		self.name = "Unit Moved Event"
+		self.name = "Unit Moved Event unit=" + str(unit)
 		self.unit = unit
 
 class UnitSelectedEvent(Event):
 	def __init__(self, unit):
-		self.name = "Unit Selected Event: unit=" + unit.name + " x=" + str(unit.pos_x) + " y=" + str(unit.pos_y)
+		self.name = "Unit Selected Event: " + str(unit)
 		self.unit = unit
 
 # BUILDING EVENTS
@@ -82,5 +81,23 @@ class BuildingSelectedEvent(Event):
 # INPUT EVENTS
 class MouseClickedEvent(Event):
 	def __init__(self, pos):
-		self.name = str("Mouse Clicked Event: pos=" + str(pos))
+		self.name = "Mouse Clicked Event: pos=" + str(pos)
 		self.pos = pos
+
+# GUI EVENTS
+class GuiPanelAddedEvent(Event):
+	def __init__(self, anchor, panel):
+		self.name = "Panel Added Event: " + str(panel)
+		self.anchor = anchor
+		self.panel = panel
+
+class GuiWidgetFocusedEvent(Event):
+	def __init__(self, widget):
+		self.name = "Widget Focused Event: widget=" + str(widget)
+		self.widget = widget
+
+class GuiWidgetUnfocusedEvent(Event):
+	def __init__(self, widget):
+		self.name = "Widget Unfocused Event: widget=" + str(widget)
+		self.widget = widget
+

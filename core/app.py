@@ -4,17 +4,27 @@ import os, sys, imp
 # import os-dependant libs
 from core.lib.posix.pygame_sdl2 import pygame_sdl2
 
-# import whole core package
-from core import *
+# import whole core manahers
+from core.managers.eventmanager import EventManager
+from core.managers.inputmanager import InputManager
+from core.managers.gameloopmanager import GameLoopManager
+from core.managers.pygamedrawingmanager import PygameDrawingManager
+from core.managers.unitmanager import UnitManager
+from core.managers.mapmanager import MapManager
+from core.managers.guimanager import GuiManager
+from core.managers.ingamemanager import IngameManager
+
+from core.tools.maploader import MapLoader
 
 # initialize pygame screen as global
 global screen
 screen = None
 eventMgr = EventManager()
 
+# sys manager initialisation
 inputMgr = InputManager(eventMgr)
 loopMgr = GameLoopManager(eventMgr)
-pygameMgr = PygameGuiManager(eventMgr)
+pygameMgr = PygameDrawingManager(eventMgr)
 
 # loading map
 _map = MapLoader("highland_bridge").get_map()
@@ -22,6 +32,7 @@ _map = MapLoader("highland_bridge").get_map()
 # Manager initialization
 unitMgr = UnitManager(eventMgr, _map, mod="base")
 mapMgr = MapManager(eventMgr, _map)
+guiMgr = GuiManager(eventMgr)
 ingameMgr = IngameManager(eventMgr)
 
 # add two players
@@ -34,4 +45,5 @@ unitMgr.spawn_unit_at(1, "archer", (10, 6))
 
 # start loop
 loopMgr.run()
+ingameMgr.start_game()
 

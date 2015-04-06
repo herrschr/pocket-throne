@@ -1,31 +1,9 @@
-# AUTO IMPORT
-# entities
-from core.entities.building import Building
-from core.entities.tile import Tile
-from core.entities.tilemap import TileMap
-from core.entities.unit import Unit, Weapon
-
-# events
-from core.entities.event import *
-
-# managers
-from core.managers.eventmanager import EventManager
-from core.managers.gameloopmanager import GameLoopManager
-
-from core.managers.inputmanager import InputManager
-from core.managers.ingamemanager import IngameManager
-from core.managers.pygamedrawingmanager import PygameDrawingManager
-
-from core.managers.mapmanager import MapManager
-from core.managers.unitmanager import UnitManager
+import sys
+import os
 from core.managers.filemanager import FileManager
-
-# tools
-from tools.maploader import MapLoader
 
 # get game root directory on package initialization
 def getGameRoot():
-	import os
 	return os.path.abspath(__file__ + "/../../")
 
 # initialize file manager

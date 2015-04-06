@@ -30,7 +30,9 @@ class Unit(object):
 		self.name = unit_name
 
 	def __repr__(self):
-		return "<"  + self.name + " x=" + str(self.pos_x) + " y=" + str(self.pos_y) + ">"
+		return "<Unit player="  + str(self.player_num) + " type=" + self.name + \
+			" pos=" + str(self.get_position()) + " hp=" + str(self.hp) + " mp=" + \
+			str(self.mp) + ">"
 
 	# load values from json skeleton
 	def loadFromJson(json_path):
@@ -45,6 +47,10 @@ class Unit(object):
 			return self._id
 		else:
 			return None
+
+	# get unit position tuple
+	def get_position(self):
+		return (self.pos_x, self.pos_y)
 
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
 class Weapon(object):

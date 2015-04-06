@@ -30,4 +30,4 @@ class Tile:
 		return (self.pos_x, self.pos_y)
 
 	def __repr__(self):
-		return "<Tile lds=" + self.landscape + " x=" + self.pos_x + " y=" + self.pos_y + ">"
+		return "<Tile lds=" + self.landscape + " pos=" + str(self.get_position()) + ">"

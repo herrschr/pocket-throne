@@ -12,10 +12,10 @@ class EventManager:
 
 	def unregister_listener( self, listener ):
 		if listener in self.listeners:
-			del self.listeners[ listener ]
+			del self.listeners[listener]
 
 	def post(self, event ):
 		if not isinstance(event, TickEvent):
 			print( "EventManager: Message: " + event.name )
-		for listener in self.listeners:
+		for listener in list(self.listeners):
 			listener.on_event(event)

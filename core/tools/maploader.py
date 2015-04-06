@@ -22,6 +22,7 @@ class MapLoader:
 
 		# create and fill TileMap
 		self._map = TileMap()
+		self._map._name = map_name
 		self.fill_map_properties(json_map)
 		self.fill_map_tiles(json_map)
 		self.fill_buildings(json_map)
@@ -30,6 +31,7 @@ class MapLoader:
 	# fill map properties for self._map
 	def fill_map_properties(self, json_map):
 		self._map.name = json_map["name"]
+		self._map.name_de = json_map["name_de"]
 		self._map.size_x = int(json_map["size"].split("x")[0])
 		self._map.size_y = int(json_map["size"].split("x")[1])
 

@@ -1,15 +1,18 @@
 class TileMap(object):
-	# static TileMap vars
-	_id = -1
+	# TileMap system properties
+	_name = ""
+	_last_tile_id = -1
+	TILESIZE = 40
+
+	# TileMap class properties
 	name = ""
+	name_de = ""
 	size_x = 0
 	size_y = 0
-	TILESIZE = 40
 
 	# TileMap tile collections
 	tiles = []
 	tiles_at = {}
-	_last_tile_id = -1
 
 	# unit, building and item collections
 	units = []
@@ -18,6 +21,9 @@ class TileMap(object):
 
 	def __init__(self):
 		pass
+
+	def get_size(self):
+		return (self.size_x, self.size_y)
 
 	# add a Tile (core/entities/tile.py)
 	def add_tile(self, tile_to_add):
@@ -51,5 +57,8 @@ class TileMap(object):
 	def next_tile_id(self):
 		self._last_tile_id += 1
 		return self._last_tile_id
+
+	def __repr__(self):
+		return "<TileMap name=" + self.name + " size=" + str(self.get_size()) + ">"
 
 

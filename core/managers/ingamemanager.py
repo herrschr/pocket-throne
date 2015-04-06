@@ -24,6 +24,12 @@ class IngameManager:
 		nature.color = (0, 0, 0)
 		self.add_player(nature)
 
+	def start_game(self):
+		# set turn and player
+		self.actual_turn = 0
+		self.actual_player_num = 1
+		self.actual_player = self.players[self.actual_player_num]
+
 	# add a player by class
 	def add_player(self, player):
 		# add player number to player and add all to player list
