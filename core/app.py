@@ -7,13 +7,9 @@ from core.lib.posix.pygame_sdl2 import pygame_sdl2
 # import whole core package
 from core import *
 
-# initialize pygame
+# initialize pygame screen as global
 global screen
-global mapMgr
-global unitMgr
 screen = None
-mapMgr = None
-unitMgr = None
 
 eventMgr = EventManager()
 
