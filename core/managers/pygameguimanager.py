@@ -16,7 +16,7 @@ class PygameGuiManager:
 		# initialize pygame_sdl2
 		global screen
 		pygame_sdl2.init()
-		screen = pygame_sdl2.display.set_mode((500, 500))
+		screen = pygame_sdl2.display.set_mode((600, 600))
 		screen.fill((255, 255, 255))
 		pygame_sdl2.display.update()
 
@@ -74,6 +74,7 @@ class PygameGuiManager:
 		# when a tile is unselected
 		if isinstance(event, TileUnselectedEvent):
 			self.selected_tile = None
+
 
 
 
