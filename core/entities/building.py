@@ -22,8 +22,16 @@ class Building:
 	pos_y = -1
 
 	def __init__(self, building_name):
-		self.name = name
+		self.name = building_name
 
 	def loadFromJson(json_path):
 		pass
+
+	def set_position(self, (pos_x, pos_y)):
+		self.pos_x = pos_x
+		self.pos_y = pos_y
+
+	def get_position(self):
+		return (self.pos_x, self.pos_y)
+
 
