@@ -14,7 +14,7 @@ from core.managers.gameloopmanager import GameLoopManager
 
 from core.managers.inputmanager import InputManager
 from core.managers.ingamemanager import IngameManager
-from core.managers.pygameguimanager import PygameGuiManager
+from core.managers.pygamedrawingmanager import PygameDrawingManager
 
 from core.managers.mapmanager import MapManager
 from core.managers.unitmanager import UnitManager
