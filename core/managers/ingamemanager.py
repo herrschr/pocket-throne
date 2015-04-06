@@ -53,6 +53,8 @@ class IngameManager:
 		# update turn & actual player in gamestate
 		GameState.update_actual_turn(self.actual_turn)
 		GameState.update_actual_player(self.actual_player)
+		# trigger NextTurnEvent
+		self._eventmgr.post(NextTurnEvent(self.actual_turn))
 
 	# internal: end turn of the actual player and switch to next one
 	def next_one(self):
@@ -61,6 +63,8 @@ class IngameManager:
 		self.actual_player = self.players[self.actual_player_num]
 		# update actual player in gamestate
 		GameState.update_actual_player(self.actual_player)
+		# trigger NextOneEvent
+		self._eventmgr.post(NextOneEvent(self.actual_player))
 
 	# switch player or update turn, "End Turn" button beheaviour
 	def forward(self):
