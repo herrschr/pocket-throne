@@ -29,6 +29,9 @@ class Unit(object):
 	def __init__(self, unit_name):
 		self.name = unit_name
 
+	def __repr__(self):
+		return "<"  + self.name + " x=" + str(self.pos_x) + " y=" + str(self.pos_y) + ">"
+
 	# load values from json skeleton
 	def loadFromJson(json_path):
 		pass
