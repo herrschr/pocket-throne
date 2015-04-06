@@ -30,6 +30,13 @@ class UnitManager:
 		self._last_unit_id += 1
 		return self._last_unit_id
 
+	def get_unit_at((at_x, at_y)):
+		for unit in self._units:
+			if unit.pos_x == at_x and unit.pos_y == at_y:
+				return unit
+			else:
+				return None
+
 	# load unit skeletons from mods/<mod_name>/units/*.json
 	def load_unit_skeletons(self, mod_name):
 		unit_folder_path = FileManager.mod_path() + mod_name + "/units/"
@@ -158,5 +165,9 @@ class UnitManager:
 			print self._tag + "skeleton for " + unit_name + " added."
 
 	def on_event(self, event):
-		pass
+		if isinstance(event, TileSelectedEvent):
+			selected_unit = self.get_unit_at(event.pos)
+			if selected_unit != None:
+				ev_selected_unit = SelectedUnitEvent(selected_unit)
+				self._eventmgr.post(ev_selected_unit)
 
