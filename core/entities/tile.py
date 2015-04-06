@@ -1,10 +1,5 @@
 class Tile:
 	_id = -1
-	pos_x = -1
-	pos_y = -1
-	landscape = None
-	_image_path = ""
-
 	def __init__(self,x,y,landscape):
 		self.pos_x = x
 		self.pos_y = y
@@ -24,7 +19,7 @@ class Tile:
 			return "tile_water.png"
 		# mointains
 		elif (self.landscape == "M"):
-			return "tile_mointain.png"
+			return "tile_mountains.png"
 		# forest
 		elif (self.landscape == "F"):
 			return "tile_forest.png"
@@ -33,3 +28,6 @@ class Tile:
 
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
+
+	def __repr__(self):
+		return "<Tile lds=" + self.landscape + " x=" + self.pos_x + " y=" + self.pos_y + ">"
