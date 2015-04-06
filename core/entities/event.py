@@ -55,6 +55,23 @@ class UnitMovedEvent(Event):
 		self.name = "Unit Moved Event"
 		self.unit = unit
 
+class UnitSelectedEvent(Event):
+	def __init__(self, unit):
+		self.name = "Unit Selected Event unit=" + unit.name + " x=" + unit.pos_x + " y=" + unit.pos_y
+		self.unit = unit
+
+# BUILDING EVENTS
+class UnitBuiltEvent(Event):
+	def __init__(self, bld, (pos_x, pos_y)):
+		self.name = "Building Built Event: bld=" + bld.name + " x=" + bld.pos_x + " y=" + bld.pos_y
+		self.bld = bld
+		self.pos = (pos_x, pos_y)
+
+class BuildingSelectedEvent(Event):
+	def __init__(self, bld):
+		self.name = "Building Selected Event bld=" + bld.name + " x=" + bld.pos_x + " y=" + bld.pos_y
+		self.building = bld
+
 # INPUT EVENTS
 class MouseClickedEvent(Event):
 	def __init__(self, pos):
