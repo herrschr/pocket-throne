@@ -10,7 +10,6 @@ from core import *
 # initialize pygame screen as global
 global screen
 screen = None
-
 eventMgr = EventManager()
 
 inputMgr = InputManager(eventMgr)
@@ -18,7 +17,7 @@ loopMgr = GameLoopManager(eventMgr)
 pygameMgr = PygameGuiManager(eventMgr)
 
 # loading map
-_map = MapLoader("rostow").get_map()
+_map = MapLoader("highland_bridge").get_map()
 
 # Manager initialization
 unitMgr = UnitManager(eventMgr, _map, mod="base")
