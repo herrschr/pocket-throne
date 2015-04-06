@@ -24,9 +24,10 @@ class MapLoadedEvent(Event):
 		self.tilemap = tilemap
 
 class TileSelectedEvent(Event):
-	def __init__(self, selected_tile):
-		self.name = "Tile Selected Event: x=" + str(selected_tile.pos_x) + " y=" + str(selected_tile.pos_y)
+	def __init__(self, selected_tile, pos):
+		self.name = "Tile Selected Event: lds= " + selected_tile.landscape +" x=" + str(selected_tile.pos_x) + " y=" + str(selected_tile.pos_y)
 		self.selected_tile = selected_tile
+		self.pos = pos
 
 class TileUnselectedEvent(Event):
 	def __init__(self,):
@@ -44,6 +45,12 @@ class NextOneEvent(Event):
 		self.actual_player = actual_player
 
 # UNIT EVENTS
+class UnitSpawnedEvent(Event):
+	def __init__(self, unit, (pos_x, pos_y)):
+		self.name = "Unit Spawned Event: unit=" + unit.name + " x=" + str(unit.pos_x) + " y=" + str(unit.pos_y)
+		self.unit = unit
+		self.pos = (pos_x, pos_y)
+
 class UnitMoveRequest(Event):
 	def __init__(self, unit, (rel_x, rel_y)):
 		self.name = "Unit Move Request"
@@ -57,23 +64,23 @@ class UnitMovedEvent(Event):
 
 class UnitSelectedEvent(Event):
 	def __init__(self, unit):
-		self.name = "Unit Selected Event unit=" + unit.name + " x=" + unit.pos_x + " y=" + unit.pos_y
+		self.name = "Unit Selected Event: unit=" + unit.name + " x=" + str(unit.pos_x) + " y=" + str(unit.pos_y)
 		self.unit = unit
 
 # BUILDING EVENTS
-class UnitBuiltEvent(Event):
+class BuildingBuiltEvent(Event):
 	def __init__(self, bld, (pos_x, pos_y)):
-		self.name = "Building Built Event: bld=" + bld.name + " x=" + bld.pos_x + " y=" + bld.pos_y
+		self.name = "Building Built Event: bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
 		self.bld = bld
 		self.pos = (pos_x, pos_y)
 
 class BuildingSelectedEvent(Event):
 	def __init__(self, bld):
-		self.name = "Building Selected Event bld=" + bld.name + " x=" + bld.pos_x + " y=" + bld.pos_y
+		self.name = "Building Selected Event bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
 		self.building = bld
 
 # INPUT EVENTS
 class MouseClickedEvent(Event):
 	def __init__(self, pos):
-		self.name = "Mouse Clicked Event: pos=" + str(pos)
+		self.name = str("Mouse Clicked Event: pos=" + str(pos))
 		self.pos = pos
