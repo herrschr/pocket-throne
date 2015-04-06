@@ -10,6 +10,8 @@ class PygameGuiManager:
 
 		self.tilemap = None
 		self.selected_tile = None
+		self.actual_turn = None
+		self.actual_player = None
 
 		# initialize pygame_sdl2
 		global screen
