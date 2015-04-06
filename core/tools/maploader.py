@@ -24,6 +24,7 @@ class MapLoader:
 		self._map = TileMap()
 		self.fill_map_properties(json_map)
 		self.fill_map_tiles(json_map)
+		self.fill_buildings(json_map)
 		self._initialized = True
 
 	# fill map properties for self._map
@@ -53,6 +54,17 @@ class MapLoader:
 				cursor_x += 1
 			cursor_x = 0
 			cursor_y += 1
+
+	def fill_buildings(self, json_map):
+		buildings = json_map["buildings"]
+		for bld_row in buildings:
+			bld_data = bld_row.split()
+			# create new building with building name (bld_data[1])
+			bld = Building(bld_data[1])
+			bld.playerId = bld_data[0]
+			# set building position (x=bld_data[2]; y=bld_data[3])
+			bld.set_position((bld_data[2], bld_data[3]))
+		self._map.buildings = buildings
 
 	# returns the loaded map
 	def get_map(self):
