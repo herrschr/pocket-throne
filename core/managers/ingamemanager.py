@@ -1,5 +1,4 @@
 from core.entities.player import Player
-from core.entities.gamestate import GameState
 from core.entities.event import *
 
 # Manager class for players & turn methods
@@ -33,8 +32,6 @@ class IngameManager:
 		self.players.append(new_player)
 		# debug: log player addition
 		print self._tag + "added player name=" + new_player.name + " on number " + str(new_player.num)
-		# update gamestate player list
-		GameState.update_player_list(self.players)
 
 	# add a new player by name and color
 	def add_new_player(self, player_name, (r, g, b)):
@@ -50,9 +47,6 @@ class IngameManager:
 		# player one starts
 		self.actual_player_num = 1
 		self.actual_player = self.players[self.actual_player_num]
-		# update turn & actual player in gamestate
-		GameState.update_actual_turn(self.actual_turn)
-		GameState.update_actual_player(self.actual_player)
 		# trigger NextTurnEvent
 		self._eventmgr.post(NextTurnEvent(self.actual_turn))
 
@@ -61,8 +55,6 @@ class IngameManager:
 		# next player
 		self.actual_player_num += 1
 		self.actual_player = self.players[self.actual_player_num]
-		# update actual player in gamestate
-		GameState.update_actual_player(self.actual_player)
 		# trigger NextOneEvent
 		self._eventmgr.post(NextOneEvent(self.actual_player))
 

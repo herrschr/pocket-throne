@@ -5,8 +5,8 @@ from core.entities.tile import Tile
 from core.entities.tilemap import TileMap
 from core.entities.unit import Unit, Weapon
 
+# events
 from core.entities.event import *
-from core.entities.gamestate import GameState
 
 # managers
 from core.managers.eventmanager import EventManager

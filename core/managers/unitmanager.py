@@ -3,8 +3,8 @@ import json
 import copy
 from core.entities.unit import Unit, Weapon
 from core.managers.filemanager import FileManager
-from core.entities.gamestate import GameState
 from core.managers.eventmanager import EventManager
+from core.entities.event import *
 
 class UnitManager:
 	_tag = "UnitManager: "
@@ -30,12 +30,13 @@ class UnitManager:
 		self._last_unit_id += 1
 		return self._last_unit_id
 
-	def get_unit_at((at_x, at_y)):
+	def get_unit_at(self, (at_x, at_y)):
 		for unit in self._units:
+			unit_x = int(unit.pos_x)
+			unit_y = int(unit.pos_y)
 			if unit.pos_x == at_x and unit.pos_y == at_y:
 				return unit
-			else:
-				return None
+		return None
 
 	# load unit skeletons from mods/<mod_name>/units/*.json
 	def load_unit_skeletons(self, mod_name):
@@ -50,8 +51,6 @@ class UnitManager:
 				unit = self.load_unit_skeleton(unit_json)
 				self._skeletons[unit_basename] = unit
 		self.print_skeletons()
-		# add unit blueprints to gamestate
-		GameState.set_unit_skeletons(self._skeletons)
 
 	# fill a Unit skeleton with a json dict
 	def load_unit_skeleton(self, unit_json):
@@ -114,8 +113,9 @@ class UnitManager:
 		# add unit to self._units and _map._units
 		self._units.append(to_spawn)
 		self._map.units.append(to_spawn)
-		# update gamestate
-		GameState.update_unit_list(self._units)
+		# fire UnitSpawnedEvent
+		ev_unit_spawned = UnitSpawnedEvent(to_spawn, (pos_x, pos_y))
+		self._eventmgr.post(ev_unit_spawned)
 
 	# move unit to absolute position
 	def move_unit_to(self, unit, (to_x, to_y)):
@@ -150,7 +150,6 @@ class UnitManager:
 		elif rel_x == 0 and rel_y != 0:
 			unit.pos_y += rel_y
 			unit.mp -= abs(rel_y)
-		GameState.update_unit_list(self._units)
 		return unit
 
 	# remove/kill unit
@@ -168,6 +167,6 @@ class UnitManager:
 		if isinstance(event, TileSelectedEvent):
 			selected_unit = self.get_unit_at(event.pos)
 			if selected_unit != None:
-				ev_selected_unit = SelectedUnitEvent(selected_unit)
+				ev_selected_unit = UnitSelectedEvent(selected_unit)
 				self._eventmgr.post(ev_selected_unit)
 

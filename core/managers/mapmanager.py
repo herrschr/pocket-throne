@@ -1,4 +1,4 @@
-from core.entities.gamestate import GameState
+
 from core.entities.event import *
 
 class MapManager:
@@ -16,8 +16,6 @@ class MapManager:
 			return None
 		self._map = tilemap
 		self._eventmgr.post(MapLoadedEvent(self._map))
-		# update map in gamestate
-		GameState.set_actual_map(self._map)
 
 	# set tile at given position tuple as selected
 	def select_tile_at(self, (pos_x, pos_y)):
@@ -56,5 +54,5 @@ class MapManager:
 			grid_pos = self.gui_to_pos(event.pos)
 			selected_tile = self._map.get_tile_at(grid_pos)
 			# fire TileSelectedEvent
-			ev_tile_selected = TileSelectedEvent(selected_tile)
+			ev_tile_selected = TileSelectedEvent(selected_tile, grid_pos)
 			self._eventmgr.post(ev_tile_selected)
