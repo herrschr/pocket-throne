@@ -52,7 +52,9 @@ class MapManager:
 	def on_event(self, event):
 		# trigger TileSelectedEvent on mouse click
 		if isinstance(event, MouseClickedEvent):
+			# get selected tile
 			grid_pos = self.gui_to_pos(event.pos)
 			selected_tile = self._map.get_tile_at(grid_pos)
+			# fire TileSelectedEvent
 			ev_tile_selected = TileSelectedEvent(selected_tile)
 			self._eventmgr.post(ev_tile_selected)
