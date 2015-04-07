@@ -1,4 +1,5 @@
 from core.gui.panel import Panel
+from core.gui.labelwidget import LabelWidget
 from core.gui import *
 from core.entities.event import *
 
@@ -35,5 +36,15 @@ class GuiManager:
 			self.gamestate = GAMESTATE_INGAME
 			# add bottom panel
 			bottom_panel = Panel(self._eventmgr, PANEL_ANCHOR_BOTTOM)
+			bottom_label = LabelWidget(self._eventmgr)
+			bottom_label.set_text("Hi!")
+			bottom_panel.add_widget(bottom_label)
 			self.add_panel(bottom_panel)
+
+		if isinstance(event, UnitSelectedEvent):
+			selected_unit = event.unit
+			label1 = self.panel_at[PANEL_ANCHOR_BOTTOM].widgets[0]
+			print ("gui s: " + str(label1))
+			label1.set_text("[" + str(selected_unit.player_num) + "] " + selected_unit.name_de)
+			print ("gui e: " + str(label1))
 
