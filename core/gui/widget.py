@@ -8,6 +8,15 @@ class Widget(Sprite):
 	WIDGET_ALIGN_LEFT = 4
 	WIDGET_ALIGN_CENTER = 5
 
+	parent = None
+
+	layout = {
+		"left": 0,
+		"top": 0,
+		"width": 0,
+		"height": 0
+	}
+
 	def __init__(self, eventmanager):
 		# init parent class (Pygame sprite)
 		Sprite.__init__(self)
@@ -16,12 +25,19 @@ class Widget(Sprite):
 		self._eventmgr.register_listener(self)
 		# not focused; to be redrawn
 		self._focused = False
-		self._redraw = True
+		self.dirty = True
+
+	def trigger_redraw(self):
+		self.dirty = True
+		if self.parent != None:
+			ev_panel_updated = GuiPanelUpdatedEvent(self.parent)
+			self._eventmgr.post(ev_panel_updated)
+
 
 	# set focus and redraw
 	def set_focus(self, focused):
 		self._focused = focused
-		self._redraw = True
+		self.dirty = True
 
 	def remove(self):
 		Sprite.kill(self)
