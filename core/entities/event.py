@@ -29,7 +29,7 @@ class TileSelectedEvent(Event):
 		self.pos = pos
 
 class TileUnselectedEvent(Event):
-	def __init__(self,):
+	def __init__(self):
 		self.name = "Tile Unselected Event"
 
 # TURN EVENTS
@@ -89,6 +89,11 @@ class GuiPanelAddedEvent(Event):
 	def __init__(self, anchor, panel):
 		self.name = "Panel Added Event: " + str(panel)
 		self.anchor = anchor
+		self.panel = panel
+
+class GuiPanelUpdatedEvent(Event):
+	def __init__(self, panel):
+		self.name = "Panel Updated Event: " + str(panel)
 		self.panel = panel
 
 class GuiWidgetFocusedEvent(Event):
