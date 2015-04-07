@@ -1,30 +1,35 @@
 class Tile:
 	_id = -1
+
+	image_paths = {
+		"G": "tile_grass.png",
+		"D": "tile_dirt.png",
+		"W": "tile_water.png",
+		"M": "tile_mountains.png",
+		"F": "tile_forest.png"
+	}
+
+	names = {
+		"G": "Green Grasslands",
+		"D": "Dirty Landscapes",
+		"W": "The Sea",
+		"M": "High Mountains",
+		"F": "A Dark Forest"
+	}
+
 	def __init__(self,x,y,landscape):
 		self.pos_x = x
 		self.pos_y = y
 		self.landscape = landscape
+		self.name = self.get_name()
 		self._image_path = self.get_image_path()
 
 	# returns the tiles sprite path in /img folder
 	def get_image_path(self):
-		# grass
-		if (self.landscape == "G"):
-			return "tile_grass.png"
-		# dirt
-		elif (self.landscape == "D"):
-			return "tile_dirt.png"
-		# water
-		elif (self.landscape == "W"):
-			return "tile_water.png"
-		# mointains
-		elif (self.landscape == "M"):
-			return "tile_mountains.png"
-		# forest
-		elif (self.landscape == "F"):
-			return "tile_forest.png"
-		else:
-			return None
+		return self.image_paths.get(self.landscape, None)
+
+	def get_name(self):
+		return self.names.get(self.landscape, None)
 
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
