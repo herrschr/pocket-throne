@@ -115,7 +115,7 @@ class UnitManager:
 		self._map.units.append(to_spawn)
 		# fire UnitSpawnedEvent
 		ev_unit_spawned = UnitSpawnedEvent(to_spawn, (pos_x, pos_y))
-		self._eventmgr.post(ev_unit_spawned)
+		self._eventmgr.fire(ev_unit_spawned)
 
 	# move unit to absolute position
 	def move_unit_to(self, unit, (to_x, to_y)):
@@ -168,5 +168,5 @@ class UnitManager:
 			selected_unit = self.get_unit_at(event.pos)
 			if selected_unit != None:
 				ev_selected_unit = UnitSelectedEvent(selected_unit)
-				self._eventmgr.post(ev_selected_unit)
+				self._eventmgr.fire(ev_selected_unit)
 

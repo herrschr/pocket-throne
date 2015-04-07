@@ -41,10 +41,9 @@ class GuiManager:
 			bottom_panel.add_widget(bottom_label)
 			self.add_panel(bottom_panel)
 
+		# when a unit is selected, show unit's name on
 		if isinstance(event, UnitSelectedEvent):
 			selected_unit = event.unit
 			label1 = self.panel_at[PANEL_ANCHOR_BOTTOM].widgets[0]
-			print ("gui s: " + str(label1))
-			label1.set_text("[" + str(selected_unit.player_num) + "] " + selected_unit.name_de)
-			print ("gui e: " + str(label1))
+			label1.set_text("Unit: " + selected_unit.name)
 
