@@ -41,6 +41,7 @@ ingameMgr.add_new_player("Player 2", (0, 0, 255))
 
 # add some units
 unitMgr.spawn_unit_at(1, "swordsman", (2, 9))
+unitMgr.spawn_unit_at(1, "swordsman", (3, 9))
 unitMgr.spawn_unit_at(1, "archer", (10, 6))
 
 # start loop
