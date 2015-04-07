@@ -1,4 +1,5 @@
 from pygame_sdl2 import *
+from pygame_sdl2.rect import Rect
 from core.entities.event import *
 from core.managers.filemanager import FileManager
 from core.gui import *
@@ -20,6 +21,8 @@ class PygameDrawingManager:
 		self.screen_width = 1
 		self.screen_height = 1
 
+		self.panels = {}
+
 		# initialize pygame_sdl2
 		global screen
 		pygame_sdl2.init()
@@ -40,9 +43,8 @@ class PygameDrawingManager:
 			# load image from Tile._image_path
 			full_img_path = FileManager.image_path() + tile._image_path
 			image = pygame_sdl2.image.load(full_img_path).convert()
-			# calculate x and y position on screen
+			# calculate x and y position on screen and render tile image
 			gui_position = self.mappos_to_gui((tile.pos_x, tile.pos_y))
-			# render
 			screen.blit(image, gui_position)
 
 		# draw selected tile
@@ -50,9 +52,8 @@ class PygameDrawingManager:
 			# load static selected-tile image (img/selected_tile.png)
 			selected_img_path = FileManager.image_path() + "tile_selected.png"
 			selected_img = pygame_sdl2.image.load(selected_img_path).convert_alpha()
-			# calculate x and y position on screen
+			# calculate x and y position on screen and render selected tile image there
 			selected_gui_pos = self.mappos_to_gui(self.selected_tile.get_position())
-			# render
 			screen.blit(selected_img, selected_gui_pos)
 
 		# draw units
@@ -60,13 +61,30 @@ class PygameDrawingManager:
 			# load unit image from Unit.image_path
 			full_img_path = FileManager.image_path() + unit.image_path
 			image = pygame_sdl2.image.load(full_img_path).convert_alpha()
-			# calculate x and y position on screen
+			# calculate x and y position on screen and render unit image there
 			gui_position = self.mappos_to_gui((unit.pos_x, unit.pos_y))
-			# render
 			screen.blit(image, gui_position)
 
 	def draw_menu(self):
-		pass
+		# for each existing panel
+		for panel in self.panels.itervalues():
+			# update dirty widgets
+			if panel.dirty:
+				print("panel-dirty")
+				# redraw underlaying panel
+				#panel_l = panel.layout["left"]
+				panel_l = 0
+				panel_t = panel.layout["top"]
+				panel_w = panel.layout["width"]
+				panel_h = panel.layout["height"]
+				screen.fill(panel.color, rect=Rect(panel_l, panel_t, panel_w, panel_h))
+				for widget in panel.widgets:
+					if widget.dirty:
+						print("widget-dirty")
+						# draw updated widget overlay
+						widget.update()
+						gui_pos = (widget.layout["left"], widget.layout["top"])
+						screen.blit(widget.image, gui_pos)
 
 	# translates position on map grid in position on screen
 	def mappos_to_gui(self,(x, y)):
@@ -80,6 +98,7 @@ class PygameDrawingManager:
 		pos_y = int(y / self.tilemap.TILESIZE)
 		return (pos_x, pos_y)
 
+	# event handling
 	def on_event(self, event):
 		# each tick
 		if isinstance(event, TickEvent):
@@ -118,11 +137,23 @@ class PygameDrawingManager:
 		# when a panel is added in GUI
 		if isinstance(event, GuiPanelAddedEvent):
 			if (event.anchor == PANEL_ANCHOR_BOTTOM):
-				# add panel space at the bottom
-				panel_height = 64
+				# set panel width and height and add to drawing cache
+				panel = event.panel
+				panel.layout["top"] = self.screen_height
+				panel.layout["width"] = self.screen_width
+				self.panels[event.anchor] = panel
+
+				# add space at the bottom and set menu redraw flag (_dirty_menu)
+				panel_height = panel.layout["height"]
 				self.screen_height = self.screen_height + panel_height
 				self.resize_display()
 				self._dirty_menu = True
+
+		# when a panel is updated
+		if isinstance(event, GuiPanelUpdatedEvent):
+			panel = event.panel
+			panel.dirty = True
+			self._dirty_menu = True
 
 
 
