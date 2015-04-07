@@ -4,6 +4,7 @@ class Unit(object):
 	_id = -1
 	_instanciated = False
 
+	_name = ""
 	name = ""
 	name_de = ""
 	categories = []
