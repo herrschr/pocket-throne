@@ -1,4 +1,4 @@
-from core.lib.posix.pygame_sdl2 import *
+from pygame_sdl2 import *
 from core.entities.event import *
 
 # handles pygame events and translate them to corresponding EventManager events
@@ -18,10 +18,21 @@ class InputManager:
 				# on ESC
 				elif event.type == KEYDOWN and event.key == K_ESCAPE:
 					response_event = QuitEvent()
+
+				# on keydown
+				elif event.type == KEYDOWN and event.key != K_ESCAPE:
+					response_event = KeyPressedEvent(event.key)
+
 				# on mouse click
 				elif event.type == MOUSEBUTTONDOWN:
 					gui_pos = pygame_sdl2.mouse.get_pos()
-					response_event = MouseClickedEvent(gui_pos)
+					pressed_mousebtn = pygame_sdl2.mouse.get_pressed()
+					# fire MouseClickedEvent
+					if pressed_mousebtn[0] == True:
+						response_event = MouseClickedEvent(gui_pos)
+					# fire MouseRightclickedEvent
+					if pressed_mousebtn[2] == True:
+						response_event = MouseRightClickedEvent(gui_pos)
 				# post corresonding EventManager event
 				if response_event != None:
-					self._eventmgr.post(response_event)
+					self._eventmgr.fire(response_event)
