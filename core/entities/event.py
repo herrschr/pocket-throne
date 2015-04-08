@@ -35,12 +35,12 @@ class TileUnselectedEvent(Event):
 # TURN EVENTS
 class NextTurnEvent(Event):
 	def __init__(self, turnnumber):
-		self.name = "Next Turn Event"
+		self.name = "Next Turn Event: " + str(turnnumber)
 		self.turn = turnnumber
 
 class NextOneEvent(Event):
 	def __init__(self, actual_player):
-		self.name = "Next Player Event"
+		self.name = "Next Player Event: " + str(actual_player)
 		self.actual_player = actual_player
 
 # UNIT EVENTS
@@ -66,6 +66,10 @@ class UnitSelectedEvent(Event):
 		self.name = "Unit Selected Event: " + str(unit)
 		self.unit = unit
 
+class UnitUnselectedEvent(Event):
+	def __init__(self):
+		self.name = "Unit Unselected Event"
+
 # BUILDING EVENTS
 class BuildingBuiltEvent(Event):
 	def __init__(self, bld, (pos_x, pos_y)):
@@ -84,6 +88,16 @@ class MouseClickedEvent(Event):
 		self.name = "Mouse Clicked Event: pos=" + str(pos)
 		self.pos = pos
 
+class MouseRightClickedEvent(Event):
+	def __init__(self, pos):
+		self.name = "Mouse RightClicked Event: pos=" + str(pos)
+		self.pos = pos
+
+class KeyPressedEvent(Event):
+	def __init__(self, key):
+		self.name = "Key Pressed Event: key=" + str(key)
+		self.key = key
+
 # GUI EVENTS
 class GuiPanelAddedEvent(Event):
 	def __init__(self, anchor, panel):
@@ -92,9 +106,10 @@ class GuiPanelAddedEvent(Event):
 		self.panel = panel
 
 class GuiPanelUpdatedEvent(Event):
-	def __init__(self, panel):
-		self.name = "Panel Updated Event: " + str(panel)
+	def __init__(self, panel, action="updated"):
+		self.name = "Panel Updated Event: [" + action + "] " + str(panel)
 		self.panel = panel
+		self.action = action
 
 class GuiWidgetFocusedEvent(Event):
 	def __init__(self, widget):
