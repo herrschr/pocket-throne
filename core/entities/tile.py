@@ -1,23 +1,36 @@
-class Tile:
-	_id = -1
+# -*- coding: utf-8 -*-
 
+class Tile:
+	# sys properties
+	_id = -1
+	_neighbors = {
+		"west": None,
+		"north": None,
+		"east": None,
+		"south": None
+	},
+	# tile path & name constants
 	image_paths = {
 		"G": "tile_grass.png",
 		"D": "tile_dirt.png",
 		"W": "tile_water.png",
 		"M": "tile_mountains.png",
-		"F": "tile_forest.png"
-	}
-
+		"F": "tile_forest.png"}
 	names = {
 		"G": "Green Grasslands",
 		"D": "Dirty Landscapes",
 		"W": "The Sea",
 		"M": "High Mountains",
-		"F": "A Dark Forest"
-	}
+		"F": "A Dark Forest"}
+	names_de = {
+		"G": "Grüne Wiesen",
+		"D": "Dürre Erde",
+		"W": "Wasser",
+		"M": "Hohe Berge",
+		"F": "Düsterer Wald"}
+	walkable = {"G": True, "D": True, "W": False, "M": False, "F": True}
 
-	def __init__(self,x,y,landscape):
+	def __init__(self,x,y,landscape=None):
 		self.pos_x = x
 		self.pos_y = y
 		self.landscape = landscape
@@ -31,8 +44,23 @@ class Tile:
 	def get_name(self):
 		return self.names.get(self.landscape, None)
 
+	def get_name_de(self):
+		return self.names_de.get(self.landscape, None)
+
+	def is_walkable(self):
+		return self.walkable.get(self.landscape, True)
+
+	def get_landscape(self):
+		return self.landscape
+
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
+
+	def _neighbor(self, direction):
+		return self._neighbors[direction]
+
+	def _set_neighbor(self, direction, lds):
+		self._neighbors[direction]
 
 	def __repr__(self):
 		return "<Tile lds=" + self.landscape + " pos=" + str(self.get_position()) + ">"

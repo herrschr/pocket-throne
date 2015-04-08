@@ -15,6 +15,7 @@ class PygameDrawingManager:
 
 		self.tilemap = None
 		self.selected_tile = None
+		self.selected_unit = None
 		self.actual_turn = None
 		self.actual_player = None
 
@@ -65,6 +66,17 @@ class PygameDrawingManager:
 			gui_position = self.mappos_to_gui((unit.pos_x, unit.pos_y))
 			screen.blit(image, gui_position)
 
+		# when a unit is selected: draw possible moves
+		if self.selected_unit != None:
+			print ("PygameDrawingManager: unit selected")
+			pseudotiles = unit._possible_moves
+			print(str(len(pseudotiles)) + " possibilities added")
+			for pseudotile in pseudotiles:
+				full_img_path = self.png_path("overlay_unit_possiblemove")
+				image = pygame_sdl2.image.load(full_img_path).convert_alpha()
+				gui_position = self.mappos_to_gui((pseudotile.pos_x, pseudotile.pos_y))
+				screen.blit(image, gui_position)
+
 	def draw_menu(self):
 		# for each existing panel
 		for panel in self.panels.itervalues():
@@ -75,12 +87,15 @@ class PygameDrawingManager:
 				panel_dimens = panel.get_layout()
 				screen.fill(panel.color, rect=Rect(panel_dimens))
 				for widget in panel.widgets:
-					#if widget.dirty:
-					# draw updated widget overlay
+					# update widget size and content before drawing it
 					widget.update()
-					print("update-widget: " + str(widget))
 					gui_pos = (widget.left, widget.top)
+					# draw widget on screen
 					screen.blit(widget.image, gui_pos)
+
+	# returns the full path to a .png resource in gameroot/img path
+	def png_path(self, filename):
+		return FileManager.image_path() + filename + ".png"
 
 	# translates position on map grid in position on screen
 	def mappos_to_gui(self,(x, y)):
@@ -129,6 +144,14 @@ class PygameDrawingManager:
 		if isinstance(event, TileUnselectedEvent):
 			self.selected_tile = None
 			self._dirty_map = True
+
+		# when a unit is selected
+		if isinstance(event, UnitSelectedEvent):
+			self.selected_unit = event.unit
+
+		# when a unit is unselected later
+		if isinstance(event, UnitUnselectedEvent):
+			self.selected_unit = None
 
 		# when a panel is added in GUI
 		if isinstance(event, GuiPanelAddedEvent):

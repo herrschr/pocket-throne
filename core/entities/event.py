@@ -62,9 +62,10 @@ class UnitMovedEvent(Event):
 		self.unit = unit
 
 class UnitSelectedEvent(Event):
-	def __init__(self, unit):
-		self.name = "Unit Selected Event: " + str(unit)
+	def __init__(self, unit, moves=[]):
+		self.name = "Unit Selected Event: " + str(unit) + " moves=" + str(len(moves))
 		self.unit = unit
+		self.moves = moves
 
 class UnitUnselectedEvent(Event):
 	def __init__(self):

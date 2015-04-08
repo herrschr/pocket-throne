@@ -43,6 +43,10 @@ class Widget:
 		self._focused = focused
 		self.dirty = True
 
+	# base method for a widget
+	def update(self):
+		pass
+
 	# get panel position and dimensions as tuple
 	def get_layout(self):
 		return (self.left, self.top, self.width, self.height)

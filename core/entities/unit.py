@@ -3,6 +3,7 @@ class Unit(object):
 	# static unit vars, defaults
 	_id = -1
 	_instanciated = False
+	_possible_moves = []
 
 	_name = ""
 	name = ""

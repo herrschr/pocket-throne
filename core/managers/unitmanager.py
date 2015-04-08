@@ -1,10 +1,15 @@
 import os
 import json
 import copy
+
 from core.entities.unit import Unit, Weapon
+from core.entities.tile import Tile
+
 from core.managers.filemanager import FileManager
 from core.managers.eventmanager import EventManager
 from core.entities.event import *
+
+from core.tools.unitmovementhelper import UnitMovementHelper
 
 class UnitManager:
 	_tag = "UnitManager: "
@@ -19,11 +24,9 @@ class UnitManager:
 		# register in EventManager
 		self._eventmgr = eventmanager
 		self._eventmgr.register_listener(self)
-
 		# ignore the mod name, no active modding system
 		# load all unit blueprints
 		self.load_unit_skeletons("base")
-
 		# spawn units from map file
 		self._map = tilemap
 
@@ -187,6 +190,11 @@ class UnitManager:
 		for unit_name in self._skeletons:
 			print (self._tag + "skeleton for " + unit_name + " added.")
 
+	# returns an array with all possible moves of a unit
+	def get_possible_moves(self, unit):
+		movement_helper = UnitMovementHelper(unit, self._map)
+		return movement_helper.get_possible_moves()
+
 	def on_event(self, event):
 		# on tile selectection: check if a unit is also selected
 		if isinstance(event, TileSelectedEvent):
@@ -194,13 +202,20 @@ class UnitManager:
 			if selected_unit != None:
 				# save selectec unit in UnitManager
 				self._selected = selected_unit
+				moves = self.get_possible_moves(selected_unit)
+				# selected_unit._possible_moves = moves
 				# fire UnitSelectedEvent
-				ev_selected_unit = UnitSelectedEvent(selected_unit)
+				ev_selected_unit = UnitSelectedEvent(selected_unit, moves=moves)
 				self._eventmgr.fire(ev_selected_unit)
 			# move unit
 			if selected_unit == None and self._selected != None:
 				print("move?")
 				self.move_unit_to(self._selected, (event.pos))
+
+		# when map is loaded
+		if isinstance(event, MapLoadedEvent):
+			# load tilemap
+			self._map = event.tilemap
 
 		# on right click: unselect actual unit
 		if isinstance(event, MouseRightClickedEvent):
@@ -215,6 +230,3 @@ class UnitManager:
 			actual_player_num = event.actual_player.num
 			for unit in self.get_units_of_player(actual_player_num):
 				unit.reset_mps()
-
-
-

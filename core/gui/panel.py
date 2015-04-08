@@ -7,20 +7,14 @@ class Panel:
 	_placed = False
 	_usedspace = 0
 	_last_widget_pos = -1
+
 	widgets = []
 	anchor = None
 	align = None
 	anchor = PANEL_ANCHOR_NOT_SET
 	padding = 8
+	# dirty paper menu color
 	color = (198, 172, 136)
-
-	layout_override = False
-	layout = {
-		"left": 0,
-		"top": 0,
-		"width": 0,
-		"height": 0
-	}
 
 	def __init__(self, eventmanager, panel_anchor):
 		# register in eventmanager

@@ -49,10 +49,12 @@ class MultiLineLabelWidget(Widget):
 	def get_line(self, line_num):
 		return self.__line[line_num +1]
 
+	# update widget size
 	def _update_size(self):
 		rect = self.image.get_rect()
 		self.set_layout((None, None, rect.width, rect.height))
 
+	# update widget before drawing it in PygameDrawingManager
 	def update(self):
 		if not self.dirty:
 			return

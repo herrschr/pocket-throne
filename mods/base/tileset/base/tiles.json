@@ -1,0 +1,27 @@
+{
+	"G": {
+		"name": "Green Grasslands",
+		"name_de": "Grüne Wiesen",
+		"image_path": "tile_grass.png"
+	},
+	"D": {
+		"name": "Dirty Landscapes",
+		"name_de": "Dürre Landstriche",
+		"image_path": "tile_dirt.png"
+	},
+	"W": {
+		"name": "The Sea",
+		"name_de": "Das Meer",
+		"image_path": "tile_water.png"
+	},
+	"M": {
+		"name": "High Mountains",
+		"name_de": "Hohe Berge",
+		"image_path": "tile_mountains.png"
+	},
+	"F": {
+		"name": "A Dark Forest",
+		"name_de": "Ein Dunkler Wald",
+		"image_path": "tile_forest.png"
+	},
+}

@@ -20,7 +20,17 @@ class TileMap(object):
 	items = []
 
 	def __init__(self):
-		pass
+		self.initialize_neighbortiles()
+
+	# set Tile._neighbors
+	def initialize_neighbortiles(self):
+		for tile in self.tiles:
+			x = tile.pos_x
+			y = tile.pos_y
+			tile._set_neighbor("west", self._get_lds_at(x -1, y))
+			tile._set_neighbor("north", self._get_lds_at(x, y -1))
+			tile._set_neighbor("east", self._get_lds_at(x +1, y))
+			tile._set_neighbor("south", self._get_lds_at(x, y +1))
 
 	def get_size(self):
 		return (self.size_x, self.size_y)
@@ -39,13 +49,29 @@ class TileMap(object):
 
 	# returns tile at given position, accepts two ints
 	def get_tile_at(self, pos_x, pos_y):
-		return  self.get_tile_at((pos_x, pos_y))
+		return self.get_tile_at((pos_x, pos_y))
 
 	# returns tile at given position tuple
 	def get_tile_at(self, (pos_x, pos_y)):
 		try:
 			return  self.tiles_at[pos_x, pos_y]
 		except:
+			return None
+
+	# system method
+	def _get_lds_at(self, (pos_x, pos_y)):
+		tile = self.get_tile_at((pos_x, pos_y))
+		if tile:
+			return tile.get_landscape()
+		else:
+			return None
+
+	# system method
+	def get_if_walkable(self, (pos_x, pos_y)):
+		tile = self.get_tile_at((pos_x, pos_y))
+		if tile:
+			return tile.is_walkable()
+		else:
 			return None
 
 	# remove tile
