@@ -2,7 +2,7 @@
 import os, sys, imp
 
 # import os-dependant libs
-from core.lib.posix.pygame_sdl2 import pygame_sdl2
+from pygame_sdl2 import pygame_sdl2
 
 # import whole core manahers
 from core.managers.eventmanager import EventManager
