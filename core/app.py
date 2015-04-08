@@ -27,7 +27,7 @@ loopMgr = GameLoopManager(eventMgr)
 pygameMgr = PygameDrawingManager(eventMgr)
 
 # loading map
-_map = MapLoader("highland_bridge").get_map()
+_map = MapLoader("mountain_stream").get_map()
 
 # Manager initialization
 unitMgr = UnitManager(eventMgr, _map, mod="base")
