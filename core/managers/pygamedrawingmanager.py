@@ -69,22 +69,18 @@ class PygameDrawingManager:
 		# for each existing panel
 		for panel in self.panels.itervalues():
 			# update dirty widgets
-			if panel.dirty:
+			if panel.dirty and panel._placed:
 				print("panel-dirty")
 				# redraw underlaying panel
-				#panel_l = panel.layout["left"]
-				panel_l = 0
-				panel_t = panel.layout["top"]
-				panel_w = panel.layout["width"]
-				panel_h = panel.layout["height"]
-				screen.fill(panel.color, rect=Rect(panel_l, panel_t, panel_w, panel_h))
+				panel_dimens = panel.get_layout()
+				screen.fill(panel.color, rect=Rect(panel_dimens))
 				for widget in panel.widgets:
-					if widget.dirty:
-						print("widget-dirty")
-						# draw updated widget overlay
-						widget.update()
-						gui_pos = (widget.layout["left"], widget.layout["top"])
-						screen.blit(widget.image, gui_pos)
+					#if widget.dirty:
+					# draw updated widget overlay
+					widget.update()
+					print("update-widget: " + str(widget))
+					gui_pos = (widget.left, widget.top)
+					screen.blit(widget.image, gui_pos)
 
 	# translates position on map grid in position on screen
 	def mappos_to_gui(self,(x, y)):
@@ -139,15 +135,16 @@ class PygameDrawingManager:
 			if (event.anchor == PANEL_ANCHOR_BOTTOM):
 				# set panel width and height and add to drawing cache
 				panel = event.panel
-				panel.layout["top"] = self.screen_height
-				panel.layout["width"] = self.screen_width
+				panel.top = self.screen_height
+				panel.width = self.screen_width
 				self.panels[event.anchor] = panel
-
-				# add space at the bottom and set menu redraw flag (_dirty_menu)
-				panel_height = panel.layout["height"]
-				self.screen_height = self.screen_height + panel_height
+				# add space at the bottom
+				self.screen_height = self.screen_height + panel.height
 				self.resize_display()
-				self._dirty_menu = True
+				# trigger menu and panel content redraw
+				# fire GuiPanelUpdatedEvent
+				ev_panel_placed = GuiPanelUpdatedEvent(panel, "placed")
+				self._eventmgr.fire(ev_panel_placed)
 
 		# when a panel is updated
 		if isinstance(event, GuiPanelUpdatedEvent):
