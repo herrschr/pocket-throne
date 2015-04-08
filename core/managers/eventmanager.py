@@ -14,7 +14,7 @@ class EventManager:
 		if listener in self.listeners:
 			del self.listeners[listener]
 
-	def post(self, event):
+	def fire(self, event):
 		if not isinstance(event, TickEvent):
 			print("EventManager: Message: " + event.name)
 		for listener in list(self.listeners):

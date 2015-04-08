@@ -43,15 +43,25 @@ class Unit(object):
 	def give_weapon(self, weapon):
 		self.weapon = weapon
 
+	# get unit id
 	def _id(self):
 		if self._id != -1:
 			return self._id
 		else:
 			return None
 
-	# get unit position tuple
+	# set unit position with tuple (x, y)
+	def set_position(self, (pos_x, pos_y)):
+		self.pos_x = pos_x
+		self.pos_y = pos_y
+
+	# get unit position tuple (x, y)
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
+
+	# reset mp on turn change
+	def reset_mps(self):
+		self.mp = self.movement
 
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
 class Weapon(object):

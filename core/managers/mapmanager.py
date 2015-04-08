@@ -15,7 +15,7 @@ class MapManager:
 		if tilemap == None:
 			return None
 		self._map = tilemap
-		self._eventmgr.post(MapLoadedEvent(self._map))
+		self._eventmgr.fire(MapLoadedEvent(self._map))
 
 	# set tile at given position tuple as selected
 	def select_tile_at(self, (pos_x, pos_y)):
@@ -24,14 +24,14 @@ class MapManager:
 			self.has_selected_tile = False
 			return None
 		self.has_selected_tile = True
-		self._eventmgr.post(TileSelectedEvent(self.selected))
+		self._eventmgr.fire(TileSelectedEvent(self.selected))
 		return self.selected
 
 	# revert tile selection
 	def unselect_tile(self):
 		self.has_selected_tile = False
 		self.selected = None
-		self._eventmgr.post(TileUnselectedEvent())
+		self._eventmgr.fire(TileUnselectedEvent())
 
 	# translates a TileMap grid position into display size
 	@classmethod
@@ -55,4 +55,4 @@ class MapManager:
 			selected_tile = self._map.get_tile_at(grid_pos)
 			# fire TileSelectedEvent
 			ev_tile_selected = TileSelectedEvent(selected_tile, grid_pos)
-			self._eventmgr.post(ev_tile_selected)
+			self._eventmgr.fire(ev_tile_selected)

@@ -13,6 +13,8 @@ class UnitManager:
 	_map = None
 	_last_unit_id = -1
 
+	_selected = None
+
 	def __init__(self, eventmanager, tilemap, mod="base"):
 		# register in EventManager
 		self._eventmgr = eventmanager
@@ -98,18 +100,32 @@ class UnitManager:
 		# weapon.image_path = weapon_json["image_path"]
 		return weapon
 
+	def get_units(self):
+		return self._units
+
+	def get_units_of_player(self, player_num):
+		units_of_player = []
+		for unit in self._units:
+			if unit.player_num == player_num:
+				units_of_player.append(unit)
+		return units_of_player
+
+
 	# get a prefilled Unit class from loaded skeleton/blueprint
 	def get_prefilled_unit(self, unit_basename):
 		return copy.deepcopy(self._skeletons[unit_basename])
 
 	# spawn a new unit with given player and position
 	def spawn_unit_at(self, player_num, unit_basename, (pos_x, pos_y)):
-		# get prefilled unit and add player, position & unit id
+		# get prefilled unit and unit id
 		to_spawn = self.get_prefilled_unit(unit_basename)
-		to_spawn.player_num = player_num
-		to_spawn.pos_x = pos_x
-		to_spawn.pos_y = pos_y
 		to_spawn._id = self.next_unit_id()
+		# set hp & mp
+		to_spawn.hp = to_spawn.health
+		to_spawn.mp = to_spawn.movement
+		# set player and pos
+		to_spawn.player_num = player_num
+		to_spawn.set_position((pos_x, pos_y))
 		# add unit to self._units and _map._units
 		self._units.append(to_spawn)
 		self._map.units.append(to_spawn)
@@ -133,21 +149,29 @@ class UnitManager:
 
 	# unit movement relative to own position; unit movement base method
 	def move_unit(self, unit, (rel_x, rel_y)):
+		if unit.mp <= 0:
+			print ("UnitManager: unit " + unit.name + " has no more mp")
+			return
 		# restrict two-direction movement, not allowed yet
 		if rel_x != 0 and rel_y != 0:
 			print ("UnitManager: no two-direction movement of units allowed")
-			return unit
-		# check unit's movement points
-		way = abs(rel_x)
-		if way > unit.mp:
-			print ("UnitManager: unit " + unit.name + " isn't allowed to move " + str(way) + " tiles")
-			return unit
+			return
 		# horizontal movement
 		elif rel_x != 0 and rel_y == 0:
+			# check if way is too long
+			way = abs(rel_x)
+			if way > unit.mp:
+				print ("UnitManager: unit " + unit.name + " isn't allowed to move " + str(way) + " tiles")
+				return
 			unit.pos_x += rel_x
 			unit.mp -= abs(rel_x)
 		# vertical movement
 		elif rel_x == 0 and rel_y != 0:
+			# check if way is too long
+			way = abs(rel_y)
+			if way > unit.mp:
+				print ("UnitManager: unit " + unit.name + " isn't allowed to move " + str(way) + " tiles")
+				return
 			unit.pos_y += rel_y
 			unit.mp -= abs(rel_y)
 		return unit
@@ -161,12 +185,36 @@ class UnitManager:
 	# debug method; prints all loaded skeletons
 	def print_skeletons(self):
 		for unit_name in self._skeletons:
-			print self._tag + "skeleton for " + unit_name + " added."
+			print (self._tag + "skeleton for " + unit_name + " added.")
 
 	def on_event(self, event):
+		# on tile selectection: check if a unit is also selected
 		if isinstance(event, TileSelectedEvent):
 			selected_unit = self.get_unit_at(event.pos)
 			if selected_unit != None:
+				# save selectec unit in UnitManager
+				self._selected = selected_unit
+				# fire UnitSelectedEvent
 				ev_selected_unit = UnitSelectedEvent(selected_unit)
 				self._eventmgr.fire(ev_selected_unit)
+			# move unit
+			if selected_unit == None and self._selected != None:
+				print("move?")
+				self.move_unit_to(self._selected, (event.pos))
+
+		# on right click: unselect actual unit
+		if isinstance(event, MouseRightClickedEvent):
+			if self._selected != None:
+				# fire UnitUnselectedEvent
+				self._selected = None
+				ev_unselected_unit = UnitUnselectedEvent()
+				self._eventmgr.fire(ev_unselected_unit)
+
+		# reset unit movement points before player starts
+		if isinstance(event, NextOneEvent):
+			actual_player_num = event.actual_player.num
+			for unit in self.get_units_of_player(actual_player_num):
+				unit.reset_mps()
+
+
 

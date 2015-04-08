@@ -14,10 +14,10 @@ class GameLoopManager:
 	def run(self):
 		# fire GameStartedEvent
 		ev_game_started = GameStartedEvent()
-		self._eventmgr.post(ev_game_started)
+		self._eventmgr.fire(ev_game_started)
 		while self.keepGoing:
 			event = TickEvent()
-			self._eventmgr.post(event)
+			self._eventmgr.fire(event)
 
 	# stop the gameloop on QuitEvent
 	def on_event(self, event):

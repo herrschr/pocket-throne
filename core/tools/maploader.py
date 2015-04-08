@@ -73,5 +73,5 @@ class MapLoader:
 		if self._initialized:
 			return self._map
 		else:
-			print "Error: map is null!"
+			print ("Error: map is null!")
 			return None
