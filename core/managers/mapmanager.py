@@ -1,4 +1,5 @@
-
+from core.tools.maploader import MapLoader
+from core.managers.filemanager import FileManager
 from core.entities.event import *
 
 class MapManager:
@@ -7,15 +8,35 @@ class MapManager:
 	has_selected_tile = False
 	selected = None
 
-	def __init__(self, eventmanager, tilemap):
+	def __init__(self, eventmanager, map_name=None, mod="base"):
 		# register in EventManager
 		self._eventmgr = eventmanager
 		self._eventmgr.register_listener(self)
 		# set self._map
-		if tilemap == None:
-			return None
-		self._map = tilemap
+		if map_name == None:
+			return
+		else:
+			self.load_map(map_name)
+
+	def load_map(self, map_name):
+		tilemap = MapLoader(map_name).get_map()
+		self._map = self.postload_map(tilemap)
 		self._eventmgr.fire(MapLoadedEvent(self._map))
+
+	def postload_map(self, tilemap):
+		# set terrain bridges
+		tilemap.initialize_neighbortiles()
+		for tile in tilemap.tiles:
+			if tile.get_landscape() == "W":
+				if tile._neighbor_north == "G" or tile._neighbor_north == "M":
+					tile.image_override = "tile_water_ontop_grass.png"
+		return tilemap
+
+	def get_loaded_map(self):
+		return self._map
+
+	def load_tiles(self):
+		pass
 
 	# set tile at given position tuple as selected
 	def select_tile_at(self, (pos_x, pos_y)):

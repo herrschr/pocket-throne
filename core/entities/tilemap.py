@@ -20,17 +20,16 @@ class TileMap(object):
 	items = []
 
 	def __init__(self):
-		self.initialize_neighbortiles()
+		# self.initialize_neighbortiles()
+		pass
 
 	# set Tile._neighbors
 	def initialize_neighbortiles(self):
 		for tile in self.tiles:
-			x = tile.pos_x
-			y = tile.pos_y
-			tile._set_neighbor("west", self._get_lds_at(x -1, y))
-			tile._set_neighbor("north", self._get_lds_at(x, y -1))
-			tile._set_neighbor("east", self._get_lds_at(x +1, y))
-			tile._set_neighbor("south", self._get_lds_at(x, y +1))
+			tile._neighbor_west =  self._get_lds_at((tile.pos_x -1, tile.pos_y))
+			tile._neighbor_north =  self._get_lds_at((tile.pos_x, tile.pos_y -1))
+			tile._neighbor_east = self._get_lds_at((tile.pos_x +1, tile.pos_y))
+			tile._neighbor_south = self._get_lds_at((tile.pos_x, tile.pos_y +1))
 
 	def get_size(self):
 		return (self.size_x, self.size_y)

@@ -3,13 +3,13 @@
 class Tile:
 	# sys properties
 	_id = -1
-	_neighbors = {
-		"west": None,
-		"north": None,
-		"east": None,
-		"south": None
-	},
+	_neighbor_west = None
+	_neighbor_north = None
+	_neighbor_east = None
+	_neighbor_south = None
+
 	# tile path & name constants
+	image_override = None
 	image_paths = {
 		"G": "tile_grass.png",
 		"D": "tile_dirt.png",
@@ -39,6 +39,8 @@ class Tile:
 
 	# returns the tiles sprite path in /img folder
 	def get_image_path(self):
+		if self.image_override:
+			return self.image_override
 		return self.image_paths.get(self.landscape, None)
 
 	def get_name(self):
@@ -55,12 +57,6 @@ class Tile:
 
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
-
-	def _neighbor(self, direction):
-		return self._neighbors[direction]
-
-	def _set_neighbor(self, direction, lds):
-		self._neighbors[direction]
 
 	def __repr__(self):
 		return "<Tile lds=" + self.landscape + " pos=" + str(self.get_position()) + ">"
