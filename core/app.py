@@ -26,12 +26,10 @@ inputMgr = InputManager(eventMgr)
 loopMgr = GameLoopManager(eventMgr)
 pygameMgr = PygameDrawingManager(eventMgr)
 
-# loading map
-_map = MapLoader("mountain_stream").get_map()
-
 # Manager initialization
+mapMgr = MapManager(eventMgr, map_name="mountain_stream")
+_map = mapMgr.get_loaded_map()
 unitMgr = UnitManager(eventMgr, _map, mod="base")
-mapMgr = MapManager(eventMgr, _map)
 guiMgr = GuiManager(eventMgr)
 ingameMgr = IngameManager(eventMgr)
 
