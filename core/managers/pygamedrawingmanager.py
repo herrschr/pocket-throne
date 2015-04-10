@@ -16,6 +16,8 @@ class PygameDrawingManager:
 		self.tilemap = None
 		self.selected_tile = None
 		self.selected_unit = None
+		self.unit_moves = []
+
 		self.actual_turn = None
 		self.actual_player = None
 
@@ -69,7 +71,7 @@ class PygameDrawingManager:
 		# when a unit is selected: draw possible moves
 		if self.selected_unit != None:
 			print ("PygameDrawingManager: unit selected")
-			pseudotiles = unit._possible_moves
+			pseudotiles = self.unit_moves
 			print(str(len(pseudotiles)) + " possibilities added")
 			for pseudotile in pseudotiles:
 				full_img_path = self.png_path("overlay_unit_possiblemove")
@@ -148,6 +150,7 @@ class PygameDrawingManager:
 		# when a unit is selected
 		if isinstance(event, UnitSelectedEvent):
 			self.selected_unit = event.unit
+			self.unit_moves = event.moves
 
 		# when a unit is unselected later
 		if isinstance(event, UnitUnselectedEvent):

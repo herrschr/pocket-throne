@@ -177,6 +177,9 @@ class UnitManager:
 				return
 			unit.pos_y += rel_y
 			unit.mp -= abs(rel_y)
+		#fire UnitMovedEvent
+		ev_unit_moved = UnitMovedEvent(unit)
+		self._eventmgr.fire(ev_unit_moved)
 		return unit
 
 	# remove/kill unit
@@ -224,6 +227,16 @@ class UnitManager:
 				self._selected = None
 				ev_unselected_unit = UnitUnselectedEvent()
 				self._eventmgr.fire(ev_unselected_unit)
+
+		# load actualized unit properties and move when it's moved
+		if isinstance(event, UnitMovedEvent):
+			# load new unit and possible moves
+			moved_unit = event.unit
+			moves = self.get_possible_moves(moved_unit)
+			# fire UnitSelectedEvent with updated data
+			ev_selected_unit = UnitSelectedEvent(moved_unit, moves=moves)
+			self._eventmgr.fire(ev_selected_unit)
+
 
 		# reset unit movement points before player starts
 		if isinstance(event, NextOneEvent):
