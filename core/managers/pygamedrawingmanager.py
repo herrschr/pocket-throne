@@ -44,7 +44,7 @@ class PygameDrawingManager:
 		# draw tiles
 		for tile in self.tilemap.tiles:
 			# load image from Tile._image_path
-			full_img_path = FileManager.image_path() + tile._image_path
+			full_img_path = FileManager.image_path() + tile.get_image_path()
 			image = pygame_sdl2.image.load(full_img_path).convert()
 			# calculate x and y position on screen and render tile image
 			gui_position = self.mappos_to_gui((tile.pos_x, tile.pos_y))
