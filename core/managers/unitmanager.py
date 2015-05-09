@@ -18,6 +18,7 @@ class UnitManager:
 	_map = None
 	_last_unit_id = -1
 
+	_actual_player = None
 	_selected = None
 
 	def __init__(self, eventmanager, tilemap, mod="base"):
@@ -35,12 +36,15 @@ class UnitManager:
 		self._last_unit_id += 1
 		return self._last_unit_id
 
-	def get_unit_at(self, (at_x, at_y)):
+	def get_unit_at(self, (at_x, at_y), for_specific_player=None):
 		for unit in self._units:
 			unit_x = int(unit.pos_x)
 			unit_y = int(unit.pos_y)
 			if unit.pos_x == at_x and unit.pos_y == at_y:
-				return unit
+				if not for_specific_player:
+					return unit
+				elif unit.player_num == for_specific_player:
+					return unit
 		return None
 
 	# load unit skeletons from mods/<mod_name>/units/*.json
@@ -201,7 +205,7 @@ class UnitManager:
 	def on_event(self, event):
 		# on tile selectection: check if a unit is also selected
 		if isinstance(event, TileSelectedEvent):
-			selected_unit = self.get_unit_at(event.pos)
+			selected_unit = self.get_unit_at(event.pos, for_specific_player=self._actual_player)
 			if selected_unit != None:
 				# save selectec unit in UnitManager
 				self._selected = selected_unit
@@ -240,6 +244,6 @@ class UnitManager:
 
 		# reset unit movement points before player starts
 		if isinstance(event, NextOneEvent):
-			actual_player_num = event.actual_player.num
-			for unit in self.get_units_of_player(actual_player_num):
+			self._actual_player = event.actual_player.num
+			for unit in self.get_units_of_player(self._actual_player):
 				unit.reset_mps()
