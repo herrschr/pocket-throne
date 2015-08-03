@@ -1,0 +1,7 @@
+{
+	"name": "The Empire",
+	"name_de": "Das Imperium",
+
+	"city_prefixes": ["Storm", "Hill", "Mountain", "Iron", "Steel", "Grey", "Cliff", "Salt"],
+	"city_postfixes": ["kap", "castle", "view", "ton", "beach", "fort", "top", "way"]
+}
