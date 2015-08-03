@@ -3,5 +3,7 @@ class Player(object):
 	name = "Anonymous"
 	color = (255, 0, 0)
 
+	fraction = None
+
 	def __repr__(self):
 		return "<Player num=" + str(self.num) + " name=" + self.name + ">"
