@@ -62,14 +62,21 @@ class UnitMovedEvent(Event):
 		self.unit = unit
 
 class UnitSelectedEvent(Event):
-	def __init__(self, unit, moves=[]):
+	def __init__(self, unit, moves=[], attacks=[]):
 		self.name = "Unit Selected Event: " + str(unit) + " moves=" + str(len(moves))
 		self.unit = unit
 		self.moves = moves
+		self.attacks = attacks
 
 class UnitUnselectedEvent(Event):
 	def __init__(self):
 		self.name = "Unit Unselected Event"
+
+class UnitKilledEvent(Event):
+	def __init__(self, killed, attacker):
+		self.name = "Unit Killed Event unit=" + repr(killed)
+		self.killed = killed
+		self.attacker = attacker
 
 # BUILDING EVENTS
 class BuildingBuiltEvent(Event):
@@ -82,6 +89,29 @@ class BuildingSelectedEvent(Event):
 	def __init__(self, bld):
 		self.name = "Building Selected Event bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
 		self.building = bld
+
+# CITY EVENTS
+class CitySelectedEvent(Event):
+	def __init__(self, city, recruitable=[]):
+		self.name = "City Selected Event city=" + repr(city) + " recruitable=" + str(recruitable)
+		self.city = city
+		self.recruitable = recruitable
+
+class CityUnselectedEvent(Event):
+	def __init__(self):
+		self.name = "City Unselected Event"
+
+class CityRecruitmentStartedEvent(Event):
+	def __init__(self, city, blueprint):
+		self.name = "CityRecruitmentStartedEvent: unit=" + repr(blueprint) + " in " + city.name
+		self.city = city
+		self.unit = blueprint
+
+class CityRecruitmentFinishedEvent(Event):
+	def __init__(self, city, blueprint):
+		self.name = "CityRecruitedUnitEvent in " + city.name + ": unit=" + repr(blueprint)
+		self.city = city
+		self.blueprint = blueprint
 
 # INPUT EVENTS
 class MouseClickedEvent(Event):
@@ -99,26 +129,10 @@ class KeyPressedEvent(Event):
 		self.name = "Key Pressed Event: key=" + str(key)
 		self.key = key
 
-# GUI EVENTS
-class GuiPanelAddedEvent(Event):
-	def __init__(self, anchor, panel):
-		self.name = "Panel Added Event: " + str(panel)
-		self.anchor = anchor
-		self.panel = panel
-
-class GuiPanelUpdatedEvent(Event):
-	def __init__(self, panel, action="updated"):
-		self.name = "Panel Updated Event: [" + action + "] " + str(panel)
-		self.panel = panel
-		self.action = action
-
-class GuiWidgetFocusedEvent(Event):
-	def __init__(self, widget):
-		self.name = "Widget Focused Event: widget=" + str(widget)
-		self.widget = widget
-
-class GuiWidgetUnfocusedEvent(Event):
-	def __init__(self, widget):
-		self.name = "Widget Unfocused Event: widget=" + str(widget)
-		self.widget = widget
+# BUTTON CALLBACK EVENTS
+class GuiButtonClickedEvent(Event):
+	def __init__(self, button_tag, button):
+		self.name = "ButtonClickedEvent: button_tag=" + button_tag
+		self.button_tag = button_tag
+		self.button = button
 
