@@ -1,32 +1,51 @@
 # Unit class for std-units and heroes
 class Unit(object):
-	# static unit vars, defaults
+	# system properties
 	_id = -1
+	_basename = None
 	_instanciated = False
 	_possible_moves = []
 
+	# engine properties
 	_name = ""
 	name = ""
 	name_de = ""
 	categories = []
 	image_path = None
 	json_path = None
+
+	# constants
 	health = 4
 	movement = 2
 	is_owned_by_nature = False
 	weapon = None
 
+	# limited number
 	has_player_max = False
 	has_map_max = False
 	max_per_player = -1
 	max_per_map = -1
 
+	# TODO: load requirements and costs into skeletons
+	# requirements
+	required_building = None
+	required_fraction = None
+
+	# costs
+	cost_turns = 5
+	cost_gold = 10
+
 	# changeable building vars
 	player_num = -1
 	hp = -1
 	mp = movement
+
+	# position
 	pos_x = -1
 	pos_y = -1
+
+	# experience level
+	experience = 0
 
 	def __init__(self, unit_name):
 		self.name = unit_name
@@ -39,6 +58,9 @@ class Unit(object):
 	# load values from json skeleton
 	def loadFromJson(json_path):
 		pass
+
+	def get_name(self):
+		return self.name
 
 	# set the weapon of this uni
 	def give_weapon(self, weapon):
@@ -64,15 +86,22 @@ class Unit(object):
 	def reset_mps(self):
 		self.mp = self.movement
 
+	def damage(self, damage):
+		self.hp = self.hp - damage
+
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
 class Weapon(object):
+	# engine properties
 	_id = -1
 	name = ""
 	name_de = ""
+	image_path = None
+
+	# constants
 	value = 1
 	distance = 1
+	hit_percent = 75
 	atk_vs_category = []
-	image_path = None
 
 
 
