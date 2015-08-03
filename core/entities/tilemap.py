@@ -15,8 +15,8 @@ class TileMap(object):
 	tiles_at = {}
 
 	# unit, building and item collections
+	cities = []
 	units = []
-	buildings = []
 	items = []
 
 	def __init__(self):
@@ -30,7 +30,7 @@ class TileMap(object):
 			tile._neighbor_north =  self._get_lds_at((tile.pos_x, tile.pos_y -1))
 			tile._neighbor_east = self._get_lds_at((tile.pos_x +1, tile.pos_y))
 			tile._neighbor_south = self._get_lds_at((tile.pos_x, tile.pos_y +1))
-
+	# return the size of this map
 	def get_size(self):
 		return (self.size_x, self.size_y)
 
@@ -45,6 +45,10 @@ class TileMap(object):
 		self.tiles.append(tile_to_add)
 		self.tiles_at[pos_x, pos_y] = tile_to_add
 		return tile_to_add
+
+	# return all tiles belonging to this map
+	def get_tiles(self):
+		return self.tiles
 
 	# returns tile at given position, accepts two ints
 	def get_tile_at(self, pos_x, pos_y):
