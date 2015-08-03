@@ -2,6 +2,8 @@ import sys
 import os
 from core.managers.filemanager import FileManager
 
+print("core ini")
+
 # get game root directory on package initialization
 def getGameRoot():
 	return os.path.abspath(__file__ + "/../../")
