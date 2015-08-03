@@ -1,0 +1,29 @@
+{
+	"name": "Footknight",
+	"name_de": "Landritter",
+	"categories": ["INF", "INF_MELEE"],
+
+	"required_fraction": "none",
+	"required_building": "none",
+
+	"image": "unit_std_swordsman.png",
+	"health": 9,
+	"movement": 2,
+	"size": "1x1",
+
+	"is_owned_by_nature": false,
+	"max_per_player": -1,
+	"max_per_map": -1,
+
+	"weapon": {
+		"name": "Long Sword",
+		"name_de": "Langschwert",
+		"value": 1,
+		"distance": 1,
+		"percent": 65,
+		"atk_vs_category":
+		{
+			"INF": 6
+		}
+	}
+}

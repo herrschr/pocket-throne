@@ -1,0 +1,7 @@
+{
+	"name": "House Greyjoy",
+	"name_de": "Haus Graufroyd",
+
+	"city_prefixes": ["Storm", "Hill", "Mountain", "Iron", "Steel", "Grey", "Cliff", "Salt"],
+	"city_postfixes": ["kap", "castle", "view", "ton", "beach", "fort", "top", "way"]
+}

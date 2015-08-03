@@ -1,0 +1,26 @@
+{
+	"name": "Crossbowman",
+	"name_de": "Armbrustschütze",
+	"categories": ["INF", "INF_DISTANCE"],
+
+	"image": "unit_std_archer.png",
+	"health": 5,
+	"movement": 3,
+	"size": "1x1",
+
+	"is_owned_by_nature": false,
+	"max_per_player": -1,
+	"max_per_map": -1,
+
+	"weapon": {
+		"name": "Crossbow",
+		"name_de": "Armbrust",
+		"value": 1,
+		"distance": 3,
+		"hit_percent": 40,
+		"atk_vs_category":
+		{
+			"INF": 7
+		}
+	}
+}

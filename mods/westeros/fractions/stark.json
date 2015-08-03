@@ -1,0 +1,7 @@
+{
+	"name": "House Stark",
+	"name_de": "Haus Stark",
+
+	"city_prefixes": ["Winter", "Snow", "Mountain", "White", "Wolf", "Tan", "North", "Last"],
+	"city_postfixes": ["fell", "castle", "view", "ton", "wood", "fort", "wyn", "gate"]
+}
