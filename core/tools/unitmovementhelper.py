@@ -8,12 +8,16 @@ class UnitMovementHelper:
 	DIR_EAST = 2
 	DIR_SOUTH = 3
 
-	def __init__(self, unit, tilemap):
+	unit = None
+	tilemap = None
+	ingore_lds = False
+
+	def __init__(self, unit, tilemap, ignore_lds=False):
 		self.unit = unit
 		self.tilemap = tilemap
+		self.ignore_lds = ignore_lds
 
 	def check_direction(self, (from_x, from_y), dir, mp):
-		print("check dir: " + str(dir))
 		possible_moves = []
 		while mp > 0:
 			# check towards west: x--
@@ -33,21 +37,21 @@ class UnitMovementHelper:
 			if not tile_to_check:
 				return possible_moves
 			if not tile_to_check.is_walkable():
-				print ("Unit Movement impossible to x=" + str(from_x) + " y=" + str(from_y))
-				return possible_moves
+				if not self.ignore_lds:
+					return possible_moves
 			pseudotile = Tile(from_x, from_y)
 			possible_moves.append(pseudotile)
-			print ("Unit Movement possible to x=" + str(from_x) + " y=" + str(from_y))
 			mp -= 1
 		return possible_moves
 
-	def get_possible_moves(self):
+	def get_possible_moves(self, distance=None):
 		moves = []
 		unit = self.unit
+		if distance == None:
+			distance = self.unit.mp
 		towards_dir = 0
 		while towards_dir < 4:
-			pseudotiles = self.check_direction(unit.get_position(), towards_dir, unit.mp)
+			pseudotiles = self.check_direction(unit.get_position(), towards_dir, distance)
 			moves += pseudotiles
-			print("moves: " + str(len(moves)))
 			towards_dir += 1
 		return moves
