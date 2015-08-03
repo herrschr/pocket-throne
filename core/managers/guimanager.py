@@ -1,18 +1,17 @@
-from core.gui.panel import Panel
-from core.gui.labelwidget import LabelWidget
-from core.gui.multilinelabelwidget import MultiLineLabelWidget
-from core.gui import *
+from kivy.uix.relativelayout import RelativeLayout
 from core.entities.event import *
+from core.managers.eventmanager import EventManager
+from core.gui import *
+from core.managers.locator import Locator
 
 class GuiManager:
-	panels = []
-	panel_at = {}
-	_last_panel_id = -1
+	root = None
+	mapwidget = None
+	bottombar = None
+	sidebar = None
 
-	def __init__(self, eventmanager):
-		print ("guimgr: init with " + str(eventmanager))
-		self._eventmgr = eventmanager
-		self._eventmgr.register_listener(self)
+	def __init__(self):
+		EventManager.register_listener(self)
 		self.gamestate = GAMESTATE_LOADING
 
 	# returns a new gui panel id
@@ -20,50 +19,40 @@ class GuiManager:
 		self._last_panel_id += 1
 		return self._last_panel_id
 
-	def add_panel(self, panel):
-		# add panel to collections
-		anchor = panel.anchor
-		panel._id = self.next_panel_id()
-		self.panel_at[panel.anchor] = panel
-		self.panels = panel
-		# fire GuiPanelAddedEvent
-		ev_panel_added = GuiPanelAddedEvent(anchor, panel)
-		self._eventmgr.fire(ev_panel_added)
-
-	def click_in_gui(self, (click_x, click_y)):
-		for panel in self.panels:
-			pass
-
-	def click_in_panel(self, (click_x, click_y)):
-		pass
+	# fire ButtonClickedEvent when a button is pressed
+	def button_clicked(self, button):
+		ev_button_clicked = GuiButtonClickedEvent(button.tag, button)
+		EventManager.fire(ev_button_clicked)
 
 	def on_event(self, event):
-		# add ingame panels when map is loaded
-		if isinstance(event, GameStartedEvent):
-			# switch in INGAME state
-			self.gamestate = GAMESTATE_INGAME
-			# add bottom panel
-			bottom_panel = Panel(self._eventmgr, PANEL_ANCHOR_BOTTOM)
-			# add heading label
-			h_label = MultiLineLabelWidget(self._eventmgr)
-			h_label.set_line(0, "No Selection..")
-			# add data label
-			# data_label = LabelWidget(self._eventmgr)
-			# data_label.set_text("nodata")
-			# add them to panel and add panel to GuiManager
-			bottom_panel.add_widget(h_label)
-			# bottom_panel.add_widget(data_label)
-			self.add_panel(bottom_panel)
+		# clear BottomBar Labels on TileUnselectedEvent
+		if isinstance(event, TileUnselectedEvent):
+			# clear BottomBar labels
+			self.bottombar.set_heading_text("")
+			self.bottombar.set_details_text("")
+			# clear SideBar
+			self.sidebar.clear_widgets()
 
-		# when a unit is selected, show unit's name on label1
+		# show unit data in BottomBar on UnitSelectedEvent
 		if isinstance(event, UnitSelectedEvent):
-			selected_unit = event.unit
-			selected_label = self.panel_at[PANEL_ANCHOR_BOTTOM].widgets[0]
-			selected_label.set_line(1, "Unit: " + selected_unit.name)
-			selected_label.set_line(2, "HP: " + str(selected_unit.hp) + " | MP: " + str(selected_unit.mp))
+			self.bottombar.set_heading_text("Unit: " + event.unit.name)
+			self.bottombar.set_details_text("HP: " + str(event.unit.hp) + " | MP: " + str(event.unit.mp))
 
-		# when a unit is unselected, hide label1
-		if isinstance(event, UnitUnselectedEvent):
-			selected_label = self.panel_at[PANEL_ANCHOR_BOTTOM].widgets[0]
-			selected_label.set_line(1, "")
-			selected_label.set_line(2, "")
+		# show city data in BottomBar on CitySelectedEvent
+		if isinstance(event, CitySelectedEvent):
+			city = event.city
+			prod_info = "nothing"
+			if city.is_recruiting():
+				prod_info = str(city.get_unit_in_production().name) + " (" + str(city.production_time) + ")"
+			self.bottombar.set_heading_text(city.get_size_name() + ": " + city.get_name())
+			self.bottombar.set_details_text("HP: " + str(city.get_hp()) + " | In Production: " + prod_info)
+
+		# handle Button clicks
+		if isinstance(event, GuiButtonClickedEvent):
+			# ACTION button
+			if event.button_tag == "ACTION":
+				selected_city = Locator.CITY_MGR.get_selected_city
+				# in city? show recruitable unit buttons
+				if selected_city:
+					recruitable_units = Locator.CITY_MGR.get_recruitable_units(selected_city)
+					self.sidebar.show_recruitable_units(recruitable_units)
