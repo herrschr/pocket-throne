@@ -1,23 +1,28 @@
 from core.entities.event import *
 import sys
+from core.managers.eventmanager import EventManager
+from kivy.clock import Clock
 
 # GameLoopManager
 # handles the gameloop instead of the main script before
 class GameLoopManager:
-	def __init__(self, eventmanager):
+	def __init__(self):
 		# init eventmanager and keepGoing
-		self._eventmgr = eventmanager
-		self._eventmgr.register_listener(self)
-		self.keepGoing = 1
+		EventManager.register_listener(self)
+		self.keepGoing = True
 
 	# start the gameloop
 	def run(self):
 		# fire GameStartedEvent
 		ev_game_started = GameStartedEvent()
-		self._eventmgr.fire(ev_game_started)
-		while self.keepGoing:
-			event = TickEvent()
-			self._eventmgr.fire(event)
+		EventManager.fire(ev_game_started)
+		# schedule tickevent with 40 fps
+		Clock.schedule_interval(self.tick, 1/40)
+
+	# fire a single TickEvent
+	def tick(self, dt):
+		event = TickEvent()
+		EventManager.fire(event)
 
 	# stop the gameloop on QuitEvent
 	def on_event(self, event):
