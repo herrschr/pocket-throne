@@ -22,10 +22,10 @@
 		"WWWWGGGGGMMMMM"
 	],
 
-	"buildings":
+	"cities":
 	[
-		"1 playerbase 4 12",
-		"2 playerbase 12 5",
-		"3 playerbase 1 3"
+		"1 1 4 12",
+		"2 1 12 5",
+		"1 2 1 3"
 	]
 }

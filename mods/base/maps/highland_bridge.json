@@ -22,9 +22,9 @@
 		"GGGFWWWWWWGMMM"
 	],
 
-	"buildings":
+	"cities":
 	[
-		"1 playerbase 1 3",
-		"2 playerbase 11 3"
+		"1 1 1 3",
+		"2 1 11 3"
 	]
 }

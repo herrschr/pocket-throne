@@ -19,10 +19,10 @@
 		"DDDDGGGGGDD"
 	],
 
-	"buildings":
+	"cities":
 	[
-		"0 altar 6 10",
-		"1 playerbase 4 4",
-		"2 playerbase 11 3"
+		"0 1 6 10",
+		"1 1 4 4",
+		"2 2 11 3"
 	]
 }
