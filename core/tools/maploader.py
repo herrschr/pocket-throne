@@ -1,31 +1,36 @@
 import json
 import os
 
+from kivy.core.image import Image
+
 from core.managers.filemanager import FileManager
 
 from core.entities.tile import Tile
 from core.entities.tilemap import TileMap
-from core.entities.building import Building
+from core.entities.city import City
 from core.entities.unit import Unit
 
 class MapLoader:
 	_initialized = False
 	_map = None
+	_textures = {}
 
-	def __init__(self, map_name):
+	def __init__(self, map_name, mod="base"):
 		# load map file into json_map json dict
-		map_path = FileManager.mod_path() + "base/maps/" + map_name + ".json"
+		map_path = FileManager.mod_path() + mod + "/maps/" + map_name + ".json"
 		map_string = FileManager.read_file(map_path)
 		if (map_string == ""):
 			return None
 		json_map = json.loads(map_string)
-
 		# create and fill TileMap
+		# fill map name and size
 		self._map = TileMap()
 		self._map._name = map_name
 		self.fill_map_properties(json_map)
+		# fill map tiles
 		self.fill_map_tiles(json_map)
-		self.fill_buildings(json_map)
+		# fill buildings
+		self.fill_cities(json_map)
 		self._initialized = True
 
 	# fill map properties for self._map
@@ -57,16 +62,23 @@ class MapLoader:
 			cursor_x = 0
 			cursor_y += 1
 
-	def fill_buildings(self, json_map):
-		buildings = json_map["buildings"]
-		for bld_row in buildings:
-			bld_data = bld_row.split()
-			# create new building with building name (bld_data[1])
-			bld = Building(bld_data[1])
-			bld.playerId = bld_data[0]
-			# set building position (x=bld_data[2]; y=bld_data[3])
-			bld.set_position((bld_data[2], bld_data[3]))
-		self._map.buildings = buildings
+	# fill the city list of the TileMap class
+	def fill_cities(self, json_map):
+		city_lines = json_map["cities"]
+		cities = []
+		for city_row in city_lines:
+			city_row_data = city_row.split()
+			player_id = int(city_row_data[0])
+			city_size = int(city_row_data[1])
+			city_pos = (int(city_row_data[2]), int(city_row_data[3]))
+			# create new city
+			city = City()
+			city.playerId = player_id
+			city.set_position(city_pos)
+			city.set_size(city_size)
+			cities.append(city)
+		self._map.cities = cities
+		print("cities: " + str(self._map.cities))
 
 	# returns the loaded map
 	def get_map(self):
