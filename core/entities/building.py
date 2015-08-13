@@ -57,7 +57,7 @@ class Building:
 		if self.image_override:
 			return self.image_override
 		else:
-			return "city_" + building_type + ".png"
+			return "city_" + self.get_type() + ".png"
 
 	# returns the type (basename) of this building
 	def get_type(self):
