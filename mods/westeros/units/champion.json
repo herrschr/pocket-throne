@@ -1,0 +1,30 @@
+{
+	"name": "Champion",
+	"name_de": "Ehrenritter",
+	"categories": ["CAV", "CAV_MELEE"],
+
+	"required_fraction": "lannister",
+	"required_building": "none",
+
+	"image": "unit_std_swordsman.png",
+	"health": 8,
+	"movement": 5,
+	"size": "1x1",
+
+	"is_owned_by_nature": false,
+	"max_per_player": -1,
+	"max_per_map": -1,
+
+	"weapon": {
+		"name": "Lance",
+		"name_de": "Lanze",
+		"value": 1,
+		"distance": 2,
+		"percent": 65,
+		"atk_vs_category":
+		{
+			"INF": 6,
+			"CAV": 6
+		}
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"name": "Highlander",
+	"name_de": "Nordmann",
+	"categories": ["INF", "INF_MELEE"],
+
+	"required_fraction": "stark",
+
+	"image": "unit_std_swordsman.png",
+	"health": 5,
+	"movement": 3,
+	"size": "1x1",
+
+	"is_owned_by_nature": false,
+	"max_per_player": -1,
+	"max_per_map": -1,
+
+	"weapon": {
+		"name": "War Axe",
+		"name_de": "Streitaxt",
+		"value": 1,
+		"distance": 1,
+		"percent": 55,
+		"atk_vs_category":
+		{
+			"INF": 7
+		}
+	}
+}
