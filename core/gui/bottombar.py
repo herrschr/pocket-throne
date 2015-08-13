@@ -14,16 +14,16 @@ class BottomBar(BoxLayout):
 	def __init__(self, **kwargs):
 		super(BottomBar, self).__init__(orientation="horizontal", padding=10, size_hint=(1, None))
 
-		# ActionButton
+		# make action button
 		self.actionbutton = Button(pos=(0, 0), text="Action", size_hint=(.1, 1), on_press=Locator.GUI_MGR.button_clicked)
 		self.actionbutton.tag = "ACTION"
-		# Labels
+		# make label widgets
 		self.labels = BoxLayout(orientation="vertical", halign="left", valign="top", size_hint=(.8, 1))
 		self.heading = Label(text="Headings", halign="left", valign="top", text_size=(400, None), size_hint=(1, .5), font_size=28)
 		self.details = Label(text="Much more detailled infos", text_size=(400, None), size_hint=(1, .3), font_size=24)
 		self.labels.add_widget(self.heading)
 		self.labels.add_widget(self.details)
-		# NextTurnButton
+		# make next turn button
 		self.nextturnbutton = Button(text="Next Turn", size_hint=(.1, 1), on_press=Locator.GUI_MGR.button_clicked)
 		self.nextturnbutton.tag = "NEXTTURN"
 		# add all to BottomBar
@@ -36,3 +36,9 @@ class BottomBar(BoxLayout):
 
 	def set_details_text(self, text):
 		self.details.text = text
+
+	def set_action(self, text):
+		self.actionbutton.text = text
+
+	def get_action(self):
+		return self.actionbutton.text
