@@ -3,6 +3,7 @@ import os
 
 from kivy.core.image import Image
 
+from core.managers.locator import Locator
 from core.managers.filemanager import FileManager
 
 from core.entities.tile import Tile
@@ -29,7 +30,7 @@ class MapLoader:
 		self.fill_map_properties(json_map)
 		# fill map tiles
 		self.fill_map_tiles(json_map)
-		# fill buildings
+		# fill cities
 		self.fill_cities(json_map)
 		self._initialized = True
 
@@ -67,15 +68,20 @@ class MapLoader:
 		city_lines = json_map["cities"]
 		cities = []
 		for city_row in city_lines:
-			city_row_data = city_row.split()
+			city_row_data = city_row.split(",")
 			player_id = int(city_row_data[0])
 			city_size = int(city_row_data[1])
 			city_pos = (int(city_row_data[2]), int(city_row_data[3]))
+			if len(city_row_data) > 4:
+				city_name = city_row_data[4]
 			# create new city
 			city = City()
 			city.playerId = player_id
 			city.set_position(city_pos)
 			city.set_size(city_size)
+			if city_name:
+				city.set_name(city_name)
+			city.add_city_wall()
 			cities.append(city)
 		self._map.cities = cities
 		print("cities: " + str(self._map.cities))
