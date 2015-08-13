@@ -3,9 +3,6 @@
 	"name_de": "Burgwache",
 	"categories": ["INF", "INF_MELEE"],
 
-	"required_fraction": "none",
-	"required_building": "none",
-
 	"image": "unit_std_swordsman.png",
 	"health": 7,
 	"movement": 2,
