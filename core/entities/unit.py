@@ -81,6 +81,14 @@ class Unit(object):
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
 
+	# returns the basename of the required fraction of this unit or None
+	def get_required_fraction(self):
+		return self.required_fraction
+
+	# get the required building for unit recruition in a city or None
+	def get_required_building(self):
+		return self.required_building
+
 	# reset mp on turn change
 	def reset_mps(self):
 		self.mp = self.movement
