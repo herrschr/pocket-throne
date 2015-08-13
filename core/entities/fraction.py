@@ -1,3 +1,5 @@
+from random import choice
+
 class Fraction:
 	# engine properties
 	_basename = None
@@ -17,10 +19,11 @@ class Fraction:
 
 	# returns a random city name for this fraction
 	def get_random_city_name(self):
-		prefix_rnd = randrange(0, len(self.city_prefixes) -1, 1)
-		postfix_rnd = randrange(0, len(self.city_postfixes) -1, 1)
-
-		city_name = self.city_prefixes[prefix_rnd] + self.city_postfixes[postfix_rnd]
+		# select a random pre- & postfix
+		prefix = choice(self.city_prefixes)
+		postfix = choice(self.city_postfixes)
+		# sum them together & return city name
+		city_name = prefix + postfix
 		return city_name
 
 	def __repr__(self):
