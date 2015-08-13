@@ -1,5 +1,4 @@
 from core.entities.event import *
-from core.lang.borg import Borg
 from weakref import WeakKeyDictionary
 
 class EventManager:
@@ -18,7 +17,7 @@ class EventManager:
 
 	@classmethod
 	def fire(self, event):
-		if not isinstance(event, TickEvent):
+		if not isinstance(event, TickEvent) and not isinstance(event, MouseMovedEvent):
 			print(self._tag + "Message: " + event.name)
 		for listener in list(self.listeners):
 			listener.on_event(event)
