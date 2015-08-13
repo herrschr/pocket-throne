@@ -2,9 +2,8 @@ from core.tools.maploader import MapLoader
 from core.managers.filemanager import FileManager
 from core.managers.eventmanager import EventManager
 from core.entities.event import *
-from core.lang.unique import Unique
 
-class MapManager(Unique):
+class MapManager:
 	_tilesize = 40
 	_map = None
 	_mod = "base"
@@ -84,11 +83,4 @@ class MapManager(Unique):
 		return (pos_x, pos_y)
 
 	def on_event(self, event):
-		# trigger TileSelectedEvent on mouse click
-		if isinstance(event, MouseClickedEvent):
-			# get selected tile
-			grid_pos = self.gui_to_pos(event.pos)
-			# self.selected_tile = self._map.get_tile_at(grid_pos)
-			# fire TileSelectedEvent
-			# ev_tile_selected = TileSelectedEvent(self.selected_tile, grid_pos)
-			# EventManager.fire(ev_tile_selected)
+		pass
