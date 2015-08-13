@@ -62,7 +62,7 @@ class CityManager:
 
 	# returns all unit blueprints
 	def get_recruitable_units(self, city):
-		return Locator.UNIT_MGR.get_unit_blueprints()
+		return Locator.UNIT_MGR.get_unit_blueprints(for_specific_player=city.get_player_num())
 
 	# returns if a city is selected
 	def has_selected_city(self):

@@ -103,8 +103,13 @@ class UnitManager:
 		unit.health = unit_json["health"]
 		unit.movement = unit_json["movement"]
 
+		# load production costs
 		unit.cost_turns = unit_json.get("cost_turns", 4)
 		unit.cost_gold = unit_json.get("cost_gold", unit.cost_turns *3)
+
+		# load unit requirements
+		unit.required_building = unit_json.get("required_building", None)
+		unit.required_fraction = unit_json.get("required_fraction", None)
 
 		# load maximal amount per player
 		max_per_player = unit_json["max_per_player"]
@@ -148,21 +153,34 @@ class UnitManager:
 		return self._units
 
 	# get all unit blueprints as list
-	def get_unit_blueprints(self):
-		skeletons =  []
-		for skeleton in self._skeletons.itervalues():
-			skeletons.append(skeleton)
-		return skeletons
+	def get_unit_blueprints(self, for_specific_player=None):
+		blueprints =  []
+		if not for_specific_player:
+			for blueprint in self._skeletons.itervalues():
+				blueprints.append(blueprint)
+		else:
+			player = Locator.PLAYER_MGR.get_player_by_num(for_specific_player)
+			player_fraction_name = player.get_fraction()._basename
+			for blueprint in self._skeletons.itervalues():
+				req_fraction = blueprint.get_required_fraction()
+				# add blueprint when no fraction is required
+				if not req_fraction:
+					blueprints.append(blueprint)
+				# add blueprint when for_specific_player has required fraction
+				elif req_fraction == player_fraction_name:
+					blueprints.append(blueprint)
+		return blueprints
 
+	# returns a single unit blueprint by its basename
 	def get_unit_blueprint(self, blueprint_name):
 		return self._skeletons[blueprint_name]
 
 	# get the names of all unit blueprints as list
-	def get_skeleton_names(self):
-		skeleton_names = []
-		for skeleton in self._skeletons:
-			skeleton_names.append(skeleton.name)
-		return skeleton_names
+	def get_blueprint_names(self):
+		blueprint_names = []
+		for blueprint in self.get_unit_blueprints():
+			blueprint_names.append(blueprint.get_name())
+		return blueprint_names
 
 	# get all units of the player with number player_num as list
 	def get_units_of_player(self, player_num):
