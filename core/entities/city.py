@@ -1,7 +1,7 @@
 from building import Building
 from core.entities.unit import Unit
 from core.entities.event import *
-from random import randrange
+from random import choice
 
 from core.managers.eventmanager import EventManager
 
@@ -51,12 +51,14 @@ class City:
 
 	# generates a random name for the city
 	def get_random_name(self):
+		# hard-coded pre- & postifxes for city names
 		prefixes = ["Iron", "Green", "Wood", "Wild", "Dried",  "Old", "New", "Saint", "Death"]
 		postfixes = ["valley", "mountain", "city", "river", "smith",  " Creek", " Towers", " Monument", " Settlement"]
-
-		prefix_rnd = randrange(0, len(prefixes) -1, 1)
-		postfix_rnd = randrange(0, len(postfixes) -1, 1)
-		city_name = prefixes[prefix_rnd] + postfixes[postfix_rnd]
+		# select one of each
+		prefix = choice(prefixes)
+		postfix = choice(postfixes)
+		# put them together & return the city name
+		city_name = prefix + postfix
 		return city_name
 
 	# get the name of this city
@@ -137,9 +139,16 @@ class City:
 
 	# add a building at a random position inside the city
 	def add_building(self, building_type):
+		# get all free building positions
 		positions = [(-1,-1), (1,-1), (1,1), (-1,1)]
-		rnd = randrange(0, 3, 1)
-		rel_pos = positions[rnd]
+		for building in self.get_buildings():
+			taken_rel_pos = building.get_relative_position()
+			if taken_rel_pos in positions:
+				print("city " + self.name + ": " + str(taken_rel_pos) + " isnt free")
+				positions.remove(taken_rel_pos)
+		# select a random position out of them
+		rel_pos = choice(positions)
+		# build the building a this pos
 		self.add_building_at(building_type, rel_pos)
 
 	# build a wall around this city
