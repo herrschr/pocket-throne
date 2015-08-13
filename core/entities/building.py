@@ -1,17 +1,30 @@
 class Building:
 	# engine properties
 	_id = -1
-	_type = None
 	name = ""
 	name_de = ""
 	size = "1x1"
 
+	# building type
+	_type = None
+	# possible building types & names
+	_types = ["wall", "tower", "blacksmith", "bordel", "stables", "harbour", "tunnels", "siege_workshop", "mansion"]
+	_names = {
+		"wall": "Wall",
+		"tower": "Tower",
+		"blacksmith": "Blacksmith",
+		"bordel": "Bordel",
+		"stables": "Stables",
+		"harbour": "Harbour",
+		"tunnels": "Tunnel Systems",
+		"siege_workshop": "Siege Workshop",
+		"mansion": "Mansion"}
+
 	# file paths
-	image_path = None
 	image_override = None
 	json_path = None
 
-	# building flags
+	# building flags (mainly for wonders)
 	is_undestroyable = False
 	is_owned_by_nature = False
 	has_player_max = False
@@ -31,23 +44,29 @@ class Building:
 	rel_y = None
 
 	def __init__(self, city, building_type):
+		# abort when building_type is not defined
+		if not building_type in self._types:
+			print("[Building] type " + building_type +" is not defined")
+			return
+		# set building type & parent city
 		self._type = building_type
 		self.city = city
-		self.image_path = "city_" + building_type + ".png"
 
-	def loadFromJson(json_path):
-		pass
-
-	# get name of the image of this building
+	# return the image file name of this building
 	def get_image_path(self):
 		if self.image_override:
 			return self.image_override
 		else:
-			return self.image_path
+			return "city_" + building_type + ".png"
 
-	# set the parent city
-	def set_city(self, city):
-		self.city = city
+	# returns the type (basename) of this building
+	def get_type(self):
+		return self._type
+
+	# return the english name of this building
+	def get_name(self):
+		building_name = self._names[self.get_type()]
+		return building_name
 
 	# returns the parent city
 	def get_city(self):
