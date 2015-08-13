@@ -21,7 +21,7 @@ from core.managers.unitmanager import UnitManager
 from core.managers.citymanager import CityManager
 from core.managers.mapmanager import MapManager
 from core.managers.guimanager import GuiManager
-from core.managers.ingamemanager import IngameManager
+from core.managers.playermanager import PlayerManager
 from core.managers.locator import Locator
 
 from core.tools.maploader import MapLoader
@@ -60,11 +60,11 @@ class PocketThroneApp(App):
 		Locator.UNIT_MGR = UnitManager(Locator.TILEMAP, mod="westeros")
 		Locator.CITY_MGR = CityManager(Locator.TILEMAP, mod="westeros")
 		Locator.GUI_MGR = GuiManager()
-		Locator.INGAME_MGR = IngameManager(mod="westeros")
+		Locator.PLAYER_MGR = PlayerManager(mod="westeros")
 
 		# add two players
-		Locator.INGAME_MGR.add_new_player("Rebellion", (255, 0, 0))
-		Locator.INGAME_MGR.add_new_player("Loyalists", (0, 0, 255))
+		Locator.PLAYER_MGR.add_new_player("Rebellion", (255, 0, 0))
+		Locator.PLAYER_MGR.add_new_player("Loyalists", (0, 0, 255))
 
 		# add some units
 		Locator.UNIT_MGR.spawn_unit_at(2, "soldier", (23, 23))
@@ -73,5 +73,5 @@ class PocketThroneApp(App):
 
 		# start loop
 		Locator.GAMELOOP_MGR.run()
-		Locator.INGAME_MGR.start_game()
+		Locator.PLAYER_MGR.start_game()
 
