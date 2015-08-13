@@ -81,7 +81,9 @@ class MapLoader:
 			city.set_size(city_size)
 			if city_name:
 				city.set_name(city_name)
+			# add wall & stables
 			city.add_city_wall()
+			city.add_building("stables")
 			cities.append(city)
 		self._map.cities = cities
 		print("cities: " + str(self._map.cities))
