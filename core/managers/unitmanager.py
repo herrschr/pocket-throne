@@ -11,6 +11,7 @@ from core.managers.eventmanager import EventManager
 from core.entities.event import *
 
 from core.tools.unitmovementhelper import UnitMovementHelper
+from core.managers.locator import Locator
 
 class UnitManager:
 	_tag = "[UnitManager] "
@@ -65,12 +66,15 @@ class UnitManager:
 		ev_selected_unit = UnitSelectedEvent(unit, moves=self._selected_moves, attacks=self._selected_attacks)
 		EventManager.fire(ev_selected_unit)
 
+	def get_selected_unit(self):
+		return self._selected
+
 	def unselect_unit(self):
 		self._selected = None
 		self._selected_moves = []
 		self._selected_attacks = []
 
-	# load unit skeletons from mods/<mod_name>/units/*.json
+	# load all unit skeletons from mods/<mod_name>/units/*.json
 	def load_unit_skeletons(self, mod_name):
 		unit_folder_path = FileManager.mod_path() + mod_name + "/units/"
 		for file in os.listdir(unit_folder_path):
@@ -196,35 +200,29 @@ class UnitManager:
 		# translate absolute to relative movement
 		rel_x = to_x - unit.pos_x
 		rel_y = to_y - unit.pos_y
-		# weird undocumented movement hacking
-		if rel_x != 0 and rel_y != 0:
-			if rel_x > rel_y:
-				rel_y = 0
-			if rel_y > rel_x:
-				rel_x = 0
 		# move unit relative to it's position
 		self.move_unit(unit, (rel_x, rel_y))
 
 	# unit movement relative to own position; unit movement base method
 	def move_unit(self, unit, (rel_x, rel_y)):
 		# check if move is possible
-		move_is_possible = False
+		move_in_radius = False
 		moves = self.get_possible_moves(unit)
 		target_pos = (unit.pos_x + rel_x, unit.pos_y + rel_y)
 		way = abs(rel_x) + abs(rel_y)
-		if way > unit.mp:
-			print ("[UnitManager] unit " + unit.name + " isn't allowed to move " + str(way) + " tiles")
-			return
+		# check if move is possible for moved unit
 		for movementtile in moves:
 			if movementtile.get_position() == target_pos:
-				move_is_possible = True
-		# move unit and reduce mp
-		unit.pos_x += rel_x
-		unit.pos_y += rel_y
-		unit.mp -= way
-		#fire UnitMovedEvent
-		ev_unit_moved = UnitMovedEvent(unit)
-		EventManager.fire(ev_unit_moved)
+				move_in_radius = True
+		# move
+		if move_in_radius:
+			# move unit and reduce mp
+			unit.pos_x += rel_x
+			unit.pos_y += rel_y
+			unit.mp -= way
+			#fire UnitMovedEvent
+			ev_unit_moved = UnitMovedEvent(unit)
+			EventManager.fire(ev_unit_moved)
 		return unit
 
 	# attack unit
@@ -247,7 +245,11 @@ class UnitManager:
 				print("[Fight] attacker=" + repr(attacker) + " defender=" + repr(defender) + " damage=" + str(attack_damage))
 				# destroy defender unit when hp <= 0
 				if (defender.hp <= 0):
+					# remove unit from unit list
 					self.remove_unit(defender)
+					# fire UnitKilledEvent
+					ev_unit_killed = UnitKilledEvent(defender, attacker)
+					EventManager.fire(ev_unit_killed)
 					print("[Fight] defender died.")
 		# no more mp
 		else:
@@ -269,6 +271,7 @@ class UnitManager:
 		movement_helper = UnitMovementHelper(unit, self._map)
 		return movement_helper.get_possible_moves()
 
+	# returns an array with all possible attacks of a unit
 	def get_possible_attacks(self, unit):
 		attack_distance = unit.weapon.distance
 		movement_helper = UnitMovementHelper(unit, self._map, ignore_lds=True)
@@ -285,14 +288,15 @@ class UnitManager:
 	def on_event(self, event):
 		# on tile selectection: check if a unit is also selected
 		if isinstance(event, TileSelectedEvent):
-			selected_unit = self.get_unit_at(event.pos, for_specific_player=self._actual_player)
-			if selected_unit != None:
-				self.select_unit(selected_unit)
+			own_unit_on_tile = self.get_unit_at(event.pos, for_specific_player=self._actual_player)
+			print("ownunit=" + repr(own_unit_on_tile))
+			if own_unit_on_tile != None:
+				self.select_unit(own_unit_on_tile)
 			# move or attack with unit
-			if selected_unit == None and self._selected != None:
-				# self._selected is selected unit until unselected
+			if own_unit_on_tile == None and self._selected != None:
 				moves = self.get_possible_moves(self._selected)
 				attacks = self.get_possible_attacks(self._selected)
+				print("possible attacks=" + str(len(attacks)))
 				action = None
 				# selected unit can move to selected tile
 				for moveable_tile in moves:
@@ -302,16 +306,27 @@ class UnitManager:
 				for attackable_tile in attacks:
 					if attackable_tile.get_position() == event.pos:
 						action = "attack"
-						defender = self.get_unit_at(event.pos)
-						attacker = self._selected
-						self.attack_unit(attacker, defender)
-				if action == "move":
+				if action == "attack":
+					defender = self.get_unit_at(event.pos)
+					attacker = self._selected
+					self.attack_unit(attacker, defender)
+				elif action == "move":
 					self.move_unit_to(self._selected, (event.pos))
+				else:
+					self.unselect_unit()
+
+		# unit movement on mouse drag
+		if isinstance(event, MouseReleasedEvent):
+			selected_unit = self.get_selected_unit()
+			target_tile_pos = event.gridpos
+			if (selected_unit):
+				self.move_unit_to(self._selected, target_tile_pos)
 
 		# select unit after movement
 		if isinstance(event, UnitMovedEvent):
 			moved_unit = event.unit
 			self.select_unit(moved_unit)
+			Locator.MAP_MGR.select_tile_at(moved_unit.get_position())
 
 		# cache selected city
 		if isinstance(event, CitySelectedEvent):
@@ -324,11 +339,7 @@ class UnitManager:
 
 		# on right click: unselect actual unit
 		if isinstance(event, MouseRightClickedEvent):
-			if self._selected != None:
-				# fire UnitUnselectedEvent
-				self._selected = None
-				ev_unselected_unit = UnitUnselectedEvent()
-				EventManager.fire(ev_unselected_unit)
+			self.unselect_unit()
 
 		# reset unit movement points before player starts
 		if isinstance(event, NextOneEvent):
