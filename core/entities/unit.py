@@ -10,11 +10,10 @@ class Unit(object):
 	_name = ""
 	name = ""
 	name_de = ""
-	categories = []
 	image_path = None
-	json_path = None
 
 	# constants
+	categories = []
 	health = 4
 	movement = 2
 	is_owned_by_nature = False
@@ -86,8 +85,13 @@ class Unit(object):
 	def reset_mps(self):
 		self.mp = self.movement
 
+	# damage this unit (decrease hp)
 	def damage(self, damage):
 		self.hp = self.hp - damage
+
+	# heal this unit (increase hp)
+	def heal(self, heal_hp):
+		self.hp = self.hp + heal_hp
 
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
 class Weapon(object):
