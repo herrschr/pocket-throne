@@ -29,6 +29,26 @@ class CityManager:
 		self._map = tilemap
 		self._cities = tilemap.cities
 
+	def get_cities(self, for_specific_player=None):
+		cities = []
+		if for_specific_player != None:
+			for city in cities:
+				if city.get_player_num == for_specific_player:
+					cities.append(city)
+			return cities
+		else:
+			return self._cities
+
+	# add a new city
+	def add_city_at(self, player_num, size, (at_x, at_y), name=None):
+		new_city = City(name=name)
+		new_city.set_player_num(player_num)
+		new_city.set_size(size)
+		new_city.set_position((at_x, at_y))
+		new_city._map = self._map
+		self._cities.append(new_city)
+
+	# returns a city at the given position
 	def get_city_at(self, (at_x, at_y), for_specific_player=None):
 		for city in self._cities:
 			city_x = int(city.pos_x)
@@ -40,21 +60,26 @@ class CityManager:
 					return city
 		return None
 
+	# returns all unit blueprints
 	def get_recruitable_units(self, city):
 		return Locator.UNIT_MGR.get_unit_blueprints()
 
+	# returns if a city is selected
 	def has_selected_city(self):
 		if self._selected:
 			return True
 		return False
 
+	# returns selected city
 	def get_selected_city(self):
 		return self._selected
 
-	def next_city_id(self):
+	# returns a new unique city id
+	def _next_city_id(self):
 		self._last_city_id += 1
 		return self._last_city_id
 
+	# recruit a new unit of unit_blueprint type in a city
 	def recruit_unit(self, city, unit_blueprint):
 		city.recruit_unit(unit_blueprint)
 
