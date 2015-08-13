@@ -2,40 +2,41 @@
 class Event:
 	def __init__(self):
 		self.name = "Generic Event"
+		self.level = 0
 
 # SYSTEM EVENTS
 class GameStartedEvent(Event):
 	def __init__(self):
-		self.name = "Game Started Event"
+		self.name = "GameStartedEvent"
 
 class TickEvent(Event):
 	def __init__(self):
-		self.name = "CPU Tick Event"
+		self.name = "CPUTickEvent"
 
 class QuitEvent(Event):
 	def __init__(self):
-		self.name = "Program Quit Event"
+		self.name = "ProgramQuitEvent"
 
 # MAP EVENTS
 class MapLoadedEvent(Event):
 	def __init__(self, tilemap):
-		self.name = "Map Loaded Event: " + str(tilemap)
+		self.name = "MapLoadedEvent: " + str(tilemap)
 		self.tilemap = tilemap
 
 class TileSelectedEvent(Event):
 	def __init__(self, selected_tile, pos):
-		self.name = "Tile Selected Event: " + str(selected_tile)
+		self.name = "TileSelectedEvent: " + str(selected_tile)
 		self.selected_tile = selected_tile
 		self.pos = pos
 
 class TileUnselectedEvent(Event):
 	def __init__(self):
-		self.name = "Tile Unselected Event"
+		self.name = "TileUnselectedEvent"
 
 # TURN EVENTS
 class NextTurnEvent(Event):
 	def __init__(self, turnnumber):
-		self.name = "Next Turn Event: " + str(turnnumber)
+		self.name = "NextTurnEvent: " + str(turnnumber)
 		self.turn = turnnumber
 
 class NextOneEvent(Event):
@@ -46,54 +47,54 @@ class NextOneEvent(Event):
 # UNIT EVENTS
 class UnitSpawnedEvent(Event):
 	def __init__(self, unit, (pos_x, pos_y)):
-		self.name = "Unit Spawned Event: " + str(unit)
+		self.name = "UnitSpawnedEvent: " + str(unit)
 		self.unit = unit
 		self.pos = (pos_x, pos_y)
 
 class UnitMoveRequest(Event):
 	def __init__(self, unit, (rel_x, rel_y)):
-		self.name = "Unit Move Request unit=" + str(unit) + " rel=" + str((rel_x, rel_y))
+		self.name = "UnitMoveRequest unit=" + str(unit) + " rel=" + str((rel_x, rel_y))
 		self.unit = unit
 		self.pos = (rel_x, rel_y)
 
 class UnitMovedEvent(Event):
 	def __init__(self, unit):
-		self.name = "Unit Moved Event unit=" + str(unit)
+		self.name = "UnitMovedEvent unit=" + str(unit)
 		self.unit = unit
 
 class UnitSelectedEvent(Event):
 	def __init__(self, unit, moves=[], attacks=[]):
-		self.name = "Unit Selected Event: " + str(unit) + " moves=" + str(len(moves))
+		self.name = "UnitSelectedEvent: " + str(unit) + " moves=" + str(len(moves))
 		self.unit = unit
 		self.moves = moves
 		self.attacks = attacks
 
 class UnitUnselectedEvent(Event):
 	def __init__(self):
-		self.name = "Unit Unselected Event"
+		self.name = "UnitUnselectedEvent"
 
 class UnitKilledEvent(Event):
 	def __init__(self, killed, attacker):
-		self.name = "Unit Killed Event unit=" + repr(killed)
+		self.name = "UnitKilledEvent unit=" + repr(killed)
 		self.killed = killed
 		self.attacker = attacker
 
 # BUILDING EVENTS
 class BuildingBuiltEvent(Event):
 	def __init__(self, bld, (pos_x, pos_y)):
-		self.name = "Building Built Event: bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
+		self.name = "BuildingBuiltEvent: bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
 		self.bld = bld
 		self.pos = (pos_x, pos_y)
 
 class BuildingSelectedEvent(Event):
 	def __init__(self, bld):
-		self.name = "Building Selected Event bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
+		self.name = "BuildingSelectedEvent bld=" + bld.name + " x=" + str(bld.pos_x) + " y=" + str(bld.pos_y)
 		self.building = bld
 
 # CITY EVENTS
 class CitySelectedEvent(Event):
 	def __init__(self, city, recruitable=[]):
-		self.name = "City Selected Event city=" + repr(city) + " recruitable=" + str(recruitable)
+		self.name = "CitySelectedEvent city=" + repr(city) + " recruitable=" + str(recruitable)
 		self.city = city
 		self.recruitable = recruitable
 
@@ -114,19 +115,30 @@ class CityRecruitmentFinishedEvent(Event):
 		self.blueprint = blueprint
 
 # INPUT EVENTS
+class MouseMovedEvent(Event):
+	def __init__(self, pos):
+		self.name = "MouseMovedEvent  pos=" + str(pos)
+		self.pos = pos
+
 class MouseClickedEvent(Event):
 	def __init__(self, pos):
-		self.name = "Mouse Clicked Event: pos=" + str(pos)
+		self.name = "MouseClickedEvent: pos=" + str(pos)
 		self.pos = pos
+
+class MouseReleasedEvent(Event):
+	def __init__(self, pos, gridpos):
+		self.name = "MouseReleasedEvent: pos=" + str(pos) + " gridpos=" + str(gridpos)
+		self.pos = pos
+		self.gridpos = gridpos
 
 class MouseRightClickedEvent(Event):
 	def __init__(self, pos):
-		self.name = "Mouse RightClicked Event: pos=" + str(pos)
+		self.name = "MouseRightClickedEvent: pos=" + str(pos)
 		self.pos = pos
 
 class KeyPressedEvent(Event):
 	def __init__(self, key):
-		self.name = "Key Pressed Event: key=" + str(key)
+		self.name = "KeyPressedEvent: key=" + str(key)
 		self.key = key
 
 # BUTTON CALLBACK EVENTS
