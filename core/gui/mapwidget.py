@@ -12,8 +12,11 @@ class MapWidget(Widget):
 	_dirty = True
 	_map = None
 
+	# actual scrolling of the map
 	scrolled_x = 0
 	scrolled_y = 0
+
+	# number of tiles that are fitting in the map size
 	grid_width = 0
 	grid_height = 0
 
@@ -35,18 +38,18 @@ class MapWidget(Widget):
 		if self._dirty:
 			self.draw_map()
 
-	# trigger a canvas redraw
+	# trigger a redraw of the map
 	def trigger_redraw(self):
 		self._dirty = True
 
-	# translate a pixel position into the tile grid
+	# translate a screen position into the tile grid
 	def to_map(self, (pos_x, pos_y)):
 		map_x = int(pos_x / Locator.TILEMAP.TILESIZE)
 		map_y = int(pos_y / Locator.TILEMAP.TILESIZE)
 		inv_y = Locator.TILEMAP.size_y - map_y
 		return map_x, map_y
 
-	# translate a tile grid position into a pixel pos
+	# translate a tile grid position into a position on the screen
 	def to_gui(self, (map_x, map_y), y_inv=True):
 		gui_x = self.x + (map_x *40)
 		gui_y = self.y + ((map_y +1) *40)
@@ -56,11 +59,13 @@ class MapWidget(Widget):
 		else:
 			return (gui_x, gui_y)
 
+	# translate a grid position into a grid position considering the actual map scrolling
 	def to_scrolled(self, (map_x, map_y)):
 		scrolled_x = map_x - self.scrolled_x
 		scrolled_y = map_y - self.scrolled_y
 		return (scrolled_x, scrolled_y)
 
+	# checks if a grid position is inside the screen considering the actual map scrolling
 	def is_in_viewport(self, (grid_x, grid_y)):
 		print("viewport="+ str((self.scrolled_x, self.scrolled_y, self.scrolled_x + self.grid_width, self.scrolled_y + self.grid_height)))
 		if grid_x >= self.scrolled_x and grid_x <= self.scrolled_x + self.grid_width:
@@ -86,7 +91,9 @@ class MapWidget(Widget):
 
 		# clear the canvas
 		with self.canvas:
+			# clear anything
 			self.canvas.clear()
+			# draw all tiles visible with the actual map scrolling
 			for tile in tiles_in_viewport:
 				gui_pos = self.to_gui(self.to_scrolled((tile.pos_x, tile.pos_y)))
 				# load the tile texture
@@ -97,13 +104,17 @@ class MapWidget(Widget):
 			if Locator.MAP_MGR.selected_tile != None:
 				selected_tile = Locator.MAP_MGR.selected_tile
 				texture = Image(FileManager.image_path() + "tile_selected.png").texture
-				gui_pos = self.to_gui(self.to_scrolled((selected_tile.pos_x, selected_tile.pos_y)))
+				gui_pos = self.to_gui(self.to_scrolled(selected_tile.get_position()))
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 			# draw cities
 			for city in Locator.CITY_MGR._cities:
-				texture = Image(FileManager.image_path() + "city_village.png").texture
+				texture = Image(FileManager.image_path() + city.get_image_path()).texture
 				gui_pos = self.to_gui(self.to_scrolled((city.pos_x, city.pos_y)))
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 80))
+				for building in city.get_buildings():
+					texture = Image(FileManager.image_path() + building.get_image_path()).texture
+					gui_pos = self.to_gui(self.to_scrolled(building.get_position()))
+					Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 			# draw units
 			for unit in Locator.UNIT_MGR._units:
 				texture = Image(FileManager.image_path() + unit.image_path).texture
@@ -119,52 +130,79 @@ class MapWidget(Widget):
 					texture = Image(FileManager.image_path() + "overlay_unit_possibleattack.png").texture
 					gui_pos = self.to_gui(self.to_scrolled((pseudotile.pos_x, pseudotile.pos_y)))
 					Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+		# the map is redrawn successfully
 		self._dirty = False
 
 	def on_touch_down(self, touch):
-		# fire MouseClickedEvent
+		# translate y pos (0|0 is on top left of the window)
 		touch_inv_y = Window.height - touch.y
-		ev_mouse_clicked = MouseClickedEvent((touch.x, touch_inv_y))
-		EventManager.fire(ev_mouse_clicked)
-		# set the selcted tile in MapManager
-		grid_pos = self.to_map((touch.x, touch_inv_y))
+		# on left click
+		if touch.button == "left":
+			# fire MouseClickedEvent
+			ev_mouse_clicked = MouseClickedEvent((touch.x, touch_inv_y))
+			EventManager.fire(ev_mouse_clicked)
+			# get the grid position that's clicked
+			grid_pos = self.to_map((touch.x, touch_inv_y))
+			# calculate the real position in by adding the map scrolling
+			scrolled_x = self.scrolled_x + grid_pos[0]
+			scrolled_y = self.scrolled_y + grid_pos[1]
+			# select correct tile in MapManager
+			Locator.MAP_MGR.select_tile_at((scrolled_x, scrolled_y))
+		# on right click
+		elif touch.button == "right":
+			ev_mouse_rightclicked = MouseRightClickedEvent((touch.x, touch_inv_y))
+			EventManager.fire(ev_mouse_rightclicked)
+
+	def on_touch_up(self, touch):
+		# get touch position & position in grid
+		touch_inv_y = Window.height - touch.y
+		touch_pos = (touch.x, touch_inv_y)
+		grid_pos = self.to_map(touch_pos)
+
+		# add map scrolling parameters
 		scrolled_x = self.scrolled_x + grid_pos[0]
 		scrolled_y = self.scrolled_y + grid_pos[1]
-		Locator.MAP_MGR.select_tile_at((scrolled_x, scrolled_y))
+		scrolled_gridpos = (scrolled_x, scrolled_y)
 
+		# fire MouseReleasedEvent
+		if touch.button == "left":
+			ev_mouse_released = MouseReleasedEvent(touch_pos, scrolled_gridpos)
+			EventManager.fire(ev_mouse_released)
+
+	# scroll horizontally
 	def scroll_x(self, tiles):
 		self.scrolled_x += tiles
 		self.trigger_redraw()
 
+	# scroll vertically
 	def scroll_y(self, tiles):
 		self.scrolled_y += tiles
 		self.trigger_redraw()
 
+	# on keyboad close
 	def _keyboard_closed(self):
 		self._keyboard.unbind(on_key_down = self.on_key_down)
 		self._keyboard = None
 
+	# fire KeyPressedEvent on key press
 	def on_key_down(self, keyboard, keycode, text, modifiers):
 		ev_key_pressed = KeyPressedEvent(keycode[1])
 		EventManager.fire(ev_key_pressed)
 
-	def on_touch_move(self, touch):
-		print("Map moved " + str(self.parent.to_window(self.parent.x, self.parent.y)))
-
 	def on_event(self, event):
-		# update the map when required
+		# redraw the map when required each TickEvent
 		if isinstance(event, TickEvent):
 			self.update()
 		# handle key press for scrolling the widget
 		if isinstance(event, KeyPressedEvent):
 			if event.key == "up":
-				self.scroll_y(-1)
+				self.scroll_y(-2)
 			elif event.key == "down":
-				self.scroll_y(1)
+				self.scroll_y(2)
 			elif event.key == "left":
-				self.scroll_x(-1)
+				self.scroll_x(-2)
 			elif event.key == "right":
-				self.scroll_x(1)
+				self.scroll_x(2)
 		# redraw the map on various events
 		if isinstance(event, TileSelectedEvent):
 			self.trigger_redraw()
