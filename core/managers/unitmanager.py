@@ -152,13 +152,16 @@ class UnitManager:
 	def get_units(self):
 		return self._units
 
-	# get all unit blueprints as list
+	# get unit blueprints as list
 	def get_unit_blueprints(self, for_specific_player=None):
 		blueprints =  []
+		# when for_specific_player is none: return all unit blueprints
 		if not for_specific_player:
 			for blueprint in self._skeletons.itervalues():
 				blueprints.append(blueprint)
+		# else return only blueprints recruitable by a specific player num
 		else:
+			# get the fraction name of player number in for_specific_player
 			player = Locator.PLAYER_MGR.get_player_by_num(for_specific_player)
 			player_fraction_name = player.get_fraction()._basename
 			for blueprint in self._skeletons.itervalues():
@@ -166,7 +169,7 @@ class UnitManager:
 				# add blueprint when no fraction is required
 				if not req_fraction:
 					blueprints.append(blueprint)
-				# add blueprint when for_specific_player has required fraction
+				# add blueprint when player has required fraction
 				elif req_fraction == player_fraction_name:
 					blueprints.append(blueprint)
 		return blueprints
@@ -175,7 +178,7 @@ class UnitManager:
 	def get_unit_blueprint(self, blueprint_name):
 		return self._skeletons[blueprint_name]
 
-	# get the names of all unit blueprints as list
+	# returns the names of all unit blueprints as list
 	def get_blueprint_names(self):
 		blueprint_names = []
 		for blueprint in self.get_unit_blueprints():
