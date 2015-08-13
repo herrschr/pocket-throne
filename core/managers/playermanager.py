@@ -1,7 +1,7 @@
 import os
 import json
 import copy
-from random import randrange
+from random import choice
 from core.entities.player import Player
 from core.entities.fraction import Fraction
 from core.entities.event import *
@@ -121,8 +121,7 @@ class PlayerManager:
 
 	# return a random fraction
 	def get_random_fraction(self):
-		i = randrange(0, len(self.fractions) -1, 1)
-		return self.fractions[i]
+		return choice(self.fractions)
 
 	# internal: end turn and start a next one
 	def next_turn(self):
