@@ -26,53 +26,57 @@ class CityManager:
 	def __init__(self, tilemap, mod="base"):
 		# register in EventManager
 		EventManager.register_listener(self)
-		# spawn units from map file
+		# cache map and city list in CityManager
 		self._map = tilemap
 		self._cities = tilemap.cities
 
 	# returns all cities; when for_specific_player is set, returns only cities owned by given player num
 	def get_cities(self, for_specific_player=None):
 		cities = []
+		# when a specific owner is wanted: filter city list for the player first
 		if for_specific_player != None:
 			for city in cities:
 				if city.get_player_num == for_specific_player:
 					cities.append(city)
 			return cities
+		# when no specific owner is wanted: return any town on map
 		else:
 			return self._cities
 
 	# add a new city
 	def add_city_at(self, player_num, size, (at_x, at_y), name=None):
+		# instanciate new city and set required city properties
 		new_city = City(name=name)
 		new_city.set_player_num(player_num)
 		new_city.set_size(size)
 		new_city.set_position((at_x, at_y))
 		new_city._map = self._map
+		# add new city to CityManagers holder array
 		self._cities.append(new_city)
 
-	# returns a city at the given position
+	# returns a city at the given position; when no city is there -> return None
 	def get_city_at(self, (at_x, at_y), for_specific_player=None):
 		for city in self._cities:
-			city_x = int(city.pos_x)
-			city_y = int(city.pos_y)
-			if city.pos_x == at_x and city.pos_y == at_y:
+			if city.get_position() == (at_x, at_y):
+				# no specific owner is wanted, return city
 				if not for_specific_player:
 					return city
+				# else: filter city for player number
 				elif city.playerId == for_specific_player:
 					return city
 		return None
 
-	# get building at absolute position when it exists
+	# get any building at absolute position when it exists
 	def get_building_at(self, (at_x, at_y), for_specific_player=None):
-		# get all buildings of the map
+		cities = []
 		all_buildings = []
-		for city in self._cities:
-			city_has_wanted_owner = True
-			if for_specific_player and city.get_player_num() != for_specific_player:
-				city_has_wanted_owner = False
-			if city_has_wanted_owner:
-				city_buildings = city.get_buildings()
-				all_buildings.extend(city_buildings)
+		# get any cities or cities of wanted owner
+		cities = self.get_cities(for_specific_player=for_specific_player)
+		# add buildings of any city into a list
+		for city in cities:
+			city_buildings = city.get_buildings()
+			all_buildings.extend(city_buildings)
+		# filter building list for building with wanted position
 		for building in all_buildings:
 			if building.get_position() == (at_x, at_y):
 				return building
@@ -84,10 +88,12 @@ class CityManager:
 		city_blueprints = []
 		fraction_blueprints = Locator.UNIT_MGR.get_unit_blueprints(for_specific_player=city.get_player_num())
 		for blueprint in fraction_blueprints:
-			# check for required building
+			# check for required building of any unit type
 			required_building = blueprint.get_required_building()
+			# when unit type needs no building -> add to list
 			if not required_building:
 				city_blueprints.append(blueprint)
+			# when building requirement is fulfilled -> add to list
 			else:
 				required_building_built = city.has_building(required_building)
 				if required_building_built:
@@ -133,7 +139,7 @@ class CityManager:
 		city.recruit_unit(unit_blueprint)
 
 	def on_event(self, event):
-		# set actual player on player change
+		# cache actual player number on player change
 		if isinstance(event, NextOneEvent):
 			self._actual_player = event.actual_player.num
 
@@ -154,13 +160,13 @@ class CityManager:
 				# unset selected city
 				self.select_city(None)
 
-		# start unit recruition
+		# handle UnitManager relevant button clicks
 		if isinstance(event, GuiButtonClickedEvent):
+			# recruit unit in selected city when tag is BUILD-* from SideBar
 			if event.button_tag.startswith("BUILD-") and self.has_selected_city():
-				selected_city = self.get_selected_city()
 				recruit_basename = event.button_tag.split("-")[1].lower()
 				blueprint = Locator.UNIT_MGR.get_unit_blueprint(recruit_basename)
-				self.recruit_unit(selected_city, blueprint)
+				self.recruit_unit(get_selected_city(), blueprint)
 
 		# finish unit recruition
 		if isinstance(event, CityRecruitmentFinishedEvent):
