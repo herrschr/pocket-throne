@@ -67,7 +67,6 @@ class MapWidget(Widget):
 
 	# checks if a grid position is inside the screen considering the actual map scrolling
 	def is_in_viewport(self, (grid_x, grid_y)):
-		print("viewport="+ str((self.scrolled_x, self.scrolled_y, self.scrolled_x + self.grid_width, self.scrolled_y + self.grid_height)))
 		if grid_x >= self.scrolled_x and grid_x <= self.scrolled_x + self.grid_width:
 			if grid_y >= self.scrolled_y and grid_y <= self.scrolled_y + self.grid_height:
 				return True
@@ -79,12 +78,22 @@ class MapWidget(Widget):
 		tiles_in_viewport = []
 		units_in_viewport = []
 		cities_in_viewport = []
+		buildings_in_viewport = []
 		# get all tiles inside the viewport
 		for iy in range(self.scrolled_y, self.scrolled_y + self.grid_height):
 			for ix in range(self.scrolled_x, self.scrolled_x + self.grid_width):
 				tile = Locator.TILEMAP.get_tile_at((ix, iy))
 				if tile != None:
 					tiles_in_viewport.append(tile)
+		# get all buildings in viewport
+		buildings = []
+		for city in Locator.CITY_MGR.get_cities():
+			buildings.extend(city.get_buildings())
+		for building in buildings:
+			bld_pos = building.get_position()
+			if self.is_in_viewport(bld_pos):
+				buildings_in_viewport.append(building)
+
 		# get all units inside the viewport
 		for unit in Locator.UNIT_MGR.get_units():
 			pass
@@ -94,44 +103,56 @@ class MapWidget(Widget):
 			# clear anything
 			self.canvas.clear()
 			# draw all tiles visible with the actual map scrolling
-			for tile in tiles_in_viewport:
-				gui_pos = self.to_gui(self.to_scrolled((tile.pos_x, tile.pos_y)))
-				# load the tile texture
-				source = FileManager.image_path() + tile.get_image_path()
-				# draw an rectangle with the tile texture
-				Rectangle(source=source, pos=gui_pos, size=(40, 40))
-			# draw selected tile
-			if Locator.MAP_MGR.selected_tile != None:
-				selected_tile = Locator.MAP_MGR.selected_tile
-				texture = Image(FileManager.image_path() + "tile_selected.png").texture
-				gui_pos = self.to_gui(self.to_scrolled(selected_tile.get_position()))
-				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+			self._draw_tiles(tiles_in_viewport)
 			# draw cities
-			for city in Locator.CITY_MGR._cities:
-				texture = Image(FileManager.image_path() + city.get_image_path()).texture
-				gui_pos = self.to_gui(self.to_scrolled((city.pos_x, city.pos_y)))
-				Rectangle(texture=texture, pos=gui_pos, size=(40, 80))
-				for building in city.get_buildings():
-					texture = Image(FileManager.image_path() + building.get_image_path()).texture
-					gui_pos = self.to_gui(self.to_scrolled(building.get_position()))
-					Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+			self._draw_cities(buildings_in_viewport)
 			# draw units
-			for unit in Locator.UNIT_MGR._units:
-				texture = Image(FileManager.image_path() + unit.image_path).texture
-				gui_pos = self.to_gui(self.to_scrolled((unit.pos_x, unit.pos_y)))
-				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
-			# draw possible unit moves and attacks
-			if Locator.UNIT_MGR._selected:
-				for pseudotile in Locator.UNIT_MGR._selected_moves:
-					texture = Image(FileManager.image_path() + "overlay_unit_possiblemove.png").texture
-					gui_pos = self.to_gui(self.to_scrolled((pseudotile.pos_x, pseudotile.pos_y)))
-					Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
-				for pseudotile in Locator.UNIT_MGR._selected_attacks:
-					texture = Image(FileManager.image_path() + "overlay_unit_possibleattack.png").texture
-					gui_pos = self.to_gui(self.to_scrolled((pseudotile.pos_x, pseudotile.pos_y)))
-					Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+			self._draw_units()
 		# the map is redrawn successfully
 		self._dirty = False
+
+	def _draw_tiles(self, tiles_in_viewport):
+		# draw tiles in vp
+		for tile in tiles_in_viewport:
+			gui_pos = self.to_gui(self.to_scrolled((tile.pos_x, tile.pos_y)))
+			# load the tile texture
+			texture = Image(FileManager.image_path() + tile.get_image_path()).texture
+			# draw an rectangle with the tile texture
+			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+		# draw selected tiles
+		if Locator.MAP_MGR.selected_tile != None:
+			selected_tile = Locator.MAP_MGR.selected_tile
+			texture = Image(FileManager.image_path() + "tile_selected.png").texture
+			gui_pos = self.to_gui(self.to_scrolled(selected_tile.get_position()))
+			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+
+	def _draw_cities(self, buildings_in_viewport):
+		# draw every city from CityManager
+		for city in Locator.CITY_MGR._cities:
+			texture = Image(FileManager.image_path() + city.get_image_path()).texture
+			gui_pos = self.to_gui(self.to_scrolled((city.pos_x, city.pos_y)))
+			Rectangle(texture=texture, pos=gui_pos, size=(40, 80))
+		# draw buildings
+		for building in buildings_in_viewport:
+			texture = Image(FileManager.image_path() + building.get_image_path()).texture
+			gui_pos = self.to_gui(self.to_scrolled(building.get_position()))
+			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+
+	def _draw_units(self):
+		for unit in Locator.UNIT_MGR._units:
+			texture = Image(FileManager.image_path() + unit.image_path).texture
+			gui_pos = self.to_gui(self.to_scrolled((unit.pos_x, unit.pos_y)))
+			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+		# draw possible unit moves and attacks
+		if Locator.UNIT_MGR._selected:
+			for pseudotile in Locator.UNIT_MGR._selected_moves:
+				texture = Image(FileManager.image_path() + "overlay_unit_possiblemove.png").texture
+				gui_pos = self.to_gui(self.to_scrolled((pseudotile.pos_x, pseudotile.pos_y)))
+				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
+			for pseudotile in Locator.UNIT_MGR._selected_attacks:
+				texture = Image(FileManager.image_path() + "overlay_unit_possibleattack.png").texture
+				gui_pos = self.to_gui(self.to_scrolled((pseudotile.pos_x, pseudotile.pos_y)))
+				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
 	def on_touch_down(self, touch):
 		# translate y pos (0|0 is on top left of the window)
