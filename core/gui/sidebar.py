@@ -26,7 +26,7 @@ class SideBar(BoxLayout):
 		for blueprint in recruitable:
 			text = blueprint.get_name()
 			tag = "BUILD-" + blueprint._basename.upper()
-			buildunitbutton = buildmilitiabutton = Button(text=text, size_hint=(1, None), size=(100, 40), on_press=Locator.GUI_MGR.button_clicked)
+			buildunitbutton = Button(text=text, size_hint=(1, None), size=(100, 40), on_press=Locator.GUI_MGR.button_clicked)
 			buildunitbutton.tag = tag
 			self.add_widget(buildunitbutton)
 
