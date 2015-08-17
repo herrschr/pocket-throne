@@ -3,11 +3,6 @@ from core.entities.tilemap import TileMap
 from core.entities.unit import Unit
 
 class UnitMovementHelper:
-	DIR_WEST = 0
-	DIR_NORTH = 1
-	DIR_EAST = 2
-	DIR_SOUTH = 3
-
 	unit = None
 	tilemap = None
 	ingore_lds = False
@@ -79,17 +74,23 @@ class UnitMovementHelper:
 		walkable_moves = []
 		unit = self.unit
 
-		# select all tils in filled cirlce
+		# when no distance is specified: use unit's mp
 		if distance == None:
 			distance = self.unit.mp
-			curr_dist = 1
-			while curr_dist <= distance:
-				curr_moves = self.get_tiles_in_circle(unit.get_position(), curr_dist)
-				moves.extend(curr_moves)
-				curr_dist += 1
 
-		# remove not walkable tiles
-		for pseudotile in moves:
-			if self.is_walkable_tile(pseudotile) and not self.ignore_lds:
-				walkable_moves.append(pseudotile)
-		return walkable_moves
+		# make filled grid circles with radius till distance
+		curr_dist = 1
+		while curr_dist <= distance:
+			curr_moves = self.get_tiles_in_circle(unit.get_position(), curr_dist)
+			moves.extend(curr_moves)
+			curr_dist += 1
+
+		# remove not walkable tiles when ignore_lds is False
+		if not self.ignore_lds:
+			for pseudotile in moves:
+				if self.is_walkable_tile(pseudotile):
+					walkable_moves.append(pseudotile)
+			return walkable_moves
+		# add every possible move when ignore_lds is True
+		else:
+			return moves
