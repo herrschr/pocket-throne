@@ -17,7 +17,7 @@ class GameLoopManager:
 		ev_game_started = GameStartedEvent()
 		EventManager.fire(ev_game_started)
 		# schedule tickevent with 40 fps
-		Clock.schedule_interval(self.tick, 1/40)
+		Clock.schedule_interval(self.tick, 1/60)
 
 	# fire a single TickEvent
 	def tick(self, dt):
