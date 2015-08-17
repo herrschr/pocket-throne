@@ -10,30 +10,29 @@ from core.managers.eventmanager import EventManager
 
 # Manager class for players & turn methods
 class PlayerManager:
+	# engine properties
 	_tag = "[PlayerManager] "
 
-	#game
+	#game properties
 	_mod_name = "base"
 
-	# turn
+	# turn related properties
 	actual_turn = 0
 	actual_player = None
 	actual_player_num = -1
 
-	# player
+	# player related properties
+	_last_player_id = -1
 	players = []
 	fractions = []
 
-	_last_player_id = -1
 
 	# add nature player (num=0) on the beginning
 	def __init__(self, mod="base"):
 		#register in EventManager
 		EventManager.register_listener(self)
-
-		# load mod &  fractions
+		# load fractions into PlayerManager
 		self.load_fractions(mod)
-
 		# create nature player
 		nature = Player()
 		nature.name = "Nature"
@@ -60,14 +59,16 @@ class PlayerManager:
 		fraction_folder_path = FileManager.mod_path() + mod_name + "/fractions/"
 		for file in os.listdir(fraction_folder_path):
 			if file.endswith(".json"):
-				# load the fraction file content to fraction_json
+				# load the fraction file content into fraction_json object
 				fraction_basename = file.split(".")[0]
 				fraction_file_path = fraction_folder_path + file
 				fraction_filecontent = FileManager.read_file(fraction_file_path)
+				# when the file isn't empty, start creating the object
 				if fraction_filecontent != "":
+					# create json object and fraction entity
 					fraction_json = json.loads(fraction_filecontent)
-					# create the fraction object from json
 					fraction = Fraction()
+					# fill fractions properties from json
 					fraction._basename = fraction_basename
 					fraction.name = fraction_json["name"]
 					fraction.name_de = fraction_json["name_de"]
@@ -77,7 +78,7 @@ class PlayerManager:
 					self.fractions.append(fraction)
 		print("[IngameManager] fractions=" + repr(self.fractions))
 
-	# add a player by class
+	# add a player by class, system method
 	def _add_player(self, player, fraction=None):
 		# add player number to player and add all to player list
 		new_player = player
@@ -91,10 +92,13 @@ class PlayerManager:
 		new_player = Player()
 		new_player.name = player_name
 		new_player.color = (r, g, b)
+		# when a specific fraction is wanted: set it
 		if fraction_name != None:
 			new_player.fraction = self.get_fraction_by_name(fraction_name)
+		# when no specific fraction is wanted: select random fraction
 		else:
 			new_player.fraction = self.get_random_fraction()
+		# add player by class in PlayerManager
 		self._add_player(new_player)
 
 	# get a player by its number
