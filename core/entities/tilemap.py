@@ -30,6 +30,7 @@ class TileMap(object):
 			tile._neighbor_north =  self._get_lds_at((tile.pos_x, tile.pos_y -1))
 			tile._neighbor_east = self._get_lds_at((tile.pos_x +1, tile.pos_y))
 			tile._neighbor_south = self._get_lds_at((tile.pos_x, tile.pos_y +1))
+
 	# return the size of this map
 	def get_size(self):
 		return (self.size_x, self.size_y)
@@ -70,7 +71,7 @@ class TileMap(object):
 			return None
 
 	# system method
-	def get_if_walkable(self, (pos_x, pos_y)):
+	def is_walkable_at(self, (pos_x, pos_y)):
 		tile = self.get_tile_at((pos_x, pos_y))
 		if tile:
 			return tile.is_walkable()
