@@ -21,6 +21,7 @@ class CityManager:
 
 	_actual_player = None
 	_selected = None
+	_selected_building = None
 
 	def __init__(self, tilemap, mod="base"):
 		# register in EventManager
@@ -29,6 +30,7 @@ class CityManager:
 		self._map = tilemap
 		self._cities = tilemap.cities
 
+	# returns all cities; when for_specific_player is set, returns only cities owned by given player num
 	def get_cities(self, for_specific_player=None):
 		cities = []
 		if for_specific_player != None:
@@ -60,9 +62,51 @@ class CityManager:
 					return city
 		return None
 
-	# returns all unit blueprints
+	# get building at absolute position when it exists
+	def get_building_at(self, (at_x, at_y), for_specific_player=None):
+		# get all buildings of the map
+		all_buildings = []
+		for city in self._cities:
+			city_has_wanted_owner = True
+			if for_specific_player and city.get_player_num() != for_specific_player:
+				city_has_wanted_owner = False
+			if city_has_wanted_owner:
+				city_buildings = city.get_buildings()
+				all_buildings.extend(city_buildings)
+		for building in all_buildings:
+			if building.get_position() == (at_x, at_y):
+				return building
+		return None
+
+	# returns all unit blueprints recruitable in a city
 	def get_recruitable_units(self, city):
-		return Locator.UNIT_MGR.get_unit_blueprints(for_specific_player=city.get_player_num())
+		# get all unit blueprints of the player/fraction
+		city_blueprints = []
+		fraction_blueprints = Locator.UNIT_MGR.get_unit_blueprints(for_specific_player=city.get_player_num())
+		for blueprint in fraction_blueprints:
+			# check for required building
+			required_building = blueprint.get_required_building()
+			if not required_building:
+				city_blueprints.append(blueprint)
+			else:
+				required_building_built = city.has_building(required_building)
+				if required_building_built:
+					city_blueprints.append(blueprint)
+		return city_blueprints
+
+	# set a selected city
+	def select_city(self, city):
+		# save selected city in CityManager
+		self._selected = city
+		if city:
+			# fire CitySelectedEvent
+			recruitable = self.get_recruitable_units(city)
+			ev_selected_unit = CitySelectedEvent(city, recruitable=recruitable)
+			EventManager.fire(ev_selected_unit)
+
+	# returns selected city
+	def get_selected_city(self):
+		return self._selected
 
 	# returns if a city is selected
 	def has_selected_city(self):
@@ -70,9 +114,14 @@ class CityManager:
 			return True
 		return False
 
-	# returns selected city
-	def get_selected_city(self):
-		return self._selected
+	# set selected building
+	def select_building(self, building):
+		# save selected building
+		self._selected_building = building
+		if building:
+			# fire BuildingSelectedEvent
+			ev_selected_building = BuildingSelectedEvent(building)
+			EventManager.fire(ev_selected_building)
 
 	# returns a new unique city id
 	def _next_city_id(self):
@@ -91,25 +140,19 @@ class CityManager:
 		# fire CitySelectedEvent when a tile with a city is selected by the player
 		if isinstance(event, TileSelectedEvent):
 			selected_city = self.get_city_at(event.pos, for_specific_player=self._actual_player)
+			# selected_building =
 			if selected_city != None:
-				# save selected unit in UnitManager
-				self._selected = selected_city
-				# fire CitySelectedEvent
-				recruitable = self.get_recruitable_units(selected_city)
-				ev_selected_unit = CitySelectedEvent(selected_city, recruitable=recruitable)
-				EventManager.fire(ev_selected_unit)
+				self.select_city(selected_city)
 
 		# unselect city on TileUnselectedEvent
 		if isinstance(event, TileUnselectedEvent):
-			self._selected = None
+			self.select_city(None)
 
 		# fire CityUnselectedEvent when a tile without a city is selected
 		if isinstance(event, MouseRightClickedEvent):
 			if self._selected != None:
-				# fire CityUnselectedEvent
-				self._selected = None
-				ev_unselected_city = CityUnselectedEvent()
-				EventManager.fire(ev_unselected_city)
+				# unset selected city
+				self.select_city(None)
 
 		# start unit recruition
 		if isinstance(event, GuiButtonClickedEvent):
@@ -121,7 +164,9 @@ class CityManager:
 
 		# finish unit recruition
 		if isinstance(event, CityRecruitmentFinishedEvent):
+			# get player, position & type of unit to spawn
 			player_num = event.city.get_player_num()
 			spawn_pos = event.city.get_position()
 			unit_basename = event.blueprint._basename
+			# spawn new unit with UnitManager
 			Locator.UNIT_MGR.spawn_unit_at(player_num, unit_basename, spawn_pos)
