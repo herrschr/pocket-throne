@@ -1,0 +1,7 @@
+{
+	"name": "House Baratheon",
+	"name_de": "Haus Baratheon",
+
+	"city_prefixes": ["Old", "Black", "Bright", "Night", "Kings", "Star", "Up", "Horn"],
+	"city_postfixes": ["hill", "castle", "crown", " Keep", "mont", "song", "wyn", " Hall"]
+}

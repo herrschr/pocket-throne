@@ -1,0 +1,7 @@
+{
+	"name": "House Lannister",
+	"name_de": "Haus Lennister",
+
+	"city_prefixes": ["Casterly", "Green", "Lannis", "Red", "Lion", "Grassy", "Up", "Horn"],
+	"city_postfixes": ["hill", "castle", "view", "ton", "mont", "fall", "wyn", "gate"]
+}
