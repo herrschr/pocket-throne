@@ -64,7 +64,7 @@ class UnitMovedEvent(Event):
 
 class UnitSelectedEvent(Event):
 	def __init__(self, unit, moves=[], attacks=[]):
-		self.name = "UnitSelectedEvent: " + str(unit) + " moves=" + str(len(moves))
+		self.name = "UnitSelectedEvent: " + str(unit) + " moves=" + str(len(moves)) + " attacks=" + str(len(attacks))
 		self.unit = unit
 		self.moves = moves
 		self.attacks = attacks
@@ -98,10 +98,6 @@ class CitySelectedEvent(Event):
 		self.city = city
 		self.recruitable = recruitable
 
-class CityUnselectedEvent(Event):
-	def __init__(self):
-		self.name = "City Unselected Event"
-
 class CityRecruitmentStartedEvent(Event):
 	def __init__(self, city, blueprint):
 		self.name = "CityRecruitmentStartedEvent: unit=" + repr(blueprint) + " in " + city.name
@@ -113,6 +109,11 @@ class CityRecruitmentFinishedEvent(Event):
 		self.name = "CityRecruitedUnitEvent in " + city.name + ": unit=" + repr(blueprint)
 		self.city = city
 		self.blueprint = blueprint
+
+class BuildingSelectedEvent(Event):
+	def __init__(self, building):
+		self.name = "BuildingSelectedEvent: type=" + building._type + " pos=" + building.get_position()
+		self.building = building
 
 # INPUT EVENTS
 class MouseMovedEvent(Event):
