@@ -69,6 +69,11 @@ class UnitManager:
 	def get_selected_unit(self):
 		return self._selected
 
+	def has_selected_unit(self):
+		if self._selected:
+			return True
+		return False
+
 	def unselect_unit(self):
 		self._selected = None
 		self._selected_moves = []
@@ -87,65 +92,47 @@ class UnitManager:
 				if unit_filecontent != "":
 					unit_json = json.loads(unit_filecontent)
 					# load skeleton Unit from json and add it skeleton list
-					unit = self.load_unit_skeleton(unit_json)
-					unit._basename = unit_basename
+					unit = self.load_unit_skeleton(unit_json, unit_basename)
 					self._skeletons[unit_basename] = unit
 		self.print_skeletons()
 
-	# fill a Unit skeleton with a json dict
-	def load_unit_skeleton(self, unit_json):
-		# load basic values and fill Unit
-		unit_name = unit_json["name"]
-		unit = Unit(unit_name)
+	# returns a unit blueprint from unit json object
+	def load_unit_skeleton(self, unit_json, unit_basename):
+		# load basic values and fill in a new unit object
+		unit = Unit(unit_basename)
+		unit.name = unit_json["name"]
 		unit.name_de = unit_json["name_de"]
 		unit.categories = unit_json["categories"]
 		unit.image_path = unit_json["image"]
 		unit.health = unit_json["health"]
 		unit.movement = unit_json["movement"]
-
 		# load production costs
 		unit.cost_turns = unit_json.get("cost_turns", 4)
 		unit.cost_gold = unit_json.get("cost_gold", unit.cost_turns *3)
-
 		# load unit requirements
 		unit.required_building = unit_json.get("required_building", None)
 		unit.required_fraction = unit_json.get("required_fraction", None)
-
-		# load maximal amount per player
-		max_per_player = unit_json["max_per_player"]
-		if (max_per_player == -1):
-			unit.has_player_max = False
-			unit.max_per_player = -1
-		else:
-			unit.has_player_max = True
-			unit.max_per_player = max_per_player
-
-		# load maximal amount on the whole map
-		max_per_map = unit_json["max_per_map"]
-		if (max_per_map == -1):
-			unit.has_map_max = False
-			unit.max_per_map = -1
-		else:
-			unit.has_map_max = True
-			unit.max_per_map = max_per_map
-
+		# load maximal amount per player & per map
+		unit.max_per_player = unit_json.get("max_per_player", None)
+		unit.max_per_map = unit_json.get("max_per_map", None)
 		# add weapon & return finished unit
 		weapon = self.load_weapon(unit_json)
 		unit.give_weapon(weapon)
 		return unit
 
-	# load a weapon from a unit's json dict
+	# returns a weapon from a unit json object
 	def load_weapon(self, unit_json):
+		# get the weapon json object out of the unit json object
 		weapon_json = unit_json["weapon"]
 		weapon = Weapon()
-
+		# fill weapon with basic properties
 		weapon.name = weapon_json["name"]
 		weapon.name_de = weapon_json["name_de"]
 		weapon.value = weapon_json["value"]
+		# fill weapon with fighting properties
 		weapon.distance = weapon_json["distance"]
 		weapon.hit_percent = weapon_json.get("hit_percent", 75)
 		weapon.atk_vs_category = weapon_json["atk_vs_category"]
-		# weapon.image_path = weapon_json["image_path"]
 		return weapon
 
 	# get all units as list
@@ -169,7 +156,7 @@ class UnitManager:
 				# add blueprint when no fraction is required
 				if not req_fraction:
 					blueprints.append(blueprint)
-				# add blueprint when player has required fraction
+				# add blueprint when player has required fraction for the unit
 				elif req_fraction == player_fraction_name:
 					blueprints.append(blueprint)
 		return blueprints
@@ -248,31 +235,32 @@ class UnitManager:
 
 	# attack unit
 	def attack_unit(self, attacker, defender):
-		# enough mp?
-		if attacker.mp >= 1:
+		# enough mp? (2 required)
+		if attacker.mp >= 2:
 			defender_cat = defender.categories[0]
 			attack_damage = attacker.weapon.atk_vs_category.get(defender_cat, 0)
 			if attack_damage == 0:
-				print("[Fight] No damage for category " + defender_cat)
+				print("[Fight] No damage vs. category " + defender_cat)
+			# reduce attacker's mp
+			attacker.mp = attacker.mp -2
 			# roll dice
-			hit_percent = attacker.weapon.hit_percent
+			req_percent = 100 - attacker.weapon.hit_percent
 			rnd_percent = randrange(0, 100, 1)
-			print "[Fight] Roll dice: <" + str(hit_percent) + " needed. got " + str(rnd_percent)
+			print "[Fight] Roll dice: got " + str(rnd_percent) + "/" + str(req_percent)
 			# on hit success
-			if (rnd_percent < hit_percent):
+			if (rnd_percent > req_percent):
 				# deal damage & reduce attacker mp
 				defender.damage(attack_damage)
-				attacker.mp = attacker.mp -1
 				print("[Fight] attacker=" + repr(attacker) + " defender=" + repr(defender) + " damage=" + str(attack_damage))
 				# destroy defender unit when hp <= 0
 				if (defender.hp <= 0):
+					print("[Fight] defender died.")
 					# remove unit from unit list
 					self.remove_unit(defender)
 					# fire UnitKilledEvent
 					ev_unit_killed = UnitKilledEvent(defender, attacker)
 					EventManager.fire(ev_unit_killed)
-					print("[Fight] defender died.")
-		# no more mp
+		# not enough mp left for an attack
 		else:
 			print("[Fight] no more mp.")
 
@@ -295,52 +283,64 @@ class UnitManager:
 	# returns an array with all possible attacks of a unit
 	def get_possible_attacks(self, unit):
 		attack_distance = unit.weapon.distance
-		movement_helper = UnitMovementHelper(unit, self._map, ignore_lds=True)
+		movement_helper = UnitMovementHelper(unit, self._map)
 		# get all tiles the weapon can possibly attack
 		possible_attacks = movement_helper.get_possible_moves(distance=attack_distance)
 		attacks = []
 		for pseudotile in possible_attacks:
-			unit_in_rad = self.get_unit_at((pseudotile.pos_x, pseudotile.pos_y))
+			unit_on_tile = self.get_unit_at((pseudotile.pos_x, pseudotile.pos_y))
+			print("attack: unit in radius=" + repr(unit_on_tile))
 			# when an enemy unit is on the tile -> add to attacks array
-			if unit_in_rad != None and unit_in_rad.player_num != self._actual_player:
+			if unit_on_tile != None and unit_on_tile.player_num != self._actual_player:
 				attacks.append(pseudotile)
 		return attacks
 
 	def on_event(self, event):
 		# on tile selectection: check if a unit is also selected
 		if isinstance(event, TileSelectedEvent):
-			own_unit_on_tile = self.get_unit_at(event.pos, for_specific_player=self._actual_player)
-			print("ownunit=" + repr(own_unit_on_tile))
-			if own_unit_on_tile != None:
-				self.select_unit(own_unit_on_tile)
-			# move or attack with unit
-			if own_unit_on_tile == None and self._selected != None:
-				moves = self.get_possible_moves(self._selected)
-				attacks = self.get_possible_attacks(self._selected)
-				print("possible attacks=" + str(len(attacks)))
-				action = None
-				# selected unit can move to selected tile
-				for moveable_tile in moves:
-					if moveable_tile.get_position() == event.pos:
-						action = "move"
-				# selected unit can attack a unit on selected tile
-				for attackable_tile in attacks:
-					if attackable_tile.get_position() == event.pos:
-						action = "attack"
-				if action == "attack":
-					defender = self.get_unit_at(event.pos)
-					attacker = self._selected
-					self.attack_unit(attacker, defender)
-				elif action == "move":
-					self.move_unit_to(self._selected, (event.pos))
+			is_own_unit = False
+			unit_on_tile = self.get_unit_at(event.pos)
+			print("unit on tile=" + repr(unit_on_tile))
+			# when a tile with a unit on it is selected
+			if unit_on_tile:
+				# unit is own -> select it
+				if unit_on_tile.get_player_num() == self._actual_player:
+					self.select_unit(unit_on_tile)
+					return;
+				# unit isnt own -> attack when possible
 				else:
-					self.unselect_unit()
+					# abort attack check when no unit is selected
+					if not self.has_selected_unit():
+						return;
+					# check if an attack on event.pos is possible for selected unit
+					for attack_tile in self._selected_attacks:
+						if attack_tile.get_position() == event.pos:
+							defender = unit_on_tile
+							attacker = self.get_selected_unit()
+							# attack with selected unit
+							self.attack_unit(attacker, defender)
+							return;
+			# when no unit stands on tile -> move when possible
+			elif not unit_on_tile:
+				# abort movement check when no unit is selected
+				if not self.has_selected_unit():
+					return;
+				# check if selected unit move is possible
+				for move_tile in self._selected_moves:
+					if move_tile.get_position() == event.pos:
+						# move unit to event pos
+						self.move_unit_to(self.get_selected_unit(), (event.pos))
+						return;
+				# when no action was made -> unselect unit
+				self.unselect_unit()
 
 		# unit movement on mouse drag
 		if isinstance(event, MouseReleasedEvent):
 			selected_unit = self.get_selected_unit()
 			target_tile_pos = event.gridpos
-			if (selected_unit):
+			unit_on_tile = self.get_unit_at(target_tile_pos)
+			# when no unit is on target tile: move
+			if selected_unit and not unit_on_tile:
 				self.move_unit_to(self._selected, target_tile_pos)
 
 		# select unit after movement
