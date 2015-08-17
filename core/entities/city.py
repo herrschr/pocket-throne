@@ -65,15 +65,19 @@ class City:
 	def get_name(self):
 		return self.name
 
+	# set the name of this city
 	def set_name(self, name):
 		self.name = name
 
+	# get number of the city owner
 	def get_player_num(self):
 		return self.playerId
 
+	# set city owner by player number
 	def set_player_num(self, player_num):
 		self.playerId = player_num
 
+	# get the image path for the town centre
 	def get_image_path(self):
 		if self.get_size() == 1:
 			return "city_village.png"
@@ -125,6 +129,21 @@ class City:
 	# returns all buildings of this city
 	def get_buildings(self):
 		return self.buildings
+
+	# returns the building at an absolute position when built
+	def get_building_at(self, (pos_x, pos_y)):
+		building_at = None
+		for building in self.get_buildings():
+			if building.get_position() == (pos_x, pos_y):
+				building_at = building
+		return building_at
+
+	# returns True when this city has built a building of type building_type
+	def has_building(self, building_type):
+		for building in self.get_buildings():
+			if building.get_type() == building_type:
+				return True
+		return False
 
 	# add a building at city position relative position
 	def add_building_at(self, building_type, (rel_x, rel_y)):

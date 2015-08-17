@@ -26,11 +26,8 @@ class Building:
 
 	# building flags (mainly for wonders)
 	is_undestroyable = False
-	is_owned_by_nature = False
-	has_player_max = False
-	has_map_max = False
 	max_per_player = -1
-	may_per_map = -1
+	max_per_map = -1
 
 	# changeable building vars
 	city = None
@@ -52,16 +49,13 @@ class Building:
 		self._type = building_type
 		self.city = city
 
-	# return the image file name of this building
-	def get_image_path(self):
-		if self.image_override:
-			return self.image_override
-		else:
-			return "city_" + self.get_type() + ".png"
-
-	# returns the type (basename) of this building
+	# returns the type of this building
 	def get_type(self):
 		return self._type
+
+	# returns the number of buildings owner
+	def get_player_num(self):
+		return self.playerId
 
 	# return the english name of this building
 	def get_name(self):
@@ -71,6 +65,13 @@ class Building:
 	# returns the parent city
 	def get_city(self):
 		return self.city
+
+	# return the image file name of this building
+	def get_image_path(self):
+		if self.image_override:
+			return self.image_override
+		else:
+			return "city_" + self.get_type() + ".png"
 
 	# set the absolute position of this building
 	def set_position(self, (pos_x, pos_y)):
@@ -92,10 +93,11 @@ class Building:
 		self.pos_x = city_pos[0] + pos_x
 		self.pos_y = city_pos[1] + pos_y
 
-	# get the absulute position of this image
+	# get the absolute position of this building
 	def get_position(self):
 		return (self.pos_x, self.pos_y)
 
+	# get the relative position of this building
 	def get_relative_position(self):
 		return (self.rel_x, self.rel_y)
 
