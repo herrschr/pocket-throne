@@ -1,20 +1,22 @@
+# TileMap entity holding the map
 class TileMap(object):
-	# TileMap system properties
+	# engine properties
 	_name = ""
-	_last_tile_id = -1
-	TILESIZE = 40
-
-	# TileMap class properties
 	name = ""
 	name_de = ""
+
+	# map informations
 	size_x = 0
 	size_y = 0
 
 	# TileMap tile collections
 	tiles = []
 	tiles_at = {}
+	TILESIZE = 40
+	_last_tile_id = -1
 
-	# unit, building and item collections
+	# player, unit, building and item collections
+	players = []
 	cities = []
 	units = []
 	items = []
@@ -23,26 +25,28 @@ class TileMap(object):
 		# self.initialize_neighbortiles()
 		pass
 
-	# set Tile._neighbors
+	# set neighbors into tile entities of this map, required for generating landscape bridge images
 	def initialize_neighbortiles(self):
 		for tile in self.tiles:
+			# in any 90° direction
 			tile._neighbor_west =  self._get_lds_at((tile.pos_x -1, tile.pos_y))
 			tile._neighbor_north =  self._get_lds_at((tile.pos_x, tile.pos_y -1))
 			tile._neighbor_east = self._get_lds_at((tile.pos_x +1, tile.pos_y))
 			tile._neighbor_south = self._get_lds_at((tile.pos_x, tile.pos_y +1))
 
-	# return the size of this map
+	# returns the size of this map
 	def get_size(self):
 		return (self.size_x, self.size_y)
 
-	# add a Tile (core/entities/tile.py)
+	# add a tile entity into this tilemap
 	def add_tile(self, tile_to_add):
-		# generate new id
+		# create new tile with new id
 		id_to_add = self.next_tile_id()
 		tile_to_add._id = id_to_add
 		# get position and add Tile to tiles & tiles_at
 		pos_x = tile_to_add.pos_x
 		pos_y = tile_to_add.pos_y
+		# add new tile to tiles and tiles_at holder lists and return it
 		self.tiles.append(tile_to_add)
 		self.tiles_at[pos_x, pos_y] = tile_to_add
 		return tile_to_add
@@ -78,7 +82,7 @@ class TileMap(object):
 		else:
 			return None
 
-	# remove tile
+	# remove tile from this map (whyever)
 	def remove_tile(self, tile_to_rem):
 		tiles.remove(tile_to_rem)
 		tiles_at.remove(tile_to_rem)
