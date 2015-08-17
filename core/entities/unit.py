@@ -46,9 +46,10 @@ class Unit(object):
 	# experience level
 	experience = 0
 
-	def __init__(self, unit_name):
-		self.name = unit_name
+	def __init__(self, unit_type):
+		self._basename = unit_type
 
+	# returns an xml like representation of this unit
 	def __repr__(self):
 		return "<Unit player="  + str(self.player_num) + " type=" + self.name + \
 			" pos=" + str(self.get_position()) + " hp=" + str(self.hp) + " mp=" + \
@@ -58,8 +59,13 @@ class Unit(object):
 	def loadFromJson(json_path):
 		pass
 
+	# returns the english name of this unit
 	def get_name(self):
 		return self.name
+
+	# returns the type (basename) of this unit
+	def get_type(self):
+		return self._basename
 
 	# set the weapon of this uni
 	def give_weapon(self, weapon):
@@ -71,6 +77,14 @@ class Unit(object):
 			return self._id
 		else:
 			return None
+
+	# returns the number of this units owner
+	def get_player_num(self):
+		return self.player_num
+
+	# return the owner player class of this unit
+	def get_player(self):
+		return None
 
 	# set unit position with tuple (x, y)
 	def set_position(self, (pos_x, pos_y)):
