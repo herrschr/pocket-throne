@@ -48,7 +48,7 @@ class MapLoader:
 		size_x = self._map.size_x
 		size_y = self._map.size_y
 
-		# add _map.tiles and _map.tile_at
+		# add _map.tiles and _map.tile_at for each grid position
 		cursor_x = 0
 		cursor_y = 0
 		while cursor_y < size_y:
@@ -86,12 +86,11 @@ class MapLoader:
 			city.add_building("stables")
 			cities.append(city)
 		self._map.cities = cities
-		print("cities: " + str(self._map.cities))
 
 	# returns the loaded map
 	def get_map(self):
 		if self._initialized:
 			return self._map
 		else:
-			print ("Error: map is null!")
+			print ("[MapLoader] Error: map is null!")
 			return None
