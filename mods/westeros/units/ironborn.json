@@ -1,0 +1,25 @@
+{
+	"name": "Soldier",
+	"name_de": "Soldat",
+	"categories": ["INF", "INF_MELEE"],
+
+	"image": "unit_std_swordsman.png",
+	"health": 9,
+	"movement": 3,
+	"size": "1x1",
+
+	"required_fraction": "greyjoy",
+
+	"weapon": {
+		"name": "Sword",
+		"name_de": "Schwert",
+		"value": 1,
+		"distance": 1,
+		"percent": 65,
+		"atk_vs_category":
+		{
+			"INF": 6,
+			"CAV": 2
+		}
+	}
+}

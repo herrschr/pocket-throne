@@ -8,10 +8,6 @@
 	"movement": 2,
 	"size": "1x1",
 
-	"is_owned_by_nature": false,
-	"max_per_player": -1,
-	"max_per_map": -1,
-
 	"weapon": {
 		"name": "Pike",
 		"name_de": "Pike",

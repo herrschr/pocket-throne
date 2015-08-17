@@ -1,23 +1,23 @@
 {
-	"name": "Vanguard",
-	"name_de": "Vorhut",
+	"name": "Elite Guardist",
+	"name_de": "Leibwache",
 	"categories": ["INF", "INF_MELEE"],
 
 	"image": "unit_std_swordsman.png",
-	"health": 6,
-	"movement": 3,
+	"health": 9,
+	"movement": 2,
 	"size": "1x1",
 
 	"weapon": {
-		"name": "Sword",
-		"name_de": "Schwert",
+		"name": "Hellebarde",
+		"name_de": "Hellebarde",
 		"value": 1,
 		"distance": 1,
 		"percent": 50,
 		"atk_vs_category":
 		{
-			"INF": 4,
-			"CAV": 2
+			"INF": 6,
+			"CAV": 6
 		}
 	}
 }
