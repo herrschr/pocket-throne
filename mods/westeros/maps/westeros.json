@@ -127,11 +127,24 @@
 		"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
 	],
 
+	"players":
+	[
+		"Rebellion, 250 0 0, stark",
+		"Loyalists, 0 0 255, lannister"
+	],
+
+
 	"cities":
 	[
 		"1, 1, 31, 31, Winterfell",
 		"1, 1, 7, 67, Pyke",
 		"2, 2, 34, 85, King's Landing",
 		"2, 1, 41, 110, Sunspear"
+	],
+
+	"units":
+	[
+		"1, archer, 27, 56",
+		"2, soldier, 23, 23"
 	]
 }
