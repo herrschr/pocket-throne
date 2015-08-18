@@ -285,7 +285,13 @@ class UnitManager:
 	# returns an array with all possible moves of a unit
 	def get_possible_moves(self, unit):
 		movement_helper = UnitMovementHelper(unit, self._map)
-		return movement_helper.get_possible_moves()
+		possible_moves = movement_helper.get_possible_moves()
+		# filter tiles with own unit on top
+		for pseudotile in possible_moves:
+			unit_on_tile = self.get_unit_at((pseudotile.pos_x, pseudotile.pos_y))
+			if unit_on_tile:
+				possible_moves.remove(pseudotile)
+		return possible_moves
 
 	# returns an array with all possible attacks of a unit
 	def get_possible_attacks(self, unit):
