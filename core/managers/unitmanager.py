@@ -289,7 +289,6 @@ class UnitManager:
 		attacks = []
 		for pseudotile in possible_attacks:
 			unit_on_tile = self.get_unit_at((pseudotile.pos_x, pseudotile.pos_y))
-			print("attack: unit in radius=" + repr(unit_on_tile))
 			# when an enemy unit is on the tile -> add to attacks array
 			if unit_on_tile != None and unit_on_tile.player_num != self._actual_player:
 				attacks.append(pseudotile)
@@ -300,7 +299,6 @@ class UnitManager:
 		if isinstance(event, TileSelectedEvent):
 			is_own_unit = False
 			unit_on_tile = self.get_unit_at(event.pos)
-			print("unit on tile=" + repr(unit_on_tile))
 			# when a tile with a unit on it is selected
 			if unit_on_tile:
 				# unit is own -> select it
