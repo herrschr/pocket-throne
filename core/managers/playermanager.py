@@ -5,6 +5,7 @@ from random import choice
 from core.entities.player import Player
 from core.entities.fraction import Fraction
 from core.entities.event import *
+from core.managers.locator import Locator
 from core.managers.filemanager import FileManager
 from core.managers.eventmanager import EventManager
 
@@ -67,9 +68,8 @@ class PlayerManager:
 				if fraction_filecontent != "":
 					# create json object and fraction entity
 					fraction_json = json.loads(fraction_filecontent)
-					fraction = Fraction()
+					fraction = Fraction(fraction_basename)
 					# fill fractions properties from json
-					fraction._basename = fraction_basename
 					fraction.name = fraction_json["name"]
 					fraction.name_de = fraction_json["name_de"]
 					fraction.city_prefixes = fraction_json["city_prefixes"]
@@ -77,6 +77,10 @@ class PlayerManager:
 					# add fraction to the array
 					self.fractions.append(fraction)
 		print("[IngameManager] fractions=" + repr(self.fractions))
+
+	# returns all players
+	def get_players(self):
+		return self.players
 
 	# add a player by class, system method
 	def _add_player(self, player, fraction=None):
@@ -120,7 +124,7 @@ class PlayerManager:
 	# return a fraction by its name
 	def get_fraction_by_name(self, fraction_name):
 		for fraction in self.fractions:
-			if fraction.name == fraction_name:
+			if fraction._basename == fraction_name:
 				return fraction
 
 	# return a random fraction
@@ -137,6 +141,17 @@ class PlayerManager:
 		# player one starts
 		actual_player_num = 1
 		self.change_actual_player(actual_player_num)
+
+	# add player income per city for each one
+	def _add_income_for_cities(self):
+		for player in self.get_players():
+			# calculate the gold gain depending on city count of the player
+			player_cities = Locator.CITY_MGR.get_cities(for_specific_player=player.get_number())
+			city_count = len(player_cities)
+			# 5 gold per city per turn
+			gold_gain = city_count *5
+			# add it to the players gold treasure
+			player.gain_gold(gold_gain)
 
 	# internal: end turn of the actual player and switch to next one
 	def next_one(self):
@@ -163,8 +178,8 @@ class PlayerManager:
 		if isinstance(event, GameStartedEvent):
 			self.start_game()
 
-		if isinstance(event, MouseClickedEvent):
-			pass
+		if isinstance(event, NextTurnEvent):
+			self._add_income_for_cities()
 
 		if isinstance(event, GuiButtonClickedEvent):
 			if event.button_tag == "NEXTTURN":
