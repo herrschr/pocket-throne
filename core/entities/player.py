@@ -4,6 +4,7 @@ class Player(object):
 	# static player properties
 	name = "Anonymous"
 	color = (255, 0, 0)
+	_fraction_name = None
 	fraction = None
 	hero = None
 	# changable player properties
