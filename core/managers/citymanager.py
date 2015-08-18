@@ -136,6 +136,7 @@ class CityManager:
 
 	# recruit a new unit of unit_blueprint type in a city
 	def recruit_unit(self, city, unit_blueprint):
+		# reduce player gold
 		city.recruit_unit(unit_blueprint)
 
 	def on_event(self, event):
@@ -166,7 +167,7 @@ class CityManager:
 			if event.button_tag.startswith("BUILD-") and self.has_selected_city():
 				recruit_basename = event.button_tag.split("-")[1].lower()
 				blueprint = Locator.UNIT_MGR.get_unit_blueprint(recruit_basename)
-				self.recruit_unit(get_selected_city(), blueprint)
+				self.recruit_unit(self.get_selected_city(), blueprint)
 
 		# finish unit recruition
 		if isinstance(event, CityRecruitmentFinishedEvent):
