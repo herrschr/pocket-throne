@@ -24,8 +24,9 @@ class Building:
 	image_override = None
 	json_path = None
 
-	# building flags (mainly for wonders)
+	# building flags
 	is_undestroyable = False
+	is_on_water = False
 	max_per_player = -1
 	max_per_map = -1
 
@@ -34,7 +35,7 @@ class Building:
 	playerId = -1
 	hp = -1
 
-	# position as absolute and relative to town center
+	# absolute position & psoition relativ to town center
 	pos_x = -1
 	pos_y = -1
 	rel_x = None

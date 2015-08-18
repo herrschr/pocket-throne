@@ -22,13 +22,11 @@ class TileMap(object):
 	items = []
 
 	def __init__(self):
-		# self.initialize_neighbortiles()
 		pass
 
 	# set neighbors into tile entities of this map, required for generating landscape bridge images
 	def initialize_neighbortiles(self):
 		for tile in self.tiles:
-			# in any 90° direction
 			tile._neighbor_west =  self._get_lds_at((tile.pos_x -1, tile.pos_y))
 			tile._neighbor_north =  self._get_lds_at((tile.pos_x, tile.pos_y -1))
 			tile._neighbor_east = self._get_lds_at((tile.pos_x +1, tile.pos_y))
@@ -92,6 +90,7 @@ class TileMap(object):
 		self._last_tile_id += 1
 		return self._last_tile_id
 
+	# returns an xml-like representation of the TileMap
 	def __repr__(self):
 		return "<TileMap name=" + self.name + " size=" + str(self.get_size()) + ">"
 

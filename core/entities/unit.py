@@ -123,7 +123,7 @@ class Weapon(object):
 	name_de = ""
 	image_path = None
 
-	# constants
+	# weapon constants
 	value = 1
 	distance = 1
 	hit_percent = 75

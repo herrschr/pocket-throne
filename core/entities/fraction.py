@@ -10,8 +10,8 @@ class Fraction:
 	city_prefixes = None
 	city_postfixes = None
 
-	def __init__(self):
-		pass
+	def __init__(self, fraction_name):
+		self._basename = fraction_name
 
 	# returns the name of this fraction
 	def get_name(self):
