@@ -66,8 +66,8 @@ class PocketThroneApp(App):
 		Locator.PLAYER_MGR = PlayerManager(mod=_mod_name)
 
 		# add two players
-		Locator.PLAYER_MGR.add_new_player("Rebellion", (255, 0, 0), fraction="stark")
-		Locator.PLAYER_MGR.add_new_player("Loyalists", (0, 0, 255), fraction="lannister")
+		Locator.PLAYER_MGR.add_new_player("Rebellion", (255, 0, 0), fraction_name="stark")
+		Locator.PLAYER_MGR.add_new_player("Loyalists", (0, 0, 255), fraction_name="lannister")
 
 		# add some units
 		Locator.UNIT_MGR.spawn_unit_at(2, "soldier", (23, 23))
