@@ -58,20 +58,12 @@ class PocketThroneApp(App):
 		Locator.GAMELOOP_MGR = GameLoopManager()
 
 		# Manager initialization inside Locator holder class
+		Locator.PLAYER_MGR = PlayerManager(mod=_mod_name)
 		Locator.MAP_MGR = MapManager(map_name=_map_name, mod=_mod_name)
 		Locator.TILEMAP = Locator.MAP_MGR.get_loaded_map()
 		Locator.UNIT_MGR = UnitManager(Locator.TILEMAP, mod=_mod_name)
 		Locator.CITY_MGR = CityManager(Locator.TILEMAP, mod=_mod_name)
 		Locator.GUI_MGR = GuiManager()
-		Locator.PLAYER_MGR = PlayerManager(mod=_mod_name)
-
-		# add two players
-		Locator.PLAYER_MGR.add_new_player("Rebellion", (255, 0, 0), fraction_name="stark")
-		Locator.PLAYER_MGR.add_new_player("Loyalists", (0, 0, 255), fraction_name="lannister")
-
-		# add some units
-		Locator.UNIT_MGR.spawn_unit_at(2, "soldier", (23, 23))
-		Locator.UNIT_MGR.spawn_unit_at(1, "archer", (27, 56))
 
 		# start loop & first turn
 		Locator.GAMELOOP_MGR.run()
