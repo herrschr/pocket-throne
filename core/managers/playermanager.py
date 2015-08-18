@@ -87,9 +87,15 @@ class PlayerManager:
 		# add player number to player and add all to player list
 		new_player = player
 		new_player.num = self.next_player_number()
+		# set player fraction
+		if not fraction and not new_player.fraction:
+			new_player.fraction = self.get_random_fraction()
+		elif fraction and not new_player.fraction:
+			new_player.fraction = self.get_fraction_by_name(fraction)
+		# add new player to player list
 		self.players.append(new_player)
-		# debug: log player addition
 		print (self._tag + "added player name=" + new_player.name + " on number " + str(new_player.num))
+
 
 	# add a new player by name and color
 	def add_new_player(self, player_name, (r, g, b), fraction_name=None):
@@ -175,12 +181,23 @@ class PlayerManager:
 		return self._last_player_id
 
 	def on_event(self, event):
+		# on MapLoadedEvent: add tilemap players to holder list
+		if isinstance(event, MapLoadedEvent):
+			map_players = event.tilemap.players
+			for player in map_players:
+				# set player fraction entity
+				player_fraction_name = player._fraction_name
+				self._add_player(player, fraction=player_fraction_name)
+
+		# on GameStartedEvent: start game with first turn
 		if isinstance(event, GameStartedEvent):
 			self.start_game()
 
+		# on NextTurnEvent: add income per city for each player
 		if isinstance(event, NextTurnEvent):
 			self._add_income_for_cities()
 
+		# on button click: forward players
 		if isinstance(event, GuiButtonClickedEvent):
 			if event.button_tag == "NEXTTURN":
 				self.forward()
