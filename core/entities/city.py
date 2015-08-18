@@ -3,8 +3,10 @@ from core.entities.unit import Unit
 from core.entities.event import *
 from random import choice
 
+from core.managers.locator import Locator
 from core.managers.eventmanager import EventManager
 
+# city wall and building positions (N = Wall, L = Street, O = Building)
 #	NNNNN
 #	NOLON
 #	NLOLN
@@ -39,7 +41,7 @@ class City:
 	production = []
 	production_time = -1
 
-	def __init__(self, name=None):
+	def __init__(self, name=None, buildings=[], capital=False):
 		# register as listener in EventManager
 		EventManager.register_listener(self)
 		# set name & hp
@@ -48,6 +50,9 @@ class City:
 			self.name = self.get_random_name()
 		else:
 			self.name = name
+		# eventually add buildings
+		for building_type in buildings:
+			self.add_building(building_type)
 
 	# generates a random name for the city
 	def get_random_name(self):
@@ -102,7 +107,7 @@ class City:
 	def get_size(self):
 		return self.size
 
-	# return the name of the city type, depending on its size
+	# return the name of the city type, depending on its size (Ruins < Village < City < Capital)
 	def get_size_name(self):
 		if self.city_size <= 0:
 			return "Ruins"
@@ -243,12 +248,12 @@ class City:
 			return True
 		return False
 
-	# reduce production time by 1 turn
+	# reduce production time by 1 turn (called by city on NextTurnEvent)
 	def reduce_production_time(self):
 		if self.production_time > -1:
 			self.production_time -= 1
 
-	# finish city production
+	# finish city production (eventually called on NextOneEvent)
 	def finish_production(self):
 		# fire CityRecruitmentFinishedEvent
 		ev_production_finished = CityRecruitmentFinishedEvent(self, self.get_unit_in_production())
