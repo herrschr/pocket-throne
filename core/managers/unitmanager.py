@@ -38,6 +38,14 @@ class UnitManager:
 		self.load_unit_skeletons(mod)
 		# spawn units from map file
 		self._map = tilemap
+		self._spawn_units_from_map()
+
+	# spawn units from the TileMap at UnitManager initialization
+	def _spawn_units_from_map(self):
+		map_units = self._map.units
+		self._map.units = []
+		for unit in map_units:
+			self.spawn_unit_at(unit.get_player_num(), unit.get_type(), unit.get_position())
 
 	# returns a new, unused unit id
 	def next_unit_id(self):
@@ -198,7 +206,6 @@ class UnitManager:
 		to_spawn.set_position((pos_x, pos_y))
 		# add unit to self._units and _map._units
 		self._units.append(to_spawn)
-		self._map.units.append(to_spawn)
 		# fire UnitSpawnedEvent
 		ev_unit_spawned = UnitSpawnedEvent(to_spawn, (pos_x, pos_y))
 		EventManager.fire(ev_unit_spawned)
