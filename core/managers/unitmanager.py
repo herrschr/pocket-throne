@@ -106,21 +106,23 @@ class UnitManager:
 
 	# returns a unit blueprint from unit json object
 	def load_unit_skeleton(self, unit_json, unit_basename):
-		# load basic values and fill in a new unit object
+		# load engine properties and fill in a new unit object
 		unit = Unit(unit_basename)
 		unit.name = unit_json["name"]
 		unit.name_de = unit_json["name_de"]
-		unit.categories = unit_json["categories"]
 		unit.image_path = unit_json["image"]
+		# load unit specific properties
 		unit.health = unit_json["health"]
 		unit.movement = unit_json["movement"]
+		# load fighting properties
+		unit.category = unit_json["category"]
 		# load production costs
 		unit.cost_turns = unit_json.get("cost_turns", 4)
 		unit.cost_gold = unit_json.get("cost_gold", unit.cost_turns *3)
 		# load unit requirements
 		unit.required_building = unit_json.get("required_building", None)
 		unit.required_fraction = unit_json.get("required_fraction", None)
-		# load maximal amount per player & per map
+		# load maximal amount per player & map
 		unit.max_per_player = unit_json.get("max_per_player", None)
 		unit.max_per_map = unit_json.get("max_per_map", None)
 		# add weapon & return finished unit
@@ -139,7 +141,8 @@ class UnitManager:
 		weapon.value = weapon_json["value"]
 		# fill weapon with fighting properties
 		weapon.distance = weapon_json["distance"]
-		weapon.hit_percent = weapon_json.get("hit_percent", 75)
+		weapon.category = weapon_json.get("category", "SWORD")
+		weapon.hit_chance = weapon_json.get("percent", 50)
 		weapon.atk_vs_category = weapon_json["atk_vs_category"]
 		return weapon
 
@@ -245,14 +248,14 @@ class UnitManager:
 	def attack_unit(self, attacker, defender):
 		# enough mp? (2 required)
 		if attacker.mp >= 2:
-			defender_cat = defender.categories[0]
+			defender_cat = defender.category
 			attack_damage = attacker.weapon.atk_vs_category.get(defender_cat, 0)
 			if attack_damage == 0:
 				print("[Fight] No damage vs. category " + defender_cat)
 			# reduce attacker's mp
 			attacker.mp = attacker.mp -2
 			# roll dice
-			req_percent = 100 - attacker.weapon.hit_percent
+			req_percent = 100 - attacker.weapon.hit_chance
 			rnd_percent = randrange(0, 100, 1)
 			print "[Fight] Dice roll: got " + str(rnd_percent) + " of " + str(req_percent)
 			# on hit success
