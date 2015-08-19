@@ -82,6 +82,15 @@ class City:
 	def set_player_num(self, player_num):
 		self.playerId = player_num
 
+	# city is captured by a new player
+	def capture(self, player_num):
+		# strop production & set new player
+		self.stop_production()
+		self.set_player_num(player_num)
+		# fire CityCapturedEvent
+		ev_city_captured = CityCapturedEvent(self, player_num)
+		EventManager.fire(ev_city_captured)
+
 	# get the image path for the town centre
 	def get_image_path(self):
 		if self.get_size() == 1:
@@ -253,6 +262,11 @@ class City:
 		if self.production_time > -1:
 			self.production_time -= 1
 
+	# cancel city production (p.e. when its captured)
+	def stop_production(self):
+		self.production = []
+		self.production_time = -1
+
 	# finish city production (eventually called on NextOneEvent)
 	def finish_production(self):
 		# fire CityRecruitmentFinishedEvent
@@ -266,6 +280,15 @@ class City:
 		return "<City player="  + str(self.playerId) + " name=" + self.name + " size=" + str(self.get_size_name()) + " pos=" + str(self.get_position()) + " hp=" + str(self.hp) + ">"
 
 	def on_event(self, event):
+		# capture city when an enemy player is moving on this city
+		if isinstance(event, UnitMovedEvent):
+			unit_pos = event.unit.get_position()
+			# unit moves to city center
+			if unit_pos == self.get_position():
+				attacker_unit = event.unit
+				attacker_player_num = attacker_unit.get_player_num()
+				self.capture(attacker_player_num)
+
 		# reduce production time on NextTurnEvent
 		if isinstance(event, NextTurnEvent):
 			self.reduce_production_time()
