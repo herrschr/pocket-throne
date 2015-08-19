@@ -223,6 +223,7 @@ class UnitManager:
 		# check if move is possible
 		move_in_radius = False
 		moves = self.get_possible_moves(unit)
+		starting_pos = unit.get_position()
 		target_pos = (unit.pos_x + rel_x, unit.pos_y + rel_y)
 		way = abs(rel_x) + abs(rel_y)
 		# check if move is possible for moved unit
@@ -236,7 +237,7 @@ class UnitManager:
 			unit.pos_y += rel_y
 			unit.mp -= way
 			#fire UnitMovedEvent
-			ev_unit_moved = UnitMovedEvent(unit)
+			ev_unit_moved = UnitMovedEvent(unit, starting_pos)
 			EventManager.fire(ev_unit_moved)
 		return unit
 
@@ -253,7 +254,7 @@ class UnitManager:
 			# roll dice
 			req_percent = 100 - attacker.weapon.hit_percent
 			rnd_percent = randrange(0, 100, 1)
-			print "[Fight] Roll dice: got " + str(rnd_percent) + "/" + str(req_percent)
+			print "[Fight] Dice roll: got " + str(rnd_percent) + " of " + str(req_percent)
 			# on hit success
 			if (rnd_percent > req_percent):
 				# deal damage & reduce attacker mp
@@ -269,12 +270,11 @@ class UnitManager:
 					EventManager.fire(ev_unit_killed)
 		# not enough mp left for an attack
 		else:
-			print("[Fight] no more mp.")
+			print("[Fight] Aborted. Not enough mp left.")
 
 	# remove/kill unit
 	def remove_unit(self, unit):
 		self._units.remove(unit)
-		self._map.units.remove(unit)
 		return unit
 
 	# debug method; prints all loaded skeletons
@@ -286,7 +286,7 @@ class UnitManager:
 	def get_possible_moves(self, unit):
 		movement_helper = UnitMovementHelper(unit, self._map)
 		possible_moves = movement_helper.get_possible_moves()
-		# filter tiles with own unit on top
+		# remove tiles with own unit
 		for pseudotile in possible_moves:
 			unit_on_tile = self.get_unit_at((pseudotile.pos_x, pseudotile.pos_y))
 			if unit_on_tile:
