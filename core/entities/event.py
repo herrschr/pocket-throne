@@ -58,9 +58,10 @@ class UnitMoveRequest(Event):
 		self.pos = (rel_x, rel_y)
 
 class UnitMovedEvent(Event):
-	def __init__(self, unit):
+	def __init__(self, unit, from_pos):
 		self.name = "UnitMovedEvent unit=" + str(unit)
 		self.unit = unit
+		self.from_pos = from_pos
 
 class UnitSelectedEvent(Event):
 	def __init__(self, unit, moves=[], attacks=[]):
@@ -97,6 +98,12 @@ class CitySelectedEvent(Event):
 		self.name = "CitySelectedEvent city=" + repr(city) + " recruitable=" + str(recruitable)
 		self.city = city
 		self.recruitable = recruitable
+
+class CityCapturedEvent(Event):
+	def __init__(self, city, player_num):
+		self.name = "CityCapturedEvent: city=" + repr(city) + " by player " + str(player_num)
+		self.city = city
+		self.player_num = player_num
 
 class CityRecruitmentStartedEvent(Event):
 	def __init__(self, city, blueprint):
