@@ -74,44 +74,29 @@ class MapWidget(Widget):
 
 	# draw the map on the widget canvas
 	def draw_map(self):
-		# add tiles to draw
+		# clear the canvas
+		with self.canvas:
+			# clear anything
+			self.canvas.clear()
+			# draw all tiles visible with the actual map scrolling
+			self._draw_tiles()
+			# draw cities
+			self._draw_cities()
+			# draw units
+			self._draw_units()
+		# the map is redrawn successfully
+		self._dirty = False
+
+	# draw any tiles that are inse the map viewport
+	def _draw_tiles(self):
 		tiles_in_viewport = []
-		units_in_viewport = []
-		cities_in_viewport = []
-		buildings_in_viewport = []
 		# get all tiles inside the viewport
 		for iy in range(self.scrolled_y, self.scrolled_y + self.grid_height):
 			for ix in range(self.scrolled_x, self.scrolled_x + self.grid_width):
 				tile = Locator.TILEMAP.get_tile_at((ix, iy))
 				if tile != None:
 					tiles_in_viewport.append(tile)
-		# get all buildings in viewport
-		buildings = []
-		for city in Locator.CITY_MGR.get_cities():
-			buildings.extend(city.get_buildings())
-		for building in buildings:
-			bld_pos = building.get_position()
-			if self.is_in_viewport(bld_pos):
-				buildings_in_viewport.append(building)
 
-		# get all units inside the viewport
-		for unit in Locator.UNIT_MGR.get_units():
-			pass
-
-		# clear the canvas
-		with self.canvas:
-			# clear anything
-			self.canvas.clear()
-			# draw all tiles visible with the actual map scrolling
-			self._draw_tiles(tiles_in_viewport)
-			# draw cities
-			self._draw_cities(buildings_in_viewport)
-			# draw units
-			self._draw_units()
-		# the map is redrawn successfully
-		self._dirty = False
-
-	def _draw_tiles(self, tiles_in_viewport):
 		# draw tiles in vp
 		for tile in tiles_in_viewport:
 			gui_pos = self.to_gui(self.to_scrolled((tile.pos_x, tile.pos_y)))
@@ -126,7 +111,20 @@ class MapWidget(Widget):
 			gui_pos = self.to_gui(self.to_scrolled(selected_tile.get_position()))
 			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
-	def _draw_cities(self, buildings_in_viewport):
+	# draw any city and buildung inside the viewport
+	def _draw_cities(self):
+		# holder list for cities & buildings inside the viewport
+		cities_in_viewport = []
+		buildings_in_viewport = []
+		# get all buildings inside the viewport
+		buildings = []
+		for city in Locator.CITY_MGR.get_cities():
+			buildings.extend(city.get_buildings())
+		for building in buildings:
+			bld_pos = building.get_position()
+			if self.is_in_viewport(bld_pos):
+				buildings_in_viewport.append(building)
+
 		# draw every city from CityManager
 		for city in Locator.CITY_MGR._cities:
 			texture = Image(FileManager.image_path() + city.get_image_path()).texture
@@ -138,8 +136,16 @@ class MapWidget(Widget):
 			gui_pos = self.to_gui(self.to_scrolled(building.get_position()))
 			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
+	# draw any unit inside the viewport
 	def _draw_units(self):
-		for unit in Locator.UNIT_MGR._units:
+		units_in_viewport = []
+		# get all units inside the viewport
+		for unit in Locator.UNIT_MGR.get_units():
+			unit_pos = unit.get_position()
+			if self.is_in_viewport(unit_pos):
+				units_in_viewport.append(unit)
+		# draw any unit inside the viewport
+		for unit in units_in_viewport:
 			texture = Image(FileManager.image_path() + unit.image_path).texture
 			gui_pos = self.to_gui(self.to_scrolled((unit.pos_x, unit.pos_y)))
 			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
@@ -154,6 +160,7 @@ class MapWidget(Widget):
 				gui_pos = self.to_gui(self.to_scrolled((pseudotile.pos_x, pseudotile.pos_y)))
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
+	# select correct tile on mouse click
 	def on_touch_down(self, touch):
 		# translate y pos (0|0 is on top left of the window)
 		touch_inv_y = Window.height - touch.y
@@ -174,6 +181,7 @@ class MapWidget(Widget):
 			ev_mouse_rightclicked = MouseRightClickedEvent((touch.x, touch_inv_y))
 			EventManager.fire(ev_mouse_rightclicked)
 
+	# fire MouseReleasedEvent on mouse drag movement
 	def on_touch_up(self, touch):
 		# get touch position & position in grid
 		touch_inv_y = Window.height - touch.y
