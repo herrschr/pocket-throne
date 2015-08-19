@@ -214,12 +214,13 @@ class City:
 		while i < length:
 			# get tile at wall position
 			wall = self.add_building_at("wall", (rel_x, rel_y))
+			# set correct image paths in image_override of the wall building
 			wall.image_override = image_path
 			if vertically:
 				rel_y += 1
 			else:
 				rel_x += 1
-				# make wall gates on top & bottom
+				# make wall gates on top & bottom of an horizontal wall
 				if i == 1:
 					wall.image_override = gate_image_path
 			i += 1
@@ -236,10 +237,9 @@ class City:
 		while i < 4:
 			# calculate absolute building position
 			wall_position = edge_positions[i]
-			# build wall wall edges
-			# get full wall edge image path
+			# get full image path of the wall edge
 			edge_img_path = edge_img_prefix + edge_img_postfix[i] + ".png"
-			# create wall building
+			# create wall building and set image_override
 			wall_edge = self.add_building_at("wall", wall_position)
 			wall_edge.image_override = edge_img_path
 			i += 1
@@ -283,8 +283,8 @@ class City:
 		# capture city when an enemy player is moving on this city
 		if isinstance(event, UnitMovedEvent):
 			unit_pos = event.unit.get_position()
-			# unit moves to city center
-			if unit_pos == self.get_position():
+			# when  an enemy unit moves into city center
+			if unit_pos == self.get_position() and unit.get_player_num != self.get_player_num():
 				attacker_unit = event.unit
 				attacker_player_num = attacker_unit.get_player_num()
 				self.capture(attacker_player_num)
