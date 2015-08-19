@@ -1,7 +1,7 @@
 {
 	"name": "Archer",
 	"name_de": "Bogenschütze",
-	"categories": ["INF", "INF_DISTANCE"],
+	"categories": "INF",
 
 	"image": "unit_std_archer.png",
 	"health": 5,
@@ -14,6 +14,7 @@
 		"value": 1,
 		"distance": 3,
 		"hit_percent": 40,
+		"category": "BOW",
 		"atk_vs_category":
 		{
 			"INF": 4,

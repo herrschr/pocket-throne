@@ -1,7 +1,7 @@
 {
 	"name": "Courier",
 	"name_de": "Kurier",
-	"categories": ["CAV", "CAV_MELEE"],
+	"category": "CAV",
 
 	"image": "unit_std_swordsman.png",
 	"health": 6,
@@ -16,6 +16,7 @@
 		"value": 1,
 		"distance": 1,
 		"percent": 55,
+		"category": "SWORD",
 		"atk_vs_category":
 		{
 			"INF": 4,

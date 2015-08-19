@@ -1,7 +1,7 @@
 {
 	"name": "Guardist",
 	"name_de": "Burgwache",
-	"categories": ["INF", "INF_MELEE"],
+	"category": "INF",
 
 	"image": "unit_std_swordsman.png",
 	"health": 7,
@@ -14,6 +14,7 @@
 		"value": 1,
 		"distance": 1,
 		"percent": 65,
+		"category": "SPEAR",
 		"atk_vs_category":
 		{
 			"INF": 4,

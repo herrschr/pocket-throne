@@ -1,7 +1,7 @@
 {
 	"name": "Soldier",
 	"name_de": "Soldat",
-	"categories": ["INF", "INF_MELEE"],
+	"category": "HEAVY_INF",
 
 	"image": "unit_std_swordsman.png",
 	"health": 9,
@@ -16,6 +16,7 @@
 		"value": 1,
 		"distance": 1,
 		"percent": 65,
+		"category": "SWORD",
 		"atk_vs_category":
 		{
 			"INF": 6,

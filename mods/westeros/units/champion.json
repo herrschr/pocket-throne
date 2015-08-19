@@ -1,7 +1,7 @@
 {
 	"name": "Champion",
-	"name_de": "Ehrenritter",
-	"categories": ["CAV", "CAV_MELEE"],
+	"name_de": "Champion",
+	"category": "CAV",
 
 	"required_fraction": "lannister",
 	"required_building": "stables",
@@ -17,6 +17,7 @@
 		"value": 1,
 		"distance": 2,
 		"percent": 65,
+		"category": "SPEAR",
 		"atk_vs_category":
 		{
 			"INF": 6,

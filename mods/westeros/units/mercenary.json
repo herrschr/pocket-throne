@@ -1,7 +1,7 @@
 {
 	"name": "Mercenary",
 	"name_de": "Söldner",
-	"categories": ["INF", "INF_MELEE"],
+	"category": "INF",
 
 	"image": "unit_std_swordsman.png",
 	"health": 5,
@@ -14,6 +14,7 @@
 		"value": 1,
 		"distance": 1,
 		"percent": 45,
+		"category": "SWORD",
 		"atk_vs_category":
 		{
 			"INF": 7

@@ -1,7 +1,7 @@
 {
 	"name": "Knight",
 	"name_de": "Ritter",
-	"categories": ["CAV", "CAV_MELEE"],
+	"category": "CAV",
 
 	"image": "unit_std_swordsman.png",
 	"health": 8,
@@ -16,6 +16,7 @@
 		"value": 1,
 		"distance": 2,
 		"percent": 65,
+		"category": "SPEAR",
 		"atk_vs_category":
 		{
 			"INF": 6,
