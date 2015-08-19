@@ -7,19 +7,21 @@ class Unit(object):
 	_possible_moves = []
 
 	# engine properties
-	_name = ""
 	name = ""
 	name_de = ""
 	image_path = None
 
-	# constants
-	categories = []
+	# unit properties
 	health = 4
 	movement = 2
-	is_owned_by_nature = False
+
+	# fighting properties
 	weapon = None
+	# unit category (INF, HEAVY_INF, CAV, MACHINE)
+	category = None
 
 	# limited number
+	is_owned_by_nature = False
 	has_player_max = False
 	has_map_max = False
 	max_per_player = -1
@@ -117,15 +119,18 @@ class Unit(object):
 # Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
 class Weapon(object):
 	# engine properties
-	_id = -1
 	name = ""
 	name_de = ""
-	image_path = None
 
 	# weapon constants
 	value = 1
 	distance = 1
-	hit_percent = 75
+
+	# chance to hit the enemy unit
+	hit_chance = 50
+	# weapon category (SWORD, SPEAR, BOW)
+	category = None
+	# damage vs. unit category
 	atk_vs_category = []
 
 
