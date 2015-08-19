@@ -25,7 +25,6 @@ class Unit(object):
 	max_per_player = -1
 	max_per_map = -1
 
-	# TODO: load requirements and costs into skeletons
 	# requirements
 	required_building = None
 	required_fraction = None
