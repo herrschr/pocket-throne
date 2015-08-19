@@ -20,9 +20,9 @@ class Building:
 		"siege_workshop": "Siege Workshop",
 		"mansion": "Mansion"}
 
-	# file paths
+	# set a non-default image path to draw here
+	# normally it will be generated from building name
 	image_override = None
-	json_path = None
 
 	# building flags
 	is_undestroyable = False
@@ -32,7 +32,7 @@ class Building:
 
 	# changeable building vars
 	city = None
-	playerId = -1
+	player_num = -1
 	hp = -1
 
 	# absolute position & psoition relativ to town center
@@ -49,6 +49,7 @@ class Building:
 		# set building type & parent city
 		self._type = building_type
 		self.city = city
+		self.player_num = city.get_player_num()
 
 	# returns the type of this building
 	def get_type(self):
@@ -56,7 +57,7 @@ class Building:
 
 	# returns the number of buildings owner
 	def get_player_num(self):
-		return self.playerId
+		return self.player_num
 
 	# return the english name of this building
 	def get_name(self):
