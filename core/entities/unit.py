@@ -26,6 +26,7 @@ class Unit(object):
 	unit_type = None
 
 	# unit flags
+	is_disabled = False
 	is_owned_by_nature = False
 	max_per_player = -1
 	max_per_map = -1

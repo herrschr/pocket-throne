@@ -110,6 +110,7 @@ class UnitManager:
 	def load_unit_skeleton(self, unit_json, unit_basename):
 		# load engine properties and fill in a new unit object
 		unit = Unit(unit_basename)
+		unit.is_disabled = unit_json.get("disabled", False)
 		unit.name = unit_json["name"]
 		unit.name_de = unit_json["name_de"]
 		unit.image_path = unit_json["image"]
@@ -154,19 +155,27 @@ class UnitManager:
 	def get_units(self):
 		return self._units
 
-	# get unit blueprints as list
-	def get_unit_blueprints(self, for_specific_player=None):
-		blueprints =  []
+	# get a list of enabled unit blueprints
+	def get_unit_blueprints(self, for_specific_player=None, add_disabled=False):
+		enabled_blueprints =  []
+		blueprints = []
+		# filter deisabled blueprints
+		if add_disabled:
+			enabled_blueprints = self.get_all_blueprints()
+		else:
+			for blueprint in self.get_all_blueprints():
+				if not blueprint.is_disabled:
+					enabled_blueprints.append(blueprint)
 		# when for_specific_player is none: return all unit blueprints
 		if not for_specific_player:
-			for blueprint in self._skeletons.itervalues():
+			for blueprint in enabled_blueprints:
 				blueprints.append(blueprint)
 		# else return only blueprints recruitable by a specific player num
 		else:
 			# get the fraction name of player number in for_specific_player
 			player = Locator.PLAYER_MGR.get_player_by_num(for_specific_player)
 			player_fraction_name = player.get_fraction()._basename
-			for blueprint in self._skeletons.itervalues():
+			for blueprint in enabled_blueprints:
 				req_fraction = blueprint.get_required_fraction()
 				# add blueprint when no fraction is required
 				if not req_fraction:
@@ -174,6 +183,13 @@ class UnitManager:
 				# add blueprint when player has required fraction for the unit
 				elif req_fraction == player_fraction_name:
 					blueprints.append(blueprint)
+		return blueprints
+
+	# returns blueprints as a list, ignore if enabled
+	def get_all_blueprints(self):
+		blueprints = []
+		for blueprint in self._skeletons.itervalues():
+			blueprints.append(blueprint)
 		return blueprints
 
 	# returns a single unit blueprint by its basename
