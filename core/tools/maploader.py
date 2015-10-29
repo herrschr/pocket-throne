@@ -1,5 +1,6 @@
 import json
 import os
+from random import seed, choice
 
 from kivy.core.image import Image
 
@@ -16,6 +17,8 @@ class MapLoader:
 	_initialized = False
 	_map = None
 	_textures = {}
+
+	_rnd_buildings = ["stables", "market"]
 
 	def __init__(self, map_name, mod="base"):
 		# load map file into json_map json dict
@@ -116,7 +119,9 @@ class MapLoader:
 				city.set_name(city_name)
 			# add wall & stables
 			city.add_city_wall()
-			city.add_building("stables")
+			seed()
+			random_building = choice(self._rnd_buildings)
+			city.add_building(random_building)
 			cities.append(city)
 		self._map.cities = cities
 
