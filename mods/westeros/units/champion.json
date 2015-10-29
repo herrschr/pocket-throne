@@ -5,6 +5,7 @@
 	"category": "KNIGHT",
 	"level": 2,
 
+	"disabled": true,
 	"required_fraction": "lannister",
 	"required_building": "stables",
 

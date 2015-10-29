@@ -2,6 +2,8 @@
 	"name": "Elite Guardist",
 	"name_de": "Leibwache",
 
+	"disabled": true,
+
 	"type": "HEAVY_INF",
 	"category": "GUARD",
 	"level": 3,
