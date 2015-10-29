@@ -8,7 +8,7 @@ class Building:
 	# building type
 	_type = None
 	# possible building types & names
-	_types = ["wall", "tower", "blacksmith", "bordel", "stables", "harbour", "tunnels", "siege_workshop", "mansion"]
+	_types = ["wall", "tower", "blacksmith", "bordel", "stables", "harbour", "tunnels", "siege_workshop", "mansion", "market"]
 	_names = {
 		"wall": "Wall",
 		"tower": "Tower",
