@@ -1,4 +1,4 @@
-# pocket-throne
+# Pocket Throne
 
 A tile and turn-based strategy game highly moddable through json files
 
