@@ -20,8 +20,8 @@ class MapWidget(Widget):
 	grid_width = 0
 	grid_height = 0
 
-	def __init__(self, **kwargs):
-		super(MapWidget, self).__init__(**kwargs)
+	def __init__(self):
+		super(MapWidget, self).__init__(size=(Locator.TILEMAP.size_x *40, Locator.TILEMAP.size_y *40))
 		# register in eventmanager
 		EventManager.register_listener(self)
 		self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
@@ -31,7 +31,7 @@ class MapWidget(Widget):
 		self.grid_height = int(Window.height / 40) +1
 		# load & draw map
 		self._map = Locator.TILEMAP
-		self.trigger_redraw()
+		self.draw_map()
 
 	# update the canvas when a redraw is required
 	def update(self):
@@ -87,7 +87,7 @@ class MapWidget(Widget):
 		# the map is redrawn successfully
 		self._dirty = False
 
-	# draw any tiles that are inse the map viewport
+	# draw any tiles that are inside the map viewport
 	def _draw_tiles(self):
 		tiles_in_viewport = []
 		# get all tiles inside the viewport
@@ -106,12 +106,12 @@ class MapWidget(Widget):
 			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 		# draw selected tiles
 		if Locator.MAP_MGR.selected_tile != None:
-			selected_tile = Locator.MAP_MGR.selected_tile
+			selected_tile = Locator.MAP_MGR.get_selected_tile()
 			texture = Image(FileManager.image_path() + "tile_selected.png").texture
 			gui_pos = self.to_gui(self.to_scrolled(selected_tile.get_position()))
 			Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
-	# draw any city and buildung inside the viewport
+	# draw any city and building inside the viewport
 	def _draw_cities(self):
 		# holder list for cities & buildings inside the viewport
 		cities_in_viewport = []
