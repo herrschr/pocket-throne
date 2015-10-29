@@ -1,7 +1,7 @@
 from building import Building
 from core.entities.unit import Unit
 from core.entities.event import *
-from random import choice
+from random import choice, seed
 
 from core.managers.locator import Locator
 from core.managers.eventmanager import EventManager
@@ -64,7 +64,9 @@ class City:
 		prefixes = ["Iron", "Green", "Wood", "Wild", "Dried",  "Old", "New", "Saint", "Death"]
 		postfixes = ["valley", "mountain", "city", "river", "smith",  " Creek", " Towers", " Monument", " Settlement"]
 		# select one of each
+		seed()
 		prefix = choice(prefixes)
+		seed()
 		postfix = choice(postfixes)
 		# put them together & return the city name
 		city_name = prefix + postfix
@@ -184,6 +186,7 @@ class City:
 				print("city " + self.name + ": " + str(taken_rel_pos) + " isnt free")
 				positions.remove(taken_rel_pos)
 		# select a random position out of them
+		seed()
 		rel_pos = choice(positions)
 		# build the building a this pos
 		self.add_building_at(building_type, rel_pos)
