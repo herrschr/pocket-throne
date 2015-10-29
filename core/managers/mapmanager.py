@@ -10,41 +10,54 @@ class MapManager:
 	has_selected_tile = False
 	selected_tile = None
 
+	enable_postloading = True
+	enable_land_elevation = True
+	enable_terrain_bridges = False
+
 	def __init__(self, map_name=None, mod="base"):
 		# register in EventManager
 		EventManager.register_listener(self)
-		# set self._map
+		# set self._map; abort when none
 		self._mod = mod
 		if map_name == None:
 			return
 		else:
 			self.load_map(map_name)
 
+	# load a new map by it's name and fire MapLoadedEvent on completion
 	def load_map(self, map_name):
 		tilemap = MapLoader(map_name, mod=self._mod).get_map()
 		self._map = self.postload_map(tilemap)
 		EventManager.fire(MapLoadedEvent(self._map))
 
+	# tweak the TileMap after loading it with MapLoader (not neccessary)
 	def postload_map(self, tilemap):
-		# set terrain bridges
+		# set terrain bridges in map
 		tilemap.initialize_neighbortiles()
-		for tile in tilemap.tiles:
-			n_north = tile.get_neighbor("N")
-			n_south = tile.get_neighbor("S")
-			n_west = tile.get_neighbor("W")
-			n_east = tile.get_neighbor("E")
-			# WATER
-			if tile.get_landscape() == "W":
-				if n_north != "W":
-					tile.image_override = "tile_water_ontop_grass.png"
-			# SNOW
-			if tile.get_landscape() == "S":
-				if n_north == "G" or n_north == "F" or n_north == "M":
-					tile.image_override = "tile_snow_north_grass.png"
-				elif n_south == "G" or n_south == "F" or n_south == "M":
-					tile.image_override = "tile_snow_south_grass.png"
+		# override image paths on bridge tiles
+		if self.enable_postloading:
+			for tile in tilemap.tiles:
+				# cache neighbor terrain of loaded tile
+				n_north = tile.get_neighbor("N")
+				n_south = tile.get_neighbor("S")
+				n_west = tile.get_neighbor("W")
+				n_east = tile.get_neighbor("E")
+				# LAND ELEVATION
+				if self.enable_land_elevation:
+					if tile.get_landscape() == "W":
+						if n_north != "W":
+							tile.image_override = "tile_water_ontop_grass.png"
+				# TERRAIN BRIDGES
+				# Snow
+				if self.enable_terrain_bridges:
+					if tile.get_landscape() == "S":
+						if n_north == "G" or n_north == "F" or n_north == "M":
+							tile.image_override = "tile_snow_north_grass.png"
+						elif n_south == "G" or n_south == "F" or n_south == "M":
+							tile.image_override = "tile_snow_south_grass.png"
 		return tilemap
 
+	# returns the TileMap instance of this game
 	def get_loaded_map(self):
 		return self._map
 
@@ -60,6 +73,10 @@ class MapManager:
 		self.has_selected_tile = True
 		EventManager.fire(TileUnselectedEvent())
 		EventManager.fire(TileSelectedEvent(self.selected_tile, (pos_x, pos_y)))
+		return self.selected_tile
+
+	# returns user-selected Tile
+	def get_selected_tile(self):
 		return self.selected_tile
 
 	# revert tile selection
