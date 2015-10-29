@@ -16,14 +16,17 @@ from core.managers.eventmanager import EventManager
 class City:
 	# engine properties
 	_id = -1
+	_map = None
+
+	#names
 	name = ""
 	name_de = ""
-	_map = None
+
+	# resources
 	image_path = None
 	json_path = None
-	size = "1x1"
 
-	# city flags
+	# flags
 	is_undestroyable = False
 	is_owned_by_nature = False
 
@@ -31,6 +34,7 @@ class City:
 	playerId = -1
 	city_size = 1
 	hp = -1
+	region = None
 	pos_x = -1
 	pos_y = -1
 
