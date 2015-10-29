@@ -3,6 +3,7 @@ import os, sys, imp
 
 # import os-dependant libs
 import kivy
+kivy.require('1.9.1')
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
@@ -34,7 +35,7 @@ class PocketThroneApp(App):
 	def build(self):
 		self.initialize_managers()
 		# create MapWidget in Scatter for free movement
-		mapwidget = MapWidget(size=(Locator.TILEMAP.size_x *40, Locator.TILEMAP.size_y *40))
+		mapwidget = MapWidget()
 		# create GUI
 		bottombar = BottomBar()
 		# add all to root layout
