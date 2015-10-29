@@ -3,7 +3,8 @@ import json
 import copy
 from random import randrange
 
-from core.entities.unit import Unit, Weapon
+from core.entities.unit import Unit
+from core.entities.weapon import Weapon
 from core.entities.tile import Tile
 
 from core.managers.filemanager import FileManager
@@ -94,6 +95,7 @@ class UnitManager:
 			if file.endswith(".json"):
 				# open file and read content
 				unit_basename = file.split(".")[0]
+				print("start loading unit blueprint for " + unit_basename)
 				unit_file_path = unit_folder_path + file
 				unit_filecontent = FileManager.read_file(unit_file_path)
 				# load json content to class
@@ -115,6 +117,7 @@ class UnitManager:
 		unit.health = unit_json["health"]
 		unit.movement = unit_json["movement"]
 		# load fighting properties
+		unit.unit_type = unit_json["type"]
 		unit.category = unit_json["category"]
 		# load production costs
 		unit.cost_turns = unit_json.get("cost_turns", 4)
@@ -134,16 +137,17 @@ class UnitManager:
 	def load_weapon(self, unit_json):
 		# get the weapon json object out of the unit json object
 		weapon_json = unit_json["weapon"]
-		weapon = Weapon()
-		# fill weapon with basic properties
+		weapon_category = weapon_json["category"]
+		weapon = Weapon(weapon_category)
+		# fill weapon with required properties
 		weapon.name = weapon_json["name"]
 		weapon.name_de = weapon_json["name_de"]
-		weapon.value = weapon_json["value"]
 		# fill weapon with fighting properties
 		weapon.distance = weapon_json["distance"]
-		weapon.category = weapon_json.get("category", "SWORD")
-		weapon.hit_chance = weapon_json.get("percent", 50)
-		weapon.atk_vs_category = weapon_json["atk_vs_category"]
+		weapon.hit_chance = weapon_json.get("hit_chance", 50)
+		weapon.damage = weapon_json["damage"]
+		weapon.multiplier_vs_category = weapon_json.get("multiplier_vs_category", {})
+		weapon.merge_attack_multipliers()
 		return weapon
 
 	# get all units as list
@@ -248,10 +252,11 @@ class UnitManager:
 	def attack_unit(self, attacker, defender):
 		# enough mp? (2 required)
 		if attacker.mp >= 2:
-			defender_cat = defender.category
-			attack_damage = attacker.weapon.atk_vs_category.get(defender_cat, 0)
+			# calculate wepon damage vs. defender unit type
+			defender_type = defender.unit_type
+			attack_damage = attacker.weapon.get_damage_vs(defender_type)
 			if attack_damage == 0:
-				print("[Fight] No damage vs. category " + defender_cat)
+				print("[Fight] Aborted. No damage vs. category " + defender_type)
 			# reduce attacker's mp
 			attacker.mp = attacker.mp -2
 			# roll dice
