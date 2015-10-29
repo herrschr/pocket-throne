@@ -1,3 +1,5 @@
+from core.entities.weapon import Weapon
+
 # Unit class for std-units and heroes
 class Unit(object):
 	# system properties
@@ -15,15 +17,16 @@ class Unit(object):
 	health = 4
 	movement = 2
 
-	# fighting properties
+	# unit's weapon
 	weapon = None
+
 	# unit category (INF, HEAVY_INF, CAV, MACHINE)
 	category = None
+	# unit type (SOLDIER, MERC, GUARD, RIDDEN, KNIGHT)
+	unit_type = None
 
-	# limited number
+	# unit flags
 	is_owned_by_nature = False
-	has_player_max = False
-	has_map_max = False
 	max_per_player = -1
 	max_per_map = -1
 
@@ -35,8 +38,10 @@ class Unit(object):
 	cost_turns = 5
 	cost_gold = 10
 
-	# changeable building vars
+	# unit's owner
 	player_num = -1
+
+	# changeable unit vaiables
 	hp = -1
 	mp = movement
 
@@ -115,23 +120,6 @@ class Unit(object):
 	# heal this unit (increase hp)
 	def heal(self, heal_hp):
 		self.hp = self.hp + heal_hp
-
-# Weapon class for std-unit or hero, defines the dealed damage, defined in <unit>.weapon
-class Weapon(object):
-	# engine properties
-	name = ""
-	name_de = ""
-
-	# weapon constants
-	value = 1
-	distance = 1
-
-	# chance to hit the enemy unit
-	hit_chance = 50
-	# weapon category (SWORD, SPEAR, BOW)
-	category = None
-	# damage vs. unit category
-	atk_vs_category = []
 
 
 
