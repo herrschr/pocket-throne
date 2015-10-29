@@ -1,25 +1,23 @@
 {
 	"name": "Highlander",
 	"name_de": "Nordmann",
-	"category": "HEAVY_INF",
+	"type": "HEAVY_INF",
+	"category": "BANDIT",
+	"level": 4,
 
 	"required_fraction": "stark",
 
 	"image": "unit_std_swordsman.png",
 	"health": 5,
 	"movement": 3,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "War Axe",
 		"name_de": "Streitaxt",
-		"value": 1,
-		"distance": 1,
-		"percent": 55,
 		"category": "SWORD",
-		"atk_vs_category":
-		{
-			"INF": 7
-		}
+
+		"distance": 1,
+		"hit_chance": 45,
+		"damage": 9
 	}
 }

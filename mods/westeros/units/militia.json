@@ -1,24 +1,21 @@
 {
 	"name": "Militia",
 	"name_de": "Stadtwache",
-	"category": "INF",
+	"type": "INF",
+	"category": "GUARD",
+	"level": 1,
 
 	"image": "unit_std_swordsman.png",
 	"health": 6,
 	"movement": 2,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "Spear",
 		"name_de": "Speer",
-		"value": 1,
-		"distance": 1,
-		"percent": 65,
 		"category": "SPEAR",
-		"atk_vs_category":
-		{
-			"INF": 3,
-			"CAV": 3
-		}
+
+		"distance": 1,
+		"hit_chance": 65,
+		"damage": 5
 	}
 }

@@ -1,24 +1,21 @@
 {
 	"name": "Vanguard",
 	"name_de": "Vorhut",
-	"category": "INF",
+	"type": "INF",
+	"category": "SOLDIER",
+	"level": 1,
 
 	"image": "unit_std_swordsman.png",
 	"health": 6,
 	"movement": 3,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "Sword",
 		"name_de": "Schwert",
-		"value": 1,
-		"distance": 1,
-		"percent": 50,
 		"category": "SWORD",
-		"atk_vs_category":
-		{
-			"INF": 4,
-			"CAV": 2
-		}
+
+		"distance": 1,
+		"hit_chance": 65,
+		"damage": 4
 	}
 }

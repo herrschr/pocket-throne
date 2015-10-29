@@ -1,27 +1,25 @@
 {
 	"name": "Champion",
 	"name_de": "Champion",
-	"category": "CAV",
+	"type": "CAV",
+	"category": "KNIGHT",
+	"level": 2,
 
 	"required_fraction": "lannister",
 	"required_building": "stables",
 
 	"image": "unit_std_swordsman.png",
-	"health": 8,
+	"health": 12,
 	"movement": 5,
 	"size": "1x1",
 
 	"weapon": {
 		"name": "Lance",
 		"name_de": "Lanze",
-		"value": 1,
-		"distance": 2,
-		"percent": 65,
 		"category": "SPEAR",
-		"atk_vs_category":
-		{
-			"INF": 6,
-			"CAV": 6
-		}
+
+		"distance": 2,
+		"hit_chance": 75,
+		"damage": 9
 	}
 }

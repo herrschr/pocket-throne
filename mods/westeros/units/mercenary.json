@@ -1,23 +1,21 @@
 {
 	"name": "Mercenary",
 	"name_de": "Söldner",
-	"category": "INF",
+	"type": "INF",
+	"category": "MERC",
+	"level": 2,
 
 	"image": "unit_std_swordsman.png",
 	"health": 5,
 	"movement": 3,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "War Axe",
 		"name_de": "Streitaxt",
-		"value": 1,
-		"distance": 1,
-		"percent": 45,
 		"category": "SWORD",
-		"atk_vs_category":
-		{
-			"INF": 7
-		}
+
+		"distance": 1,
+		"hit_chance": 50,
+		"damage": 7
 	}
 }

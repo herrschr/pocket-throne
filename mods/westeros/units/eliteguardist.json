@@ -1,24 +1,22 @@
 {
 	"name": "Elite Guardist",
 	"name_de": "Leibwache",
-	"category": "HEAVY_INF",
+
+	"type": "HEAVY_INF",
+	"category": "GUARD",
+	"level": 3,
 
 	"image": "unit_std_swordsman.png",
 	"health": 9,
 	"movement": 2,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "Hellebarde",
 		"name_de": "Hellebarde",
-		"value": 1,
-		"distance": 1,
-		"percent": 50,
 		"category": "SPEAR",
-		"atk_vs_category":
-		{
-			"INF": 6,
-			"CAV": 6
-		}
+
+		"distance": 1,
+		"hit_chance": 75,
+		"damage": 8
 	}
 }

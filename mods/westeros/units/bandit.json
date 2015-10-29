@@ -1,23 +1,25 @@
 {
 	"name": "Bandit",
 	"name_de": "Gesetzloser",
-	"categories": "INF",
+
+	"type": "INF",
+	"category": "MERC",
+	"level": 1,
 
 	"image": "unit_std_swordsman.png",
 	"health": 4,
 	"movement": 3,
-	"size": "1x1",
 
 	"weapon": {
-		"name": "Woodcutter Axe",
+		"name": "Battle Axe",
 		"name_de": "Streitaxt",
-		"value": 1,
-		"distance": 1,
-		"percent": 40,
 		"category": "SWORD",
-		"atk_vs_category":
-		{
-			"INF": 6
+
+		"distance": 1,
+		"hit_chance": 40,
+		"damage": 6,
+		"multiplier_vs_category": {
+			"INF": 1.5
 		}
 	}
 }

@@ -1,23 +1,22 @@
 {
 	"name": "Crossbowman",
 	"name_de": "Armbrustschütze",
-	"category": "INF",
+
+	"type": "INF",
+	"category": "ARCHER",
+	"level": 2,
 
 	"image": "unit_std_archer.png",
 	"health": 5,
 	"movement": 3,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "Crossbow",
 		"name_de": "Armbrust",
-		"value": 1,
-		"distance": 3,
-		"hit_percent": 40,
 		"category": "BOW",
-		"atk_vs_category":
-		{
-			"INF": 7
-		}
+
+		"distance": 3,
+		"hit_chance": 40,
+		"damage": 6
 	}
 }

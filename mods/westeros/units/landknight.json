@@ -1,23 +1,21 @@
 {
 	"name": "Footknight",
 	"name_de": "Landritter",
-	"category": "HEAVY_INF",
+	"type": "HEAVY_INF",
+	"category": "SOLDIER",
+	"level": 3,
 
 	"image": "unit_std_swordsman.png",
 	"health": 9,
 	"movement": 2,
-	"size": "1x1",
 
 	"weapon": {
-		"name": "Long Sword",
-		"name_de": "Langschwert",
-		"value": 1,
-		"distance": 1,
-		"percent": 65,
+		"name": "Noble Sword",
+		"name_de": "Edles Schwert",
 		"category": "SWORD",
-		"atk_vs_category":
-		{
-			"INF": 6
-		}
+
+		"distance": 1,
+		"hit_chance": 75,
+		"damage": 7
 	}
 }

@@ -1,24 +1,21 @@
 {
 	"name": "Soldier",
 	"name_de": "Soldat",
-	"category": "INF",
+	"type": "INF",
+	"category": "SOLDIER",
+	"level": 2,
 
 	"image": "unit_std_swordsman.png",
 	"health": 6,
 	"movement": 3,
-	"size": "1x1",
 
 	"weapon": {
 		"name": "Sword",
 		"name_de": "Schwert",
-		"value": 1,
-		"distance": 1,
-		"percent": 65,
 		"category": "SWORD",
-		"atk_vs_category":
-		{
-			"INF": 5,
-			"CAV": 2
-		}
+
+		"distance": 1,
+		"hit_chance": 75,
+		"damage": 6
 	}
 }

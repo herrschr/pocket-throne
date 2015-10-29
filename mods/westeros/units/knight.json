@@ -1,26 +1,23 @@
 {
 	"name": "Knight",
 	"name_de": "Ritter",
-	"category": "CAV",
+	"type": "CAV",
+	"category": "KNIGHT",
+	"level": 1,
 
 	"image": "unit_std_swordsman.png",
-	"health": 8,
+	"health": 9,
 	"movement": 5,
-	"size": "1x1",
 
 	"required_building": "stables",
 
 	"weapon": {
 		"name": "Lance",
 		"name_de": "Lanze",
-		"value": 1,
-		"distance": 2,
-		"percent": 65,
 		"category": "SPEAR",
-		"atk_vs_category":
-		{
-			"INF": 6,
-			"CAV": 6
-		}
+
+		"distance": 2,
+		"hit_chance": 65,
+		"damage": 8
 	}
 }

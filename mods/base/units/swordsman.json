@@ -13,7 +13,7 @@
 		"name_de": "Schwert",
 		"value": 1,
 		"distance": 1,
-		"atk_vs_category":
+		"multiplier_vs_category":
 		{
 			"INF": 5,
 			"CAV": 3

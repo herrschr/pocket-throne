@@ -14,7 +14,7 @@
 		"value": 1,
 		"distance": 3,
 		"hit_percent": 40,
-		"atk_vs_category":
+		"multiplier_vs_category":
 		{
 			"INF": 7,
 			"CAV": 2
