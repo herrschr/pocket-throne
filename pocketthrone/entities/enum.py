@@ -30,6 +30,7 @@ class WidgetState(Enum):
 	STATE_PRESSED = "pressed"
 	STATE_DISABLED = "disabled"
 	STATE_INVALID = "invalid"
+	STATE_INVISIBLE = "invisible"
 	# set default
 	value = STATE_DEFAULT
 
