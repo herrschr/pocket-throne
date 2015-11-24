@@ -10,9 +10,6 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
 
 # import whole core managers
-from pocketthrone.entities.mod import Mod
-from pocketthrone.entities.tile import Tile
-from pocketthrone.entities.event import *
 from pocketthrone.managers.locator import Locator
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.eventmanager import EventManager
@@ -25,12 +22,25 @@ from pocketthrone.managers.mapmanager import MapManager
 from pocketthrone.managers.guimanager import GuiManager
 from pocketthrone.managers.playermanager import PlayerManager
 
+# import entities
+from pocketthrone.entities.mod import Mod
+from pocketthrone.entities.tile import Tile
+from pocketthrone.entities.event import *
+
+# import gui classes
 from pocketthrone.gui.mapwidget import MapWidget
 from pocketthrone.gui.bottombar import BottomBar
 from pocketthrone.gui.sidebar import SideBar
 from pocketthrone.tools.maploader import MapLoader
 
 class PocketThroneApp(App):
+	# init screen size in kivy configuration before starting
+	def build_config(self, config):
+		config.setdefaults('graphics', {
+			'width': 800,
+			'height': 600
+		})
+
 	def build(self):
 		self.initialize_managers()
 
@@ -46,18 +56,18 @@ class PocketThroneApp(App):
 
 	def initialize_managers(self):
 		# set mod and map to load here
-		_mod_name = "westeros"
-		_map_name = "westeros"
+		MODNAME = "westeros"
+		MAPNAME = "westeros"
 
 		# set basic managers in Locator class
-		Locator.MOD_MGR = ModManager(mod_name = _mod_name)
+		Locator.MOD_MGR = ModManager(mod_name = MODNAME)
 		Locator.GUI_MGR = GuiManager()
 		Locator.INPUT_MGR = InputManager()
 		Locator.GAMELOOP_MGR = GameLoopManager()
 
 		# Manager initialization inside Locator holder class
 		Locator.PLAYER_MGR = PlayerManager()
-		Locator.MAP_MGR = MapManager(map_name=_map_name)
+		Locator.MAP_MGR = MapManager(map_name=MAPNAME)
 		Locator.TILEMAP = Locator.MAP_MGR.get_tilemap()
 		Locator.UNIT_MGR = UnitManager()
 		Locator.CITY_MGR = CityManager()
