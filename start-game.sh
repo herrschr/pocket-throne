@@ -1,1 +1,1 @@
-python -m core
+python -m pocketthrone
