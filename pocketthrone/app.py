@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 # import python libraries
-import os, sys, imp
+import os
 
 # import kivy
 import kivy
@@ -7,72 +9,108 @@ kivy.require('1.9.1')
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 
 # import whole core managers
-from pocketthrone.managers.locator import Locator
-from pocketthrone.managers.filemanager import FileManager
+from pocketthrone.managers.locator import L
 from pocketthrone.managers.eventmanager import EventManager
+from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.inputmanager import InputManager
 from pocketthrone.managers.gameloopmanager import GameLoopManager
 from pocketthrone.managers.modmanager import ModManager
 from pocketthrone.managers.unitmanager import UnitManager
 from pocketthrone.managers.citymanager import CityManager
 from pocketthrone.managers.mapmanager import MapManager
-from pocketthrone.managers.guimanager import GuiManager
+from pocketthrone.managers.widgetmanager import WidgetManager
 from pocketthrone.managers.playermanager import PlayerManager
 
 # import entities
-from pocketthrone.entities.mod import Mod
+from pocketthrone.entities.unit import Unit
 from pocketthrone.entities.tile import Tile
+from pocketthrone.entities.building import Building
 from pocketthrone.entities.event import *
 
-# import gui classes
-from pocketthrone.gui.mapwidget import MapWidget
-from pocketthrone.gui.bottombar import BottomBar
-from pocketthrone.gui.sidebar import SideBar
+# import widget classes
+from pocketthrone.widgets.mapwidget import MapWidget
+from pocketthrone.widgets.bottombar import BottomBar
+from pocketthrone.widgets.sidebar import SideBar
 from pocketthrone.tools.maploader import MapLoader
 
 class PocketThroneApp(App):
-	# init screen size in kivy configuration before starting
+	# set mod and map to load here
+	MOD_NAME = "ancientlies"
+	MAP_NAME = "highland_bridge"
+
+	# auto-set display size before cstarting
 	def build_config(self, config):
 		config.setdefaults('graphics', {
 			'width': 800,
 			'height': 600
 		})
 
+	# build & return "root" widget
 	def build(self):
-		self.initialize_managers()
+		# initialize game basics
+		self.bootstrap()
+		self.initialize_game_dir()
+		self.initialize_mod()
+		self.initialize_map()
+		self.initialize_manager_locator()
+		# initialize L
+		# initialize user interface
+		self._build_user_interface()
+		root_layout = L.WidgetManager.get_widget("root_layout")
+		# start game loop and return root FloatLayout
+		self._start_game_loop()
+		return root_layout
 
-		# create GUI
-		root = FloatLayout(pos=(0,0), size=(Window.size))
-		Locator.GUI_MGR.register_widget("root", root)
+	def on_start(self):
+		print "Application started"
+
+	# boot game core
+	def bootstrap(self):
+		L.InputManager = InputManager()
+		L.GameLoopManager = GameLoopManager()
+		L.WidgetManager = WidgetManager()
+
+	# initialize game root directory
+	def initialize_game_dir(self):
+		game_root = os.path.abspath(__file__ + "/../../")
+		L.RootDirectory = game_root
+		FileManager.set_game_root(game_root)
+
+	# initialize L manager holder
+	def initialize_manager_locator(self):
+		# set basic managers in L class
+		# Manager initialization inside L holder class
+		L.PlayerManager = PlayerManager()
+		L.UnitManager = UnitManager()
+		L.CityManager = CityManager()
+
+	# load and set Mod to start
+	def initialize_mod(self):
+		L.ModManager = ModManager(mod_name = self.MOD_NAME)
+
+	# load and set TileMap to start
+	def initialize_map(self):
+		L.MapManager = MapManager(map_name=self.MAP_NAME)
+		tilemap = L.MapManager.load_map(self.MAP_NAME)
+		L.TileMap = tilemap
+
+	# make the root kivy Layout and register it in WidgetManager
+	def _build_user_interface(self):
+		# create root kivy Layout
+		root_layout = FloatLayout(pos=(0,0), size=(800, 600))
+		L.WidgetManager.register("root_layout", root_layout)
+		# add MapWidget to root and WidgetManager
 		mapwidget = MapWidget()
 		bottombar = BottomBar()
+		root_layout.add_widget(mapwidget)
+		root_layout.add_widget(bottombar)
+		L.WidgetManager.register("mapwidget", mapwidget)
+		L.WidgetManager.register("bottombar", bottombar)
+		return root_layout
 
-		root.add_widget(mapwidget)
-		root.add_widget(bottombar)
-		return root
-
-	def initialize_managers(self):
-		# set mod and map to load here
-		MODNAME = "westeros"
-		MAPNAME = "westeros"
-
-		# set basic managers in Locator class
-		Locator.MOD_MGR = ModManager(mod_name = MODNAME)
-		Locator.GUI_MGR = GuiManager()
-		Locator.INPUT_MGR = InputManager()
-		Locator.GAMELOOP_MGR = GameLoopManager()
-
-		# Manager initialization inside Locator holder class
-		Locator.PLAYER_MGR = PlayerManager()
-		Locator.MAP_MGR = MapManager(map_name=MAPNAME)
-		Locator.TILEMAP = Locator.MAP_MGR.get_tilemap()
-		Locator.UNIT_MGR = UnitManager()
-		Locator.CITY_MGR = CityManager()
-
+	def _start_game_loop(self):
 		# start loop & first turn
-		Locator.GAMELOOP_MGR.run()
-		Locator.PLAYER_MGR.start_game()
-
+		L.GameLoopManager.run()
+		L.PlayerManager.start_game()
