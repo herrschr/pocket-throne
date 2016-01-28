@@ -1,0 +1,24 @@
+{
+	"name": "Courier",
+	"name_de": "Kurier",
+
+	"type": "CAV",
+	"category": "RIDDEN",
+	"level": 1,
+
+	"image": "unit_std_swordsman.png",
+	"health": 6,
+	"movement": 5,
+
+	"required_building": "stables",
+
+	"weapon": {
+		"name": "Knive",
+		"name_de": "Dolch",
+		"category": "SWORD",
+
+		"distance": 1,
+		"hit_chance": 55,
+		"damage": 4
+	}
+}

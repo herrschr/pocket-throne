@@ -1,0 +1,42 @@
+{
+	"name": "The Highland Bridge",
+	"name_de": "Die Hochland-Bucht",
+	"size": "14x14",
+	"tile_size": 40,
+
+	"tile_map":
+	[
+		"WWGWWWWWWGFFGM",
+		"WGGFWWWWGGFGGM",
+		"GGGFFWWWGMMGMM",
+		"GGGGFGWGGMFFMM",
+		"GGGMMGWGGMFFMM",
+		"FGMMGGWGGGGFGM",
+		"GGMGFGFFGGGGGG",
+		"GGGGFFGGGFFMGG",
+		"WGGFFFGWGGMMFG",
+		"WWGGMGGWGMMGGG",
+		"WWGMMGGWGFFGGG",
+		"WGGMGGWWWGFGGG",
+		"WGFFFWWWWGFGMM",
+		"GGGFWWWWWWGMMM"
+	],
+
+	"cities":
+	[
+		"1, 1, 1, 3, Sparta",
+		"2, 1, 11, 3, Rome"
+	],
+
+	"players":
+	[
+		"Sparta, 0 0 255, spartanic",
+		"Roman Crown, 255 0 0, roman"
+	],
+
+	"units":
+	[
+		"1, man_of_sparta, 27, 56",
+		"2, imperial_hasati, 23, 23"
+	]
+}

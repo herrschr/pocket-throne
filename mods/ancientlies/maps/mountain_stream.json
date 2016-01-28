@@ -1,0 +1,31 @@
+{
+	"name": "The Mountain Stream",
+	"name_de": "Die Flussklippen",
+	"size": "14x14",
+	"tile_size": 40,
+
+	"tile_map":
+	[
+		"GGMMGGGMWWMGMM",
+		"GGGMGGMMWMMGFM",
+		"GGGFFGMWWMGFFM",
+		"GGGGFMMWMMGGGG",
+		"GGGGFMMWWMGGGG",
+		"FGFGGGGGWMGGGG",
+		"FGFMMMWWWMFFGG",
+		"FGGMWWWGMMGFFG",
+		"GGGMWMMGGGGGMG",
+		"GGGWWMGGFFGGMM",
+		"GWWWFGGGFFFFMM",
+		"WWGFFGFMFFMMMM",
+		"WWWGGGFMGFMMMM",
+		"WWWWGGGGGMMMMM"
+	],
+
+	"cities":
+	[
+		"1 1 4 12",
+		"2 1 12 5",
+		"1 2 1 3"
+	]
+}

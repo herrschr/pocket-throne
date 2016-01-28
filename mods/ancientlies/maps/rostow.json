@@ -1,0 +1,28 @@
+{
+	"name": "Rostow",
+	"name_de": "Rostow",
+	"size": "11x11",
+	"tile_size": 40,
+
+	"tile_map":
+	[
+		"WWWWWWWWWWW",
+		"WWWWWWWWWGG",
+		"WWWGGWGGGGG",
+		"GGGGGWWWGGG",
+		"GGGGGWWWGGG",
+		"GGGGWWWGGGG",
+		"GGGGGWGGGGG",
+		"GGGGGWGGGGG",
+		"DGGGGGWGGGD",
+		"DDDGGGGGGGD",
+		"DDDDGGGGGDD"
+	],
+
+	"cities":
+	[
+		"0 1 6 10",
+		"1 1 4 4",
+		"2 2 11 3"
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"name": "Archer",
+	"name_de": "Bogenschütze",
+
+	"type": "INF",
+	"category": "ARCHER",
+	"level": 1,
+
+	"image": "unit_std_archer.png",
+	"health": 5,
+	"movement": 3,
+
+	"weapon": {
+		"name": "Short Bow",
+		"name_de": "Kurzbogen",
+		"category": "BOW",
+
+		"distance": 3,
+		"hit_chance": 40,
+		"damage": 4
+	}
+}

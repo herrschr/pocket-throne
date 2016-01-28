@@ -1,0 +1,7 @@
+{
+	"name": "Egypt Pharao",
+	"name_de": "Ägyptischer Pharao",
+
+	"city_prefixes": ["Cai", "Qan", "Ta", "Cor", "Mara", "Ny", "Oeno", "Abu"],
+	"city_postfixes": ["ro", "gina", "ropolis", "xandria", "nis", "nytos", " Magna", " el-Hisn"]
+}
