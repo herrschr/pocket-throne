@@ -4,7 +4,7 @@ from kivy.graphics import Rectangle, Color
 from kivy.core.text import Label as CoreLabel
 from kivy.uix.label import Label
 
-from pocketthrone.managers.locator import Locator
+from pocketthrone.managers.locator import L
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.entities.event import *
@@ -12,21 +12,26 @@ from pocketthrone.entities.event import *
 class GameLabel(Label):
 	_tag = "[GameLabel] "
 	_dirty = True
-	# widget-wide constants
+
+	# text size weighting default
 	_weight_mod = 1.0
+	# default fontsize in px
 	_std_fontsize = 12
+	# default font color
 	_std_fontcolor =  (0, 0, 0, 1)
+	# CoreLabel kivy class for getting font texture
 	_corelabel = None
 
-	def __init__(self, widget_id="untagged", weight=1, icon_source="none.png", **kwargs):
+	def __init__(self, link=None, weight=1, icon_source="none.png", **kwargs):
+		# initialize widget
 		super(GameLabel, self).__init__(**kwargs)
-		EventManager.register_listener(self)
-		Locator.GUI_MGR.register_widget(widget_id, self)
+		EventManager.register(self)
+		L.WidgetManager.register(link, self)
 		# set initial GameLabel state
-		self.widget_id = widget_id
+		self.link = link
 		self.weight = weight
 		self.font_color = self._std_fontcolor
-		self.icon_source =FileManager.image_path() + icon_source
+		self.icon_source = L.RootDirectory + "img/" + icon_source
 		self.halign = "left"
 		self.valign = "top"
 

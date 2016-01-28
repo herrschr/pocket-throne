@@ -1,4 +1,4 @@
-__all__ = ('GameButton', 'ButtonState')
+__all__ = ('GameButton')
 
 import string
 
@@ -9,35 +9,41 @@ from kivy.graphics import Rectangle
 from kivy.core.window import Window
 from kivy.core.text import Label as CoreLabel
 
-from pocketthrone.managers.locator import Locator
+from pocketthrone.managers.locator import L
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.eventmanager import EventManager
+
 from pocketthrone.entities.event import *
 from pocketthrone.entities.enum import WidgetState, WidgetAction
 
 class GameButton(Image):
 	# widget constants
 	ID_DEFAULT = "NO_ID"
-	EXTRA_DEFAULT = "default"
 
 	_tag = "[GameButton] "
+
+	# widget state (DEFAULT, PRESSED, DISABLED, INVALID, INVISIBLE)
 	state = WidgetState(initial=WidgetState.STATE_DEFAULT)
+	# widget action (NONE, ATTACK, MOVE, BUILD, NEXTTURN)
 	action = WidgetAction(initial=WidgetAction.ACTION_NONE)
-	extra = "NOEXTRA"
+	extra = None
 
-	widget_id = "untagged"
+	link = None
 	label = None
-	_dirty = True
 	text = ""
+	_corelabel = None
 
-	def __init__(self, widget_id=ID_DEFAULT, action=WidgetAction.ACTION_NONE ,**kwargs):
+	_dirty = True
+
+	def __init__(self, link=None, state=state,  action=action, extra=extra ,**kwargs):
 		super(GameButton, self).__init__(**kwargs)
-		EventManager.register_listener(self)
-		Locator.GUI_MGR.register_widget(widget_id, self)
+		EventManager.register(self)
+		L.WidgetManager.register(link, self)
 		# set optional properties
-		self.source = FileManager.image_path() + "none.png"
-		self.widget_id = widget_id
-		self.button_tag = string.upper(widget_id)
+		image_dir = L.RootDirectory + "/img/"
+		self.source = image_dir + str(link) + "_bg_" + str(action) + ".png"
+		self.link = link
+		self.button_tag = string.upper(link)
 		self.extra = extra
 		print(self._tag + "init start source=" + self.source)
 
@@ -52,14 +58,17 @@ class GameButton(Image):
 			# translate y pos (0|0 is on top left of the window)
 			touch_inv_y = Window.height - touch.y
 			# fire MouseClickedEvent
-			ev_button_clicked = GuiButtonClickedEvent(self.widget_id, self.get_state(), widget=self)
+			ev_button_clicked = ButtonTouchedEvent(self.link, state=self.get_state(), action=self.get_action(), extra=self.get_extra())
 			EventManager.fire(ev_button_clicked)
 
 	# set image root related path as background icon
 	def set_source(self, icon_source):
-		self.source = FileManager.image_path() + icon_source
+		self.source = L.RootDirectory + "img/" + icon_source
 		self.update()
 		print(self._tag + "button icon is " + icon_source)
+
+	# set the widgets identifier for WidgetManager and click handling
+	# TODO: remove link
 
 	# set the ActionButtons state ("sub-tag")
 	def set_state(self, state):
@@ -79,7 +88,7 @@ class GameButton(Image):
 
 	# automatically update background iconresource
 	def update_source(self):
-		background_src = FileManager.image_path() + self.widget_id + "_bg_" + self.get_action().get() +  ".png"
+		background_src = L.RootDirectory + "/img/" + self.link + "_bg_" + str(self.get_action()).lower() +  ".png"
 		print(self._tag + "background image is " + background_src)
 		texture = Image(src=background_src).texture
 		self.source = background_src
@@ -122,5 +131,3 @@ class GameButton(Image):
 		# redraw the map when required each TickEvent
 		if isinstance(event, TickEvent):
 			self.update()
-
-
