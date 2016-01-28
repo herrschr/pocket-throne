@@ -1,0 +1,7 @@
+{
+	"name": "Orkish Tribes",
+	"name_de": "Orkische Stämme",
+
+	"city_prefixes": ["Rust", "Oak", "Dirt", "Big", "Steel", "Green", "Cliff", "Wet"],
+	"city_postfixes": ["claw", "fort", "tents", "tent", " Outpost", " Point", "cleared", "way"]
+}
