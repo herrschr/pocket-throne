@@ -7,7 +7,7 @@ from pocketthrone.entities.enum import WidgetAction
 from pocketthrone.entities.player import Player
 from pocketthrone.entities.fraction import Fraction
 from pocketthrone.entities.event import *
-from pocketthrone.managers.locator import Locator
+from pocketthrone.managers.pipe import L
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.eventmanager import EventManager
 
@@ -15,6 +15,8 @@ from pocketthrone.managers.eventmanager import EventManager
 class PlayerManager:
 	# engine properties
 	_tag = "[PlayerManager] "
+
+	initialized = False
 
 	# turn related properties
 	actual_turn = 0
@@ -29,36 +31,42 @@ class PlayerManager:
 	# add nature player (num=0) on the beginning
 	def __init__(self):
 		#register in EventManager
-		EventManager.register_listener(self)
+		EventManager.register(self)
 		# load fractions into PlayerManager
-		selected_mod = Locator.MOD_MGR.get_selected_mod()
-		self.load_fractions(selected_mod._basename)
+		selected_mod = L.ModManager.get_selected_mod()
+		self.load_fractions(selected_mod.basename)
 		# create nature player
 		nature = Player()
 		nature.name = "Nature"
 		nature.color = (0, 0, 0)
-		self._add_player(nature)
+		nature.fraction = None
+		self._add_player(nature, nofraction=True)
 
-	def fill_tilemap_players(self, tilemap):
+	def next_player_number(self):
+		'''returns next unused player number'''
+		return len(self.players)
+
+	def pass_tilemap_players(self, tilemap):
+		'''adds players from tilemap to manager'''
 		for player in tilemap.players:
 			self._add_player(player)
 
-	# start the game with turn 1
 	def start_game(self):
+		'''start the game with turn 1'''
 		# set turn=0 and player=1
 		self.actual_turn = 0
 		actual_player_num = 1
 		self.change_actual_player(1)
 
-	# load all fractions from mods/<modname>/fractions/*.json files
 	def load_fractions(self, mod_name):
-		mod_name = Locator.MOD_MGR.get_selected_mod()._basename
-		fraction_folder_path = FileManager.mod_path() + mod_name + "/fractions/"
-		for file in os.listdir(fraction_folder_path):
+		'''loads all fractions from mods/<modname>/fractions/*.json files'''
+		mod_name = L.ModManager.get_selected_mod().basename
+		fraction_folder = L.RootDirectory + "/mods/" + mod_name + "/fractions/"
+		for file in os.listdir(fraction_folder):
 			if file.endswith(".json"):
 				# load the fraction file content into fraction_json object
 				fraction_basename = file.split(".")[0]
-				fraction_file_path = fraction_folder_path + file
+				fraction_file_path = fraction_folder + file
 				fraction_filecontent = FileManager.read_file(fraction_file_path)
 				# when the file isn't empty, start creating the object
 				if fraction_filecontent != "":
@@ -74,17 +82,17 @@ class PlayerManager:
 					self.fractions.append(fraction)
 		print("[IngameManager] fractions=" + repr(self.fractions))
 
-	# returns all players
 	def get_players(self):
+		'''returns a list with all players'''
 		return self.players
 
-	# add a player by class, system method
-	def _add_player(self, player, fraction=None):
+	def _add_player(self, player, fraction=None, nofraction=False):
+		'''add a player by class, system method'''
 		# add player number to player and add all to player list
 		new_player = player
 		new_player.num = self.next_player_number()
 		# set player fraction
-		if not fraction and not new_player.fraction:
+		if not fraction and not nofraction:
 			new_player.fraction = self.get_random_fraction()
 		elif fraction and not new_player.fraction:
 			new_player.fraction = self.get_fraction_by_name(fraction)
@@ -93,8 +101,8 @@ class PlayerManager:
 		print (self._tag + "added player name=" + new_player.name + " on number " + str(new_player.num))
 
 
-	# add a new player by name and color
 	def add_new_player(self, player_name, (r, g, b), fraction_name=None):
+		'''adds a new player by name and color'''
 		new_player = Player()
 		new_player.name = player_name
 		new_player.color = (r, g, b)
@@ -106,6 +114,14 @@ class PlayerManager:
 			new_player.fraction = self.get_random_fraction()
 		# add player by class in PlayerManager
 		self._add_player(new_player)
+
+	# returns the actual Player entity
+	def get_actual_player(self):
+		return self.actual_player
+
+	# returns the actual Players number
+	def get_actual_player_num(self):
+		return self.actual_player_num
 
 	# get a player by its number
 	def get_player_by_num(self, player_num):
@@ -126,12 +142,25 @@ class PlayerManager:
 	# return a fraction by its name
 	def get_fraction_by_name(self, fraction_name):
 		for fraction in self.fractions:
-			if fraction._basename == fraction_name:
+			if fraction.basename == fraction_name:
 				return fraction
+		else:
+			return self.get_random_fraction()
 
 	# return a random fraction
 	def get_random_fraction(self):
 		return choice(self.fractions)
+
+	def add_tilemap_players(self, tilemap):
+		if self.initialized:
+			return
+		map_players = tilemap.get_players()
+		print(self._tag + repr(map_players))
+		for player in map_players:
+			fraction_name = player._fraction_name
+			fraction = self.get_fraction_by_name(fraction_name)
+			self._add_player(player, fraction=fraction_name)
+		self.initialized = True
 
 	# internal: end turn and start a next one
 	def next_turn(self):
@@ -145,10 +174,11 @@ class PlayerManager:
 		self.change_actual_player(actual_player_num)
 
 	# add player income per city for each one
+	# TODO move to City entit
 	def _add_income_for_cities(self):
 		for player in self.get_players():
 			# calculate the gold gain depending on city count of the player
-			player_cities = Locator.CITY_MGR.get_cities(for_specific_player=player.get_number())
+			player_cities = L.CityManager.get_cities(for_specific_player=player.get_number())
 			city_count = len(player_cities)
 			# 5 gold per city per turn
 			gold_gain = city_count *5
@@ -171,22 +201,10 @@ class PlayerManager:
 		elif player_count - self.actual_player_num  == 0:
 			self.next_turn()
 
-	# internal: get next player number
-	def next_player_number(self):
-		self._last_player_id += 1
-		return self._last_player_id
-
 	def on_event(self, event):
-		# on MapLoadedEvent: add tilemap players to holder list
-		if isinstance(event, MapLoadedEvent):
-			map_players = event.tilemap.players
-			for player in map_players:
-				# set player fraction entity
-				player_fraction_name = player._fraction_name
-				self._add_player(player, fraction=player_fraction_name)
-
 		# on GameStartedEvent: start game with first turn
 		if isinstance(event, GameStartedEvent):
+			# start game
 			self.start_game()
 
 		# on NextTurnEvent: add income per city for each player
@@ -194,6 +212,17 @@ class PlayerManager:
 			self._add_income_for_cities()
 
 		# on button click: forward players
-		if isinstance(event, GuiButtonClickedEvent):
+		if isinstance(event, ButtonTouchedEvent):
 			if event.action == WidgetAction.ACTION_NEXTTURN:
 				self.forward()
+
+		# on player change
+		if isinstance(event, NextOneEvent):
+			# get recently selected entity
+			actual_player = event.actual_player
+			recent_position = actual_player.recently_selected
+			# select tile
+			if recent_position:
+				L.MapManager.select_tile_at(recent_position)
+				# scroll to recently selected tile
+				L.MapManager.scroll_at(recent_position)

@@ -1,8 +1,7 @@
 import os
 import json
-import copy
 
-from pocketthrone.entities.city import City
+from pocketthrone.entities.city import City, Production
 from pocketthrone.entities.building import Building
 from pocketthrone.entities.tile import Tile
 
@@ -12,35 +11,60 @@ from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.entities.event import *
 from pocketthrone.entities.enum import WidgetAction, WidgetState
 
-from pocketthrone.managers.locator import Locator
+from pocketthrone.managers.pipe import L
 
 class CityManager:
 	_tag = "[CityManager] "
-	cities = []
 	_last_city_id = -1
+
+	cities = {}
+	recruitions = {}
+	constructions = {}
 
 	selected_city = None
 	selected_building = None
 
 	def __init__(self):
 		# register in EventManager
-		EventManager.register_listener(self)
-		# cache map and city list in CityManager
-		tilemap = Locator.MAP_MGR.get_tilemap()
-		self.cities = tilemap.cities
+		EventManager.register(self)
 
-	# returns all cities; when for_specific_player is set, returns only cities owned by given player num
+	def add_cities(self, city_list):
+		'''adds cities from given city lis tand assigns an id for each one'''
+		for city in city_list:
+			# assign id
+			_id = self._next_city_id()
+			city.assign_id(_id)
+			# add to city list
+			self.cities[_id] = city
+			self.recruitions[_id] = Production(_id, ent="unit")
+			print(self._tag + "added under id " + str(_id) + ": " + repr(city))
+
 	def get_cities(self, for_specific_player=None):
+		'''returns all cities; when for_specific_player is set, returns only cities owned by given player num'''
 		cities = []
 		# when a specific owner is wanted: filter city list for the player first
 		if for_specific_player != None:
-			for city in cities:
-				if city.get_player_num == for_specific_player:
+			for city in self.cities.values():
+				if city.get_player_num() == for_specific_player:
 					cities.append(city)
 			return cities
 		# when no specific owner is wanted: return any town on map
 		else:
-			return self.cities
+			return self.cities.values()
+
+	def get_cities_by_player(self, player_num):
+		'''returns cities owned by player with player_id'''
+		filtered = []
+		for city in self.cities.values():
+			if city.get_player_num() == player_num:
+				filtered.append(city)
+		return filtered
+
+	def get_city_by_id(self, city_id):
+		try:
+			return self.cities[city_id]
+		except:
+			return None
 
 	# returns selected city
 	def get_selected_city(self):
@@ -49,7 +73,9 @@ class CityManager:
 	# add a new city
 	def add_city_at(self, player_num, size, (at_x, at_y), name=None):
 		# instanciate new city and set required city properties
+		_id = self._next_city_id()
 		new_city = City(name=name)
+		new_city.assign_id(_id)
 		new_city.set_player_num(player_num)
 		new_city.set_size(size)
 		new_city.set_position((at_x, at_y))
@@ -59,13 +85,13 @@ class CityManager:
 
 	# returns a city at the given position; when no city is there -> return None
 	def get_city_at(self, (at_x, at_y), for_specific_player=None):
-		for city in self.cities:
+		for city in self.cities.values():
 			if city.get_position() == (at_x, at_y):
 				# no specific owner is wanted, return city
 				if not for_specific_player:
 					return city
 				# else: filter city for player number
-				elif city.playerId == for_specific_player:
+				elif city.player_num == for_specific_player:
 					return city
 		return None
 
@@ -85,46 +111,40 @@ class CityManager:
 				return building
 		return None
 
-	# returns all unit blueprints recruitable in a city
 	def get_recruitable_units(self, city):
+		'''returns all unit blueprints recruitable in a city'''
 		# get all unit blueprints of the player/fraction
 		city_blueprints = []
-		fraction_blueprints = Locator.UNIT_MGR.get_unit_blueprints(for_specific_player=city.get_player_num())
-		for blueprint in fraction_blueprints:
-			# check for required building of any unit type
-			required_building = blueprint.get_required_building()
-			# when unit type needs no building -> add to list
-			if not required_building:
+		city_player_num = city.get_player_num()
+		blueprints = L.UnitManager.get_blueprints()
+		for blueprint in blueprints:
+			is_able = True
+			#check selected city requirements
+			for requirement in blueprint.requirements:
+				has_requirement = city.has_requirement(requirement)
+				if not has_requirement:
+					is_able = False
+			if is_able:
 				city_blueprints.append(blueprint)
-			# when building requirement is fulfilled -> add to list
-			else:
-				required_building_built = city.has_building(required_building)
-				if required_building_built:
-					city_blueprints.append(blueprint)
 		return city_blueprints
 
-	# set a selected city
 	def select_city(self, city):
+		'''sets city as selected'''
 		# save selected city in CityManager
 		self.selected_city = city
 		if city:
-			# fire CitySelectedEvent
-			recruitable = self.get_recruitable_units(city)
-			ev_selected_city= CitySelectedEvent(city, recruitable=recruitable)
+			# fire CitySelectedEvent for_specific_player=city.get_player_num())
+			ev_selected_city= CitySelectedEvent(city)
 			EventManager.fire(ev_selected_city)
 
-	# returns selected city
-	def get_selected_city_city(self):
-		return self.selected_city
-
-	# returns if a city is selected
 	def has_selected_city(self):
+		'''returns if a city is selected'''
 		if self.selected_city:
 			return True
 		return False
 
-	# set selected building
 	def select_building(self, building):
+		'''set selected building'''
 		# save selected building
 		self.selected_building = building
 		if building:
@@ -132,21 +152,32 @@ class CityManager:
 			ev_selected_building = BuildingSelectedEvent(building)
 			EventManager.fire(ev_selected_building)
 
-	# returns a new unique city id
 	def _next_city_id(self):
+		'''returns a new unique city id'''
 		self._last_city_id += 1
 		return self._last_city_id
 
-	# recruit a new unit of unit_blueprint type in a city
 	def recruit_unit(self, city, unit_blueprint):
+		'''recruits a new unit of unit_blueprint type in a city'''
 		# reduce player gold
 		city.recruit_unit(unit_blueprint)
 
+	def get_recruition_for(self, city_id):
+		try:
+			return self.recruitions[city_id]
+		except:
+			print(self._tag + "cant recruit in {}".format(city_id))
+			return None
+
 	def on_event(self, event):
+		if isinstance(event, MapLoadedEvent):
+			self.tilemap = event.tilemap
+			# cache map and city list in CityManager
+			self.add_cities(event.tilemap.cities)
 		# fire CitySelectedEvent when a tile with a city is selected by the player
 		if isinstance(event, TileSelectedEvent):
-			actual_player_num = Locator.PLAYER_MGR.get
-			selected_city = self.get_city_at(event.pos, for_specific_player=self._actual_player)
+			actual_player_num = L.PlayerManager.get_actual_player_num()
+			selected_city = self.get_city_at(event.pos, for_specific_player=actual_player_num)
 			# selected_building =
 			if selected_city != None:
 				self.select_city(selected_city)
@@ -154,29 +185,22 @@ class CityManager:
 		# unselect city on TileUnselectedEvent
 		if isinstance(event, TileUnselectedEvent):
 			self.select_city(None)
-
+		# decrease production time
+		if isinstance(event, NextOneEvent):
+			player_id = event.actual_player
+			player_cities = self
 		# fire CityUnselectedEvent when a tile without a city is selected
 		if isinstance(event, MouseRightClickedEvent):
 			if  self.has_selected_city:
 				# unset selected city
 				self.select_city(None)
 
-		# handle UnitManager relevant button clicks
-		if isinstance(event, GuiButtonClickedEvent):
-			# recruit unit in selected city when tag is BUILD-* from SideBar
-			if event.action == WidgetAction.ACTION_BUILD and self.has_selected_city():
-				if event.extra == None:
-					print(self._tag + "button extra is null")
-				else:
-					recruit_basename = event.extra.lower()
-					blueprint = Locator.UNIT_MGR.get_unit_blueprint(recruit_basename)
-					self.recruit_unit(self.get_selected_city(), blueprint)
-
 		# finish unit recruition
 		if isinstance(event, CityRecruitmentFinishedEvent):
 			# get player, position & type of unit to spawn
 			player_num = event.city.get_player_num()
+			# TODO spawn beside city
 			spawn_pos = event.city.get_position()
-			unit_basename = event.blueprint._basename
+			unit_basename = event.blueprint.basename
 			# spawn new unit with UnitManager
-			Locator.UNIT_MGR.spawn_unit_at(player_num, unit_basename, spawn_pos, city=event.city)
+			L.UnitManager.spawn_unit_at(player_num, unit_basename, spawn_pos, city=event.city)

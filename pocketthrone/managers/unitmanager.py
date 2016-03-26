@@ -1,7 +1,7 @@
 import os
 import json
-import copy
 from random import randrange
+from copy import copy
 
 from pocketthrone.entities.unit import Unit
 from pocketthrone.entities.weapon import Weapon
@@ -13,7 +13,8 @@ from pocketthrone.entities.event import *
 from pocketthrone.entities.enum import WeaponType, UnitType
 
 from pocketthrone.tools.unitmovementhelper import UnitMovementHelper
-from pocketthrone.managers.locator import Locator
+from pocketthrone.tools.watermovementhelper import WaterMovementHelper
+from pocketthrone.managers.pipe import L
 
 class UnitManager:
 	_tag = "[UnitManager] "
@@ -29,27 +30,27 @@ class UnitManager:
 	selected_unit_attacks = []
 
 	def __init__(self):
-		EventManager.register_listener(self)
+		EventManager.register(self)
 		# load all unit blueprints
-		mod_name = Locator.MOD_MGR.get_selected_mod()._basename
-		self.load_unitblueprints(mod_name)
+		mod_name = L.ModManager.get_selected_mod().basename
+		self.load_blueprints(mod_name)
 		# spawn units from map file
 		self._spawn_units_from_map()
 
-	# spawn units from the TileMap at UnitManager initialization
 	def _spawn_units_from_map(self):
-		map_units = Locator.MAP_MGR.get_tilemap().units
+		'''spawn units from the TileMap at UnitManager initialization'''
+		map_units = L.MapManager.get_tilemap().units
 		for unit in map_units:
-			self.spawn_unit_at(unit.get_player_num(), unit.get_type(), unit.get_position())
-		print(self._tag + "spawned " + str(map_units.size()))
+			self.spawn_unit_at(unit.get_player_num(), unit.get_basename(), unit.get_position())
+		print(self._tag + "spawned " + str(len(map_units)))
 
-	# returns a new, unused unit id
 	def next_unit_id(self):
+		'''returns a new, unused unit id'''
 		self._last_unit_id += 1
 		return self._last_unit_id
 
-	# get the unit on grid position (at_x, at_y), else return None
 	def get_unit_at(self, (at_x, at_y), for_specific_player=None):
+		'''returns the unit on grid position (at_x, at_y) or None'''
 		for unit in self.units:
 			unit_x = int(unit.pos_x)
 			unit_y = int(unit.pos_y)
@@ -60,32 +61,38 @@ class UnitManager:
 					return unit
 		return None
 
-	# select a unit and fire UnitSelectedEvent
 	def select_unit(self, unit):
+		'''select a unit and fire UnitSelectedEvent'''
 		self.selected_unit = unit
 		# cache & add possible moves and attacks to event
 		self.selected_unit_moves = self.get_possible_moves(unit)
 		self.selected_unit_attacks = self.get_possible_attacks(unit)
+		# update recent selected player entity
+		actual_player = L.PlayerManager.get_actual_player()
+		actual_player.recently_selected = unit.get_position()
 		# fire UnitSelectedEvent
 		ev_selected_unit = UnitSelectedEvent(unit, moves=self.selected_unit_moves, attacks=self.selected_unit_attacks)
 		EventManager.fire(ev_selected_unit)
 
 	def get_selected_unit(self):
+		'''returns selected unit'''
 		return self.selected_unit
 
 	def has_selected_unit(self):
+		'''returns if a unit is selected'''
 		if self.selected_unit:
 			return True
 		return False
 
 	def unselect_unit(self):
+		'''clear selected unit'''
 		self.selected_unit = None
 		self.selected_unit_moves = []
 		self.selected_unit_attacks = []
 
-	# load all unit skeletons from mods/<mod_name>/units/*.json
-	def load_unitblueprints(self, mod_name):
-		unit_folder_path = FileManager.mod_path() + mod_name + "/units/"
+	def load_blueprints(self, mod_name):
+		'''load all unit skeletons from mods/<mod_name>/units/*.json'''
+		unit_folder_path = FileManager.mod_root() + mod_name + "/units/"
 		for file in os.listdir(unit_folder_path):
 			if file.endswith(".json"):
 				# open file and read content
@@ -96,12 +103,12 @@ class UnitManager:
 				if unit_filecontent != "":
 					unit_json = json.loads(unit_filecontent)
 					# load skeleton Unit from json and add it skeleton list
-					unit = self.load_unit_skeleton(unit_json, unit_basename)
+					unit = self.load_blueprint(unit_json, unit_basename)
 					self.blueprints[unit_basename] = unit
 		self.print_blueprints()
 
-	# returns a unit blueprint from unit json object
-	def load_unit_skeleton(self, unit_json, unit_basename):
+	def load_blueprint(self, unit_json, unit_basename):
+		'''returns a unit blueprint from unit json object'''
 		# load engine properties and fill in a new unit object
 		unit = Unit(unit_basename)
 		unit.is_disabled = unit_json.get("disabled", False)
@@ -112,14 +119,15 @@ class UnitManager:
 		unit.health = unit_json["health"]
 		unit.movement = unit_json["movement"]
 		# load fighting properties
-		unit._unit_type = unit_json["type"]
-		unit._category = unit_json["category"]
+		unit.unit_type = unit_json["type"]
+		unit.category = unit_json["category"]
 		# load production costs
 		unit.cost_turns = unit_json.get("cost_turns", 4)
 		unit.cost_gold = unit_json.get("cost_gold", unit.cost_turns *3)
 		# load unit requirements
 		unit.required_building = unit_json.get("required_building", None)
 		unit.required_fraction = unit_json.get("required_fraction", None)
+		unit.requirements = unit_json.get("requirements", [])
 		# load maximal amount per player & map
 		unit.max_per_player = unit_json.get("max_per_player", None)
 		unit.max_per_map = unit_json.get("max_per_map", None)
@@ -128,8 +136,8 @@ class UnitManager:
 		unit.give_weapon(weapon)
 		return unit
 
-	# returns a weapon from a unit json object
 	def load_weapon(self, unit_json):
+		'''returns a weapon from a unit json object'''
 		# get the weapon json object out of the unit json object
 		weapon_json = unit_json["weapon"]
 		weapon_category = weapon_json["category"]
@@ -145,60 +153,43 @@ class UnitManager:
 		weapon.merge_attack_multipliers()
 		return weapon
 
-	# get all units as list
 	def get_units(self):
+		'''returns all units in game as list'''
 		return self.units
 
-	# get a list of enabled unit blueprints
-	def get_unit_blueprints(self, for_specific_player=None, add_disabled=False):
-		enabled_blueprints =  []
-		blueprints = []
-		# filter deisabled blueprints
-		if add_disabled:
-			enabled_blueprints = self.get_all_blueprints()
-		else:
-			for blueprint in self.get_all_blueprints():
-				if not blueprint.is_disabled:
-					enabled_blueprints.append(blueprint)
-		# when for_specific_player is none: return all unit blueprints
-		if not for_specific_player:
-			for blueprint in enabled_blueprints:
-				blueprints.append(blueprint)
-		# else return only blueprints recruitable by a specific player num
-		else:
-			# get the fraction name of player number in for_specific_player
-			player = Locator.PLAYER_MGR.get_player_by_num(for_specific_player)
-			player_fraction_name = player.get_fraction()._basename
-			for blueprint in enabled_blueprints:
-				req_fraction = blueprint.get_required_fraction()
-				# add blueprint when no fraction is required
-				if not req_fraction:
-					blueprints.append(blueprint)
-				# add blueprint when player has required fraction for the unit
-				elif req_fraction == player_fraction_name:
-					blueprints.append(blueprint)
-		return blueprints
-
-	# returns blueprints as a list, ignore if enabled
 	def get_all_blueprints(self):
+		'''returns blueprints as a list, ignore if enabled'''
 		blueprints = []
 		for blueprint in self.blueprints.itervalues():
 			blueprints.append(blueprint)
 		return blueprints
 
-	# returns a single unit blueprint by its basename
-	def get_unit_blueprint(self, blueprint_name):
+	def get_blueprints(self, add_disabled=False):
+		'''returns a list of enabled unit blueprints'''
+		blueprints =  []
+		# filter deisabled blueprints
+		if add_disabled:
+			blueprints = self.get_all_blueprints()
+		else:
+			for blueprint in self.get_all_blueprints():
+				if not blueprint.is_disabled:
+					blueprints.append(blueprint)
+		# return list
+		return blueprints
+
+	def get_blueprint(self, blueprint_name):
+		'''returns a single unit blueprint by its basename'''
 		return self.blueprints[blueprint_name]
 
-	# returns the names of all unit blueprints as list
 	def get_blueprint_names(self):
+		'''returns the names of all unit blueprints as list'''
 		blueprint_names = []
-		for blueprint in self.get_unit_blueprints():
+		for blueprint in self.get_blueprints():
 			blueprint_names.append(blueprint.get_name())
 		return blueprint_names
 
-	# get all units of the player with number player_num as list
 	def get_units_of_player(self, player_num):
+		'''get all units of the player with number player_num as list'''
 		units_of_player = []
 		for unit in self.units:
 			if unit.player_num == player_num:
@@ -206,12 +197,12 @@ class UnitManager:
 		return units_of_player
 
 
-	# get a prefilled Unit class from loaded skeleton/blueprint
 	def get_prefilled_unit(self, unit_basename):
-		return copy.deepcopy(self.blueprints[unit_basename])
+		'''get a prefilled Unit class from loaded skeleton/blueprint'''
+		return copy(self.blueprints[unit_basename])
 
-	# spawn a new unit with given player and position
 	def spawn_unit_at(self, player_num, unit_basename, (pos_x, pos_y), city=None):
+		'''spawn a new unit with given player and position'''
 		# get prefilled unit and unit id
 		to_spawn = self.get_prefilled_unit(unit_basename)
 		to_spawn._id = self.next_unit_id()
@@ -228,16 +219,16 @@ class UnitManager:
 		ev_unit_spawned = UnitSpawnedEvent(to_spawn, (pos_x, pos_y))
 		EventManager.fire(ev_unit_spawned)
 
-	# move unit to absolute position
 	def move_unit_to(self, unit, (to_x, to_y)):
+		'''move unit to absolute position'''
 		# translate absolute to relative movement
 		rel_x = to_x - unit.pos_x
 		rel_y = to_y - unit.pos_y
 		# move unit relative to it's position
 		self.move_unit(unit, (rel_x, rel_y))
 
-	# unit movement relative to own position; unit movement base method
 	def move_unit(self, unit, (rel_x, rel_y)):
+		'''moves unit relative to own position; unit movement base method'''
 		# check if move is possible
 		move_in_radius = False
 		moves = self.get_possible_moves(unit)
@@ -259,15 +250,15 @@ class UnitManager:
 			EventManager.fire(ev_unit_moved)
 		return unit
 
-	# attack unit
 	def attack_unit(self, attacker, defender):
+		'''attack unit defender with unit attacker'''
 		# enough mp? (2 required)
 		if attacker.mp >= 2:
 			# calculate wepon damage vs. defender unit type
-			defender_type = defender.unit_type
-			attack_damage = attacker.weapon.get_damage_vs(defender_type)
+			defender_cat = defender.get_category()
+			attack_damage = attacker.weapon.get_damage_vs(defender_cat)
 			if attack_damage == 0:
-				print("[Fight] Aborted. No damage vs. category " + defender_type)
+				print("[Fight] Aborted. No damage vs. category " + defender_cat)
 			# reduce attacker's mp
 			attacker.mp = attacker.mp -2
 			# roll dice
@@ -282,22 +273,20 @@ class UnitManager:
 				# destroy defender unit when hp <= 0
 				if (defender.hp <= 0):
 					print("[Fight] defender died.")
-					# remove unit from unit list
-					self.remove_unit(defender)
-					# fire UnitKilledEvent
 					ev_unit_killed = UnitKilledEvent(defender, attacker)
 					EventManager.fire(ev_unit_killed)
+					self.remove_unit(defender)
 		# not enough mp left for an attack
 		else:
 			print("[Fight] Aborted. Not enough mp left.")
 
-	# remove/kill unit
 	def remove_unit(self, unit):
+		'''remove/kill unit'''
 		self.units.remove(unit)
 		return unit
 
-	# debug method; prints all loaded skeletons
 	def print_blueprints(self):
+		'''debug method; prints all loaded skeletons'''
 		prefix = "blueprints = [ "
 		postfix = " ]"
 		blueprints = ""
@@ -305,11 +294,14 @@ class UnitManager:
 			blueprints += basename + ", "
 		print(self._tag + prefix + blueprints + postfix)
 
-	# returns an array with all possible moves of a unit
 	def get_possible_moves(self, unit):
+		'''returns an array with all possible moves of a unit'''
 		# load TileMap from MapManager
-		tilemap = Locator.MAP_MGR.get_tilemap()
-		movement_helper = UnitMovementHelper(unit, self.tilemap)
+		tilemap = L.MapManager.get_tilemap()
+		movement_helper = UnitMovementHelper(unit)
+		if unit.get_type() == UnitType.UNITTYPE_SHIP:
+			print(self._tag + "unit is a ship")
+			movement_helper = WaterMovementHelper(unit)
 		possible_moves = movement_helper.get_possible_moves()
 		# remove tiles with own unit
 		for pseudotile in possible_moves:
@@ -318,18 +310,19 @@ class UnitManager:
 				possible_moves.remove(pseudotile)
 		return possible_moves
 
-	# returns an array with all possible attacks of a unit
 	def get_possible_attacks(self, unit):
-		tilemap = Locator.MAP_MGR.get_tilemap()
+		'''returns an array with all possible attacks of a unit'''
+		tilemap = L.MapManager.get_tilemap()
 		attack_distance = unit.weapon.distance
-		movement_helper = UnitMovementHelper(unit, tilemap)
+		movement_helper = UnitMovementHelper(unit)
 		# get all tiles the weapon can possibly attack
 		possible_attacks = movement_helper.get_possible_moves(distance=attack_distance)
 		attacks = []
 		for pseudotile in possible_attacks:
 			unit_on_tile = self.get_unit_at((pseudotile.pos_x, pseudotile.pos_y))
 			# when an enemy unit is on the tile -> add to attacks array
-			if unit_on_tile != None and unit_on_tile.player_num != self._actual_player:
+			actual_player_num = L.PlayerManager.get_actual_player_num()
+			if unit_on_tile != None and unit_on_tile.player_num != actual_player_num:
 				attacks.append(pseudotile)
 		return attacks
 
@@ -341,39 +334,40 @@ class UnitManager:
 			# when a tile with a unit on it is selected
 			if unit_on_tile:
 				# unit is own -> select it
-				if unit_on_tile.get_player_num() == self._actual_player:
+				actual_player_num = L.PlayerManager.get_actual_player_num()
+				if unit_on_tile.get_player_num() == actual_player_num:
 					self.select_unit(unit_on_tile)
 					return;
 				# unit isnt own -> attack when possible
 				else:
 					# abort attack check when no unit is selected
-					if not self.hasselected_unit_unit():
+					if not self.has_selected_unit():
 						return;
 					# check if an attack on event.pos is possible for selected unit
 					for attack_tile in self.selected_unit_attacks:
 						if attack_tile.get_position() == event.pos:
 							defender = unit_on_tile
-							attacker = self.getselected_unit_unit()
+							attacker = self.get_selected_unit()
 							# attack with selected unit
 							self.attack_unit(attacker, defender)
 							return;
 			# when no unit stands on tile -> move when possible
 			elif not unit_on_tile:
 				# abort movement check when no unit is selected
-				if not self.hasselected_unit_unit():
+				if not self.has_selected_unit():
 					return;
 				# check if selected unit move is possible
 				for move_tile in self.selected_unit_moves:
 					if move_tile.get_position() == event.pos:
 						# move unit to event pos
-						self.move_unit_to(self.getselected_unit_unit(), (event.pos))
+						self.move_unit_to(self.get_selected_unit(), (event.pos))
 						return;
 				# when no action was made -> unselect unit
 				self.unselect_unit()
 
 		# unit movement on mouse drag
 		if isinstance(event, MouseReleasedEvent):
-			selected_unit = self.getselected_unit_unit()
+			selected_unit = self.get_selected_unit()
 			target_tile_pos = event.gridpos
 			unit_on_tile = self.get_unit_at(target_tile_pos)
 			# when no unit is on target tile: move
@@ -384,7 +378,7 @@ class UnitManager:
 		if isinstance(event, UnitMovedEvent):
 			moved_unit = event.unit
 			self.select_unit(moved_unit)
-			Locator.MAP_MGR.select_tile_at(moved_unit.get_position())
+			L.MapManager.select_tile_at(moved_unit.get_position())
 
 		# cache selected city
 		if isinstance(event, CitySelectedEvent):
@@ -401,6 +395,6 @@ class UnitManager:
 
 		# reset unit movement points before player starts
 		if isinstance(event, NextOneEvent):
-			actual_playernum = Locator.PLAYER_MGR.actual_player_num
+			actual_playernum = L.PlayerManager.actual_player_num
 			for unit in self.get_units_of_player(actual_playernum):
 				unit.reset_mps()

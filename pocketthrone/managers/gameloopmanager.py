@@ -8,19 +8,19 @@ from kivy.clock import Clock
 class GameLoopManager:
 	def __init__(self):
 		# init eventmanager and keepGoing
-		EventManager.register_listener(self)
+		EventManager.register(self)
 		self.keepGoing = True
 
-	# start the gameloop
 	def run(self):
+		'''starts the game loop'''
 		# fire GameStartedEvent
 		ev_game_started = GameStartedEvent()
 		EventManager.fire(ev_game_started)
 		# schedule tickevent with 60 fps
 		Clock.schedule_interval(self.tick, 1/60)
 
-	# fire a single TickEvent
 	def tick(self, dt):
+		'''fires next tick'''
 		event = TickEvent()
 		EventManager.fire(event)
 

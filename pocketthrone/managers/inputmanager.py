@@ -6,7 +6,7 @@ class InputManager:
 	_last_mousepos = None
 
 	def __init__(self):
-		EventManager.register_listener(self)
+		EventManager.register(self)
 
 	def on_event(self, event):
 		if isinstance(event, TickEvent):

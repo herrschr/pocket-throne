@@ -8,7 +8,7 @@ from pocketthrone.managers.unitmanager import UnitManager
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.entities.event import *
 
-from pocketthrone.managers.locator import Locator
+from pocketthrone.managers.pipe import L
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.entities.event import *
@@ -29,20 +29,20 @@ class ModManager:
 		self.set_selected_mod(mod_name)
 		self.is_initialized = True
 
-	# returns a new, unused mod id
 	def next_mod_id(self):
+		'''returns new unique mod id'''
 		self._last_mod_id += 1
 		return self._last_mod_id
 
-	# load mod collection from disk
 	def load_mods(self):
+		'''loads mod entities from mods folder'''
 		# make function-wide collections
 		subfolder_names = []
 		mod_list = []
 		mod_list_by_name = {}
 
 		# iterate through folder names in $APPROOT/mods/ for overview
-		for foldername in os.listdir(FileManager.mod_path()):
+		for foldername in os.listdir(FileManager.mod_root()):
 			subfolder_names.append(foldername)
 			print(self._tag + "mod folder name " + foldername)
 
@@ -58,10 +58,10 @@ class ModManager:
 		self.mods = mod_list
 		self.mods_by_name = mod_list_by_name
 
-	# load a single mod from disk by mod basename
 	def get_mod(self, basename):
+		'''load a single mod from disk by mod basename'''
 		# load json from basename.json file
-		json_file_path = FileManager.mod_path() + basename + "/" + basename + ".json"
+		json_file_path = FileManager.mod_root() + basename + "/" + basename + ".json"
 		mod_json_content = FileManager.read_file(json_file_path)
 		mod = Mod(basename, disabled=True)
 		# make empty properties
@@ -84,28 +84,29 @@ class ModManager:
 		# return created Mod instance
 		return mod
 
-	# add a mod entity to ModManager
 	def _add_mod(self, mod):
+		'''adds a mod entity to ModManager; system method'''
 		self.mods.append(mod)
-		self.mods_by_name[mod._basename] = mod
+		self.mods_by_name[mod.basename] = mod
 		print(self._tag + "mod ADDED " + repr(mod))
 
 	def add_mod(self, basename, name, desc="", desc_de=None):
+		'''adds a mod entity to ModManager'''
 		mod = Mod(basename, name=name, desc=desc, desc_de=desc_de)
 		self._add_mod(mod)
 
-	# returns Mod entity list when initialized
 	def get_mods(self):
+		'''returns mod entity list when initialized'''
 		if self.is_initialized:
 			return self.mods
 		else:
 			return None
 
-	# return selected Mod in this
 	def get_selected_mod(self):
+		'''returns selected mod'''
 		return self.selected_mod
 
-	# select a Mod by basename
 	def set_selected_mod(self, basename):
+		'''sets selected mod by basename'''
 		self.selected_mod = self.get_mod(basename)
 		print(self._tag + "selected mod is now " + repr(self.get_selected_mod()))

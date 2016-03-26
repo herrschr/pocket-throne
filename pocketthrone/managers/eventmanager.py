@@ -7,18 +7,21 @@ class EventManager:
 	eventQueue= []
 
 	@classmethod
-	def register_listener(self, listener, tag="untagged"):
+	def register(self, listener, tag="untagged"):
+		'''registers an object for receiving game events'''
 		self.listeners[listener] = 1
 		print(self._tag + "registered " + str(listener.__class__) + " in event queue.")
 
 	@classmethod
-	def unregister_listener( self, listener):
+	def unregister( self, listener):
+		'''unregisters an object from receiving game events'''
 		if listener in self.listeners:
 			print(self._tag + "unregistered " + str(listener.__class__) + " from event queue")
 			del self.listeners[listener]
 
 	@classmethod
 	def fire(self, event):
+		'''fires game event'''
 		if not isinstance(event, TickEvent) and not isinstance(event, MouseMovedEvent):
 			print(self._tag + "EVENT " + event.name)
 		for listener in list(self.listeners):
