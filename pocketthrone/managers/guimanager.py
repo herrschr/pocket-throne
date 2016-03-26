@@ -8,7 +8,7 @@ from pocketthrone.entities.event import *
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.gui import *
 from pocketthrone.gui.sidebar import SideBar
-from pocketthrone.managers.locator import Locator
+from pocketthrone.managers.pipe import L
 
 class GuiManager:
 	# layouts
@@ -17,7 +17,7 @@ class GuiManager:
 	widgets_by_id = {}
 
 	def __init__(self):
-		EventManager.register_listener(self)
+		EventManager.register(self)
 		self.set_gamestate(GAMESTATE_LOADING)
 
 	# set gamestate
@@ -101,7 +101,7 @@ class GuiManager:
 			# get production info text
 			txt_prod_info = "nothing"
 			if city.is_recruiting():
-				txt_prod_info = str(city.get_unit_in_production().name) + " (" + str(city.production_time) + ")"
+				txt_prod_info = str(city.get_unit_in_production().name) + " (" + str(city._recruition().get_duration()) + ")"
 			# make text for heading and detail label
 			txt_city_heading = city.get_size_name() + ": " + city.get_name()
 			txt_city_details = "HP: " + str(city.get_hp()) + " | In Production: " + txt_prod_info
@@ -122,7 +122,7 @@ class GuiManager:
 			if event.widget_id == "actionbutton":
 				# BUILD action inside a city
 				if event.button_state == "BUILD":
-					selected_city = Locator.CITY_MGR.get_selected_city()
+					selected_city = L.CITY_MGR.get_selected_city()
 					# abort if no city is selected
 					if not selected_city:
 						return
@@ -132,7 +132,7 @@ class GuiManager:
 					root = self.get_widget("root")
 					root.add_widget(sidebar)
 					# show recruitable units on it
-					recruitable_units = Locator.CITY_MGR.get_recruitable_units(selected_city)
+					recruitable_units = L.CITY_MGR.get_recruitable_units(selected_city)
 					sidebar.show_recruitable_units(recruitable_units)
 		# gamestate changes
 		if isinstance(event, GameStateChangedEvent):
