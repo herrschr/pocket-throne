@@ -1,9 +1,28 @@
+from pocketthrone.entities.enum import Enum, CoordinateAxis, Compass
+
+class GridTranslation:
+	axis = None
+	value = 0
+
+	def __init__(self, axis=CoordinateAxis.AXIS_X, value=0):
+		self.axis = axis
+		self.value = value
+
+	# return the relative position of the vector represented by this class
+	def get_relative_position(self):
+		if self.axis == CoordinateAxis.AXIS_X:
+			return(self.value, 0)
+		else:
+			return(0, self.value)
+
 # TileMap entity holding the map
 class TileMap(object):
 	# engine properties
 	_name = ""
+	_tag = "[TileMap] "
 	name = ""
 	name_de = ""
+	initialized = False
 
 	# map informations
 	size_x = 0
@@ -25,12 +44,26 @@ class TileMap(object):
 		pass
 
 	# set neighbors into tile entities of this map, required for generating landscape bridge images
-	def initialize_neighbortiles(self):
+	def _initialize_neighbors(self):
+		updated = []
+		updated_at = {}
+		counter = 0
+		dirs = [Compass.DIRECTION_WEST, Compass.DIRECTION_NORTH, Compass.DIRECTION_EAST, Compass.DIRECTION_SOUTH]
 		for tile in self.tiles:
-			tile._neighbor_west =  self._get_lds_at((tile.pos_x -1, tile.pos_y))
-			tile._neighbor_north =  self._get_lds_at((tile.pos_x, tile.pos_y -1))
-			tile._neighbor_east = self._get_lds_at((tile.pos_x +1, tile.pos_y))
-			tile._neighbor_south = self._get_lds_at((tile.pos_x, tile.pos_y +1))
+			tile_x = tile.get_position()[0]
+			tile_y = tile.get_position()[1]
+			for direction in dirs:
+				neighbor_x = tile_x + direction[0]
+				neighbor_y = tile_y + direction[1]
+				neighbor_tile = self._get_tile_at((neighbor_x, neighbor_y))
+				if neighbor_tile:
+					tile.neighbors[direction] = neighbor_tile.landscape
+			updated.append(tile)
+			updated_at[tile_x, tile_y] = tile
+			counter += 1
+		print(self._tag + "neighbors for " + str(counter) + " tiles set.")
+		self.tiles = updated
+		self.initialized = True
 
 	# returns the size of this map
 	def get_size(self):
@@ -56,12 +89,20 @@ class TileMap(object):
 	def get_masterworks(self):
 		return self.masterworks
 
+	def get_players(self):
+		return self.players
+
 	# returns tile at given position, accepts two ints
 	def get_tile_at(self, pos_x, pos_y):
 		return self.get_tile_at((pos_x, pos_y))
 
 	# returns tile at given position tuple
 	def get_tile_at(self, (pos_x, pos_y)):
+		if not self.initialized:
+			self._initialize_neighbors
+		return self._get_tile_at((pos_x, pos_y))
+
+	def _get_tile_at(self, (pos_x, pos_y)):
 		try:
 			return  self.tiles_at[pos_x, pos_y]
 		except:
@@ -96,5 +137,3 @@ class TileMap(object):
 	# returns an xml-like representation of the TileMap
 	def __repr__(self):
 		return "<TileMap name=" + self.name + " size=" + str(self.get_size()) + ">"
-
-
