@@ -6,7 +6,7 @@ class Mod:
 	# engine identifiers
 	_id = -1
 	_tag = "[Mod] "
-	_basename = None
+	basename = None
 
 	# entity strings
 	name = None
@@ -21,7 +21,7 @@ class Mod:
 
 	def __init__(self, basename, name="<nameless>", desc="", desc_de=None, disabled=False, author="unknown"):
 		# set optional properties OR defaults
-		self._basename = basename
+		self.basename = basename
 		self.author = author
 		self.is_disabled = disabled
 		self.name = name
@@ -35,9 +35,10 @@ class Mod:
 		self.initialize()
 
 	def initialize(self):
+		'''initializes mod entity'''
 		# make absolute mod .json file path
-		folder_path = FileManager.mod_path() + self._basename
-		json_path =  folder_path + "/" + self._basename + ".json"
+		folder_path = FileManager.mod_root() + self.basename
+		json_path =  folder_path + "/" + self.basename + ".json"
 		# update entity-wide
 		self.folder_path = folder_path
 		self.json_path = json_path
@@ -47,41 +48,42 @@ class Mod:
 		# flag mod as initialized
 		self.is_initialized = True
 
-	# returns if the Mod is allowed to select
 	def allowed(self):
+		'''returns whether this mod is initialized'''
 		if self.is_initialized and self.is_enabled():
 			return True
 		return False
 
-	# set the mod as enabled
 	def set_enabled(self):
+		'''flags this mod as enabled'''
 		self.is_disabled = False
 
-	# set the mod as disabled
 	def set_disabled(self):
+		'''flags this mod as disabled'''
 		self.is_disabled = True
 
-	# returns if the mod is enabled
 	def is_enabled(self):
+		'''returns whether this mod is enabled'''
 		return not self.is_disabled
 
-	# returns if the mod is disabled
 	def is_disabled(self):
+		'''returns whether this mod is disabled'''
 		return self.is_disabled
 
-	# returns the human readable Mod name
 	def get_name(self):
+		'''returns english mod name'''
 		if not self.allowed():
 			return "<uninitialized>"
 		return self.name
 
-	# returns the Mods author
 	def get_author(self):
+		'''returns mod author name'''
 		return self.author
 
 	def validate(self):
+		'''flags mod as validated'''
 		self.is_valid = True
 
-	# returns a human readable comprehension of this Mod entity
 	def __repr__(self):
-		return "<Mod basename=" + self._basename + " name=" + self.get_name() + " allowed=" + str(self.allowed()) + ">"
+		'''returns xml like mod representation'''
+		return "<Mod basename=" + self.basename + " name=" + self.get_name() + " allowed=" + str(self.allowed()) + ">"
