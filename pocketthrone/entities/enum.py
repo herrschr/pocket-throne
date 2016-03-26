@@ -24,6 +24,44 @@ class Enum:
 	def __repr__(self):
 		return "<Enum value=" + self.get() + " >"
 
+#------- GAME ENUMS -------
+class GameState(Enum):
+	STATE_INITIALIZING = "init"
+	STATE_MENU = "menu"
+	STATE_LOADING = "..."
+	STATE_INGAME = "game"
+
+class CoordinateAxis(Enum):
+	AXIS_X = "x"
+	AXIS_Y = "y"
+
+#------- NOTIFICATION ENUMS -------
+
+class MessageImportancy(Enum):
+	IMPORTANCY_UNSET = -1
+	IMPORTANCY_DEBUG = 0
+	IMPORTANCY_LOW = 1
+	IMPORTANCY_INFO = 2
+	IMPORTANCY_HIGH = 3
+	IMPORTANCY_DANGEROUS = 4
+
+class NotificationCategory(Enum):
+	NOTI_UNSET = None
+	NOTI_UNIT = "unit"
+	NOTI_city = "city"
+	NOTI_INFO = "info"
+	NOTI_BATTLE = "battle"
+	NOTI_DIPLOMACY = "diplomacy"
+
+#------- WIDGET ENUMS -------
+# possible Widget actions
+class WidgetAction(Enum):
+	ACTION_NONE = "default"
+	ACTION_ATTACK = "attack"
+	ACTION_MOVE = "move"
+	ACTION_BUILD = "build"
+	ACTION_NEXTTURN = "nextturn"
+
 # possible Widget states
 class WidgetState(Enum):
 	STATE_DEFAULT = "default"
@@ -34,14 +72,7 @@ class WidgetState(Enum):
 	# set default
 	value = STATE_DEFAULT
 
-# possible Widget actions
-class WidgetAction(Enum):
-	ACTION_NONE = "default"
-	ACTION_ATTACK = "attack"
-	ACTION_MOVE = "move"
-	ACTION_BUILD = "build"
-	ACTION_NEXTTURN = "nextturn"
-
+#------- PLAYER ENUMS -------
 # possible diplomatic player relations
 class PlayerRelation(Enum):
 	RELATION_UNSEEN = "unseen"
@@ -63,13 +94,14 @@ class PlayerType(Enum):
 	PLAYER_SLOT_OPEN = "slot:open"
 	PLAYER_SLOT_CLOSED = "slot:closed"
 
+#------- MAP ENUMS -------
 # possible Tile landscapes
 class TileLandscape(Enum):
 	LANDSCAPE_VOID = "X"
 	LANDSCAPE_WATER = "W"
 	LANDSCAPE_GRASSLANDS = "G"
 	LANDSCAPE_FOREST = "F"
-	LANDSCAPE_DIRT = "D"
+	LANDSCAPE_DESERT = "D"
 	LANDSCAPE_MOUNTAINS = "M"
 	LANDSCAPE__HILLS = "H"
 	LANDSCAPE_SAND = "S"
@@ -77,6 +109,8 @@ class TileLandscape(Enum):
 	LANDSCAPE_GOLD = "*"
 	LANDSCAPE_IRON = "T"
 	LANDSCAPE_MARSH = "-"
+	LANDSCAPE_BRIDGE_HOR = "="
+	LANDSCAPE_BRIDGE_VERT = "H"
 
 # possible Tile biomes
 class TileBiome(Enum):
@@ -90,6 +124,13 @@ class TileBiome(Enum):
 	# set default
 	value = BIOME_EUROPEAN
 
+class Compass(Enum):
+	DIRECTION_NORTH = (0, -1)
+	DIRECTION_EAST = (-1, 0)
+	DIRECTION_SOUTH = (0, 1)
+	DIRECTION_WEST = (1, 0)
+
+#------- CITY ENUMS -------
 # possible City types
 class CityType(Enum):
 	CITY_RUINS = -1
@@ -117,13 +158,14 @@ class BuildingType(Enum):
 	# set default
 	value = BUILDING_NONE
 
+#------- UNIT ENUMS -------
 # possible unit type
 class UnitCategory(Enum):
-	UNIT_INFANTRY = "INF"
-	UNIT_HEAVYINFANTRY = "HEAVY_INF"
-	UNIT_CAVALERY = "CAV"
-	UNIT_MACHINE = "MACHINE"
-	UNIT_CIVILIAN = "CIV"
+	UNITCAT_INFANTRY = "INF"
+	UNITCAT_HEAVYINFANTRY = "HEAVY_INF"
+	UNITCAT_CAVALERY = "CAV"
+	UNITCAT_MACHINE = "MACHINE"
+	UNITCAT_CIVILIAN = "CIV"
 
 class UnitType(Enum):
 	UNITTYPE_SOLIDER = "SOLDIER"
@@ -143,3 +185,7 @@ class WeaponType(Enum):
 	WEAPON_SIEGE = "SIEGE"
 	WEAPON_MAGIC = "MAGIC"
 
+class SkillLevel(Enum):
+	SKILL_NOVICE = 0
+	SKILL_TRAINED = 1
+	SKILL_VETERAN = 2
