@@ -1,6 +1,7 @@
 {
 	"name": "Athenic People",
 	"name_de": "Athens Volk",
+	"image": "fraction_unknown",
 
 	"city_prefixes": ["Athe", "Cap", "Fer", "Cor", "Mara", "Ny", "Oeno", "Piac"],
 	"city_postfixes": ["na", "gina", "polis", "xandria", "cyra", "lympia", "dos", "ta"]

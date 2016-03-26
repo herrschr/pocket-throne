@@ -1,6 +1,7 @@
 {
 	"name": "Roman Crown",
 	"name_de": "Römische Krone",
+	"image": "fraction_roman",
 
 	"city_prefixes": ["S", "Cap", "Fer", "Luc", "Fan", "A", "Grek", "Piac"],
 	"city_postfixes": ["andria", "ua", "opolis", "acine", "ticum", "udurum", "ula", "epinum"]

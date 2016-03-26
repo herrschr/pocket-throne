@@ -1,0 +1,8 @@
+{
+	"name": "Sparta",
+	"name_de": "Sparta",
+	"image": "fraction_spartanic",
+
+	"city_prefixes": ["S", "Cap", "Fer", "Cor", "Mara", "Ny", "Oeno", "Piac"],
+	"city_postfixes": ["nus", "gina", "polis", "xandria", "cyra", "lympia", "dos", "ta"]
+}

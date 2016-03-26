@@ -1,0 +1,8 @@
+{
+	"name": "Cartharge",
+	"name_de": "Karthargo",
+	"image": "fraction_cartharginian",
+
+	"city_prefixes": ["Aga", "Mli", "Olisi", "Rusad", "Uti", "Lilyba", "Zama", "Kara"],
+	"city_postfixes": ["dir", "let", "go", "po", "eum", "etum", "Hadru", " Regia"]
+}
