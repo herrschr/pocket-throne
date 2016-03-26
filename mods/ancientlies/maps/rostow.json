@@ -19,10 +19,15 @@
 		"DDDDGGGGGDD"
 	],
 
+	"players":
+	[
+		"The West, 0 0 255, spartanic",
+		"The East, 255 0 0, roman"
+	],
+
 	"cities":
 	[
-		"0 1 6 10",
-		"1 1 4 4",
-		"2 2 11 3"
+		"2, 3, 3, 4, Warnemuende",
+		"3, 2, 8, 3, Gehlsdorf"
 	]
 }

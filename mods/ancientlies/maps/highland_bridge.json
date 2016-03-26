@@ -24,8 +24,8 @@
 
 	"cities":
 	[
-		"1, 1, 1, 3, Sparta",
-		"2, 1, 11, 3, Rome"
+		"1, 1, 2, 3",
+		"2, 1, 9, 11"
 	],
 
 	"players":
@@ -36,7 +36,7 @@
 
 	"units":
 	[
-		"1, man_of_sparta, 27, 56",
-		"2, imperial_hasati, 23, 23"
+		"1, phalanx, 4, 4",
+		"2, hastati, 12, 10"
 	]
 }
