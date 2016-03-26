@@ -1,0 +1,26 @@
+{
+	"name": "Guard Of Rome",
+	"name_de": "Kaiserliche Leibwache",
+
+	"category": "HEAVY_INF",
+	"type": "GUARD",
+	"level": 3,
+
+	"requirements": ["is_roman"],
+
+	"image": "unit_guard_of_rome",
+	"health": 9,
+	"movement": 2,
+
+	"cost_turns": 5,
+
+	"weapon": {
+		"name": "Bronze Hellebard",
+		"name_de": "Bronze Hellebarde",
+		"category": "SPEAR",
+
+		"distance": 1,
+		"hit_chance": 75,
+		"damage": 7
+	}
+}

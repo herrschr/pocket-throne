@@ -1,0 +1,24 @@
+{
+	"name": "Swordsman",
+	"name_de": "Schwertsoldat",
+
+	"category": "INF",
+	"type": "SOLDIER",
+	"level": 1,
+
+	"image": "unit_swordsman",
+	"health": 6,
+	"movement": 3,
+
+	"cost_turns": 3,
+
+	"weapon": {
+		"name": "Sword",
+		"name_de": "Schwert",
+		"category": "SWORD",
+
+		"distance": 1,
+		"hit_chance": 65,
+		"damage": 4
+	}
+}

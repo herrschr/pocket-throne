@@ -2,15 +2,15 @@
 	"name": "Courier",
 	"name_de": "Kurier",
 
-	"type": "CAV",
-	"category": "RIDDEN",
+	"category": "CAV",
+	"type": "RIDDEN",
 	"level": 1,
 
-	"image": "unit_std_swordsman.png",
+	"image": "unit_swordsman",
 	"health": 6,
 	"movement": 5,
 
-	"required_building": "stables",
+	"requirements": ["has_stables"],
 
 	"weapon": {
 		"name": "Knive",

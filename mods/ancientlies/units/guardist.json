@@ -1,13 +1,16 @@
 {
 	"name": "Guardist",
 	"name_de": "Burgwache",
-	"type": "INF",
-	"category": "GUARD",
+
+	"category": "INF",
+	"type": "GUARD",
 	"level": 2,
 
-	"image": "unit_std_swordsman.png",
+	"image": "unit_guardist",
 	"health": 7,
 	"movement": 2,
+
+	"cost_turns": 3,
 
 	"weapon": {
 		"name": "Pike",
@@ -16,6 +19,6 @@
 
 		"distance": 1,
 		"hit_chance": 65,
-		"damage": 7
+		"damage": 6
 	}
 }

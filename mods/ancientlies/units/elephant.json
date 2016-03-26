@@ -1,0 +1,26 @@
+{
+	"name": "Elephant",
+	"name_de": "Elefant",
+
+	"category": "CAV",
+	"type": "RIDDEN",
+	"level": 3,
+
+  "cost_turns": 6,
+
+	"image": "unit_elephant",
+	"health": 12,
+	"movement": 5,
+
+	"requirements": ["has_stables", "is_cartharginian"],
+
+	"weapon": {
+		"name": "Lance",
+		"name_de": "Lanze",
+		"category": "SPEAR",
+
+		"distance": 1,
+		"hit_chance": 45,
+		"damage": 7
+	}
+}

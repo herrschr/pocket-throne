@@ -1,0 +1,30 @@
+{
+	"name": "Skirmisher",
+	"name_de": "Plänkler",
+
+	"category": "INF",
+	"type": "ARCHER",
+	"level": 1,
+
+  "requirements": ["is_germanic"],
+
+	"image": "unit_skirmisher",
+	"health": 5,
+	"movement": 3,
+
+	"cost_turns": 3,
+
+	"weapon": {
+		"name": "Thrown Spear",
+		"name_de": "Wurfspeer",
+		"category": "BOW",
+
+		"distance": 3,
+		"hit_chance": 30,
+		"damage": 7,
+
+    "multiplier_vs_category": {
+			"CAV": 0.8
+		}
+	}
+}

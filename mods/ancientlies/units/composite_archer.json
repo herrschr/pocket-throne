@@ -1,0 +1,29 @@
+{
+	"name": "Composite Archer",
+	"name_de": "Komposit-Bogenschütze",
+
+	"category": "INF",
+	"type": "ARCHER",
+	"level": 2,
+
+  "requirements": ["is_spartanic"],
+
+	"image": "unit_composite_archer",
+	"health": 5,
+	"movement": 3,
+
+	"weapon": {
+		"name": "Composite Bow",
+		"name_de": "Kompositbogen",
+		"category": "BOW",
+
+		"distance": 3,
+		"hit_chance": 60,
+		"damage": 4,
+
+		"multiplier_vs_category": {
+			"HEAVY_INF": 0.8,
+			"CAV": 0.8
+		}
+	}
+}

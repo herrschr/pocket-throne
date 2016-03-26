@@ -1,0 +1,26 @@
+{
+	"name": "Hastati",
+	"name_de": "Hastati",
+
+	"category": "INF",
+	"type": "SOLDIER",
+	"level": 1,
+
+	"requirements": ["is_roman"],
+
+	"image": "unit_hastati",
+	"health": 7,
+	"movement": 3,
+
+	"cost_turns": 3,
+
+	"weapon": {
+		"name": "Sword",
+		"name_de": "Schwert",
+		"category": "SWORD",
+
+		"distance": 1,
+		"hit_chance": 65,
+		"damage": 5
+	}
+}

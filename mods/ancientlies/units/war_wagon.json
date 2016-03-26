@@ -1,0 +1,24 @@
+{
+	"name": "War Wagon",
+	"name_de": "Streitwagen",
+
+	"category": "CAV",
+	"type": "RIDDEN",
+	"level": 1,
+
+	"image": "unit_war_wagon",
+	"health": 6,
+	"movement": 5,
+
+	"requirements": ["is_egyptian", "has_stables"],
+
+  "weapon": {
+		"name": "Ebony Bow",
+		"name_de": "Ebenholzbogen",
+		"category": "BOW",
+
+		"distance": 3,
+		"hit_chance": 40,
+		"damage": 5
+	}
+}

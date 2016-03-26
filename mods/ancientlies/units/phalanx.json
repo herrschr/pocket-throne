@@ -1,0 +1,31 @@
+{
+	"name": "Phalanx",
+	"name_de": "Phalanx",
+
+	"category": "HEAVY_INF",
+	"type": "GUARD",
+	"level": 3,
+
+	"requirements": ["is_spartanic"],
+
+	"image": "unit_phalanx",
+	"health": 8,
+	"movement": 2,
+
+	"cost_turns": 5,
+
+	"weapon": {
+		"name": "Hardened Spear",
+		"name_de": "Lanze",
+		"category": "SPEAR",
+
+		"distance": 1,
+		"hit_chance": 65,
+		"damage": 7,
+
+		"multiplier_vs_category": {
+			"INF": 1
+		}
+	}
+
+}

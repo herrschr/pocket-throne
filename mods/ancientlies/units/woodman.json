@@ -1,0 +1,31 @@
+{
+	"name": "Warrior",
+	"name_de": "Krieger",
+
+	"category": "INF",
+	"type": "SOLDIER",
+	"level": 1,
+
+	"requirements": ["is_germanic"],
+
+	"image": "unit_woodman",
+	"health": 5,
+	"movement": 3,
+
+	"cost_turns": 3,
+
+	"weapon": {
+		"name": "Axe",
+		"name_de": "Axt",
+		"category": "SWORD",
+
+		"distance": 1,
+		"hit_chance": 45,
+		"damage": 6,
+
+		"multiplier_vs_category": {
+			"HEAVY_INF": 0.8
+		}
+	}
+
+}

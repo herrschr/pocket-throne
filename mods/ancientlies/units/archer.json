@@ -2,13 +2,15 @@
 	"name": "Archer",
 	"name_de": "Bogenschütze",
 
-	"type": "INF",
-	"category": "ARCHER",
+	"category": "INF",
+	"type": "ARCHER",
 	"level": 1,
 
-	"image": "unit_std_archer.png",
+	"image": "unit_archer",
 	"health": 5,
 	"movement": 3,
+
+	"cost_turns": 3,
 
 	"weapon": {
 		"name": "Short Bow",

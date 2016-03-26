@@ -1,0 +1,24 @@
+{
+	"name": "Bireme",
+	"name_de": "Bireme",
+
+	"category": "MACHINE",
+	"type": "SHIP",
+	"level": 1,
+
+	"image": "unit_bireme",
+	"health": 8,
+	"movement": 5,
+
+	"requirements": ["is_coastal"],
+
+	"weapon": {
+		"name": "Ram",
+		"name_de": "Ramme",
+		"category": "SPEAR",
+
+		"distance": 1,
+		"hit_chance": 45,
+		"damage": 4
+	}
+}

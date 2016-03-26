@@ -1,0 +1,31 @@
+{
+	"name": "Sun Hardened",
+	"name_de": "Sonnenkrieger",
+
+	"category": "INF",
+	"type": "SOLDIER",
+	"level": 2,
+
+  "requirements": ["is_egyptian"],
+
+	"image": "unit_sun_hardened",
+	"health": 5,
+	"movement": 3,
+
+	"cost_turns": 4,
+
+	"weapon": {
+		"name": "Khopesh",
+		"name_de": "Khopesh",
+		"category": "SWORD",
+
+		"distance": 1,
+		"hit_chance": 80,
+		"damage": 5,
+
+    "multiplier_vs_category": {
+			"HEAVY_INF": 1,
+			"CAV": 0.4
+		}
+	}
+}
