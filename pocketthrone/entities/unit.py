@@ -1,11 +1,11 @@
-from pocketthrone.entities.enum import UnitType, UnitCategory
+from pocketthrone.entities.enum import UnitType, UnitCategory, SkillLevel
 from pocketthrone.entities.weapon import Weapon
 
 # Unit class for std-units and heroes
-class Unit(object):
+class Unit:
 	# system properties
 	_id = -1
-	_basename = None
+	basename = None
 	_instanciated = False
 	_possible_moves = []
 
@@ -13,6 +13,7 @@ class Unit(object):
 	name = ""
 	name_de = ""
 	image_path = None
+	image_override = None
 
 	# unit properties
 	city = None
@@ -23,8 +24,8 @@ class Unit(object):
 	weapon = None
 
 	# unit category & type
-	category = UnitCategory(initial=UnitCategory.UNIT_INFANTRY)
-	unit_type = UnitType(initial=UnitType.UNITTYPE_SOLIDER)
+	category = UnitCategory.UNITCAT_INFANTRY
+	unit_type = UnitType.UNITTYPE_SOLIDER
 
 	# unit flags
 	is_disabled = False
@@ -33,6 +34,7 @@ class Unit(object):
 	max_per_map = -1
 
 	# requirements
+	requirements = []
 	required_building = None
 	required_fraction = None
 
@@ -55,10 +57,10 @@ class Unit(object):
 	experience = 0
 
 	def __init__(self, unit_type):
-		self._basename = unit_type
+		self.basename = unit_type
 
-	# returns an xml like representation of this unit
 	def __repr__(self):
+		'''returns an xml like representation of this unit'''
 		return "<Unit player="  + str(self.player_num) + " type=" + self.name + \
 			" pos=" + str(self.get_position()) + " hp=" + str(self.hp) + " mp=" + \
 			str(self.mp) + ">"
@@ -67,61 +69,72 @@ class Unit(object):
 	def loadFromJson(json_path):
 		pass
 
-	# returns the english name of this unit
 	def get_name(self):
+		'''returns the english name of this unit'''
 		return self.name
 
-	# returns the type (basename) of this unit
-	def get_type(self):
-		return self._basename
+	def get_basename(self):
+		'''returns the type (basename) of this unit'''
+		return self.basename
 
-	# set the weapon of this uni
+	def get_type(self):
+		'''returns unit type'''
+		return self.unit_type
+
 	def give_weapon(self, weapon):
+		'''gives the unit a weapon object'''
 		self.weapon = weapon
 
-	# get unit id
 	def _id(self):
+		'''returns unit id'''
 		if self._id != -1:
 			return self._id
 		else:
 			return None
 
-	# returns the number of this units owner
 	def get_player_num(self):
+		'''returns number of the owner of this unit'''
 		return self.player_num
 
-	# return the owner player class of this unit
 	def get_player(self):
+		'''returns owner of this unit'''
 		return None
 
-	# set unit position with tuple (x, y)
 	def set_position(self, (pos_x, pos_y)):
+		'''sets absolute unit position'''
 		self.pos_x = pos_x
 		self.pos_y = pos_y
 
-	# get unit position tuple (x, y)
 	def get_position(self):
+		'''returns absolute unit position'''
 		return (self.pos_x, self.pos_y)
 
-	# returns the basename of the required fraction of this unit or None
 	def get_required_fraction(self):
+		'''returns the basename of the required fraction of this unit or None'''
 		return self.required_fraction
 
-	# get the required building for unit recruition in a city or None
 	def get_required_building(self):
+		'''returns required building for unit recruition in a city or None'''
 		return self.required_building
 
-	# reset mp on turn change
 	def reset_mps(self):
+		'''reset mp on turn change'''
 		self.mp = self.movement
 
-	# damage this unit (decrease hp)
 	def damage(self, damage):
+		'''damages this unit (decrease hp)'''
 		self.hp = self.hp - damage
 
-	# heal this unit (increase hp)
 	def heal(self, heal_hp):
+		'''heal this unit (increase hp)'''
 		self.hp = self.hp + heal_hp
 
+	def get_image_path(self):
+		'''returns path of image file of this units texture'''
+		if self.image_override != None:
+			return self.image_override
+		return "unit_" + self.get_basename()
 
-
+	def get_category(self):
+		'''returns category of this unit'''
+		return self.category
