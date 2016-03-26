@@ -1,13 +1,14 @@
 __all__=('MapWidget')
 
 import copy
+from pprint import pprint
 
 from kivy.graphics import Color, Ellipse, Rectangle
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
 from kivy.core.image import Image
 
-from pocketthrone.managers.locator import L
+from pocketthrone.managers.pipe import L
 from pocketthrone.entities.event import *
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.managers.filemanager import FileManager
@@ -27,7 +28,7 @@ class MapWidget(Widget):
 	tiles_visible = {}
 	tiles_visible_incomplete = False
 
-	last_scrolling = {}
+	prev_scrolling = {}
 	scrolling = {"x": 0, "y": 0}
 
 	def __init__(self):
@@ -44,50 +45,50 @@ class MapWidget(Widget):
 		# self._fill_tiles_visible()
 		self.trigger_redraw()
 
-	# trigger recalculation of screen size
 	def _update_screen_grid(self):
+		'''triggers recalculation of screen size'''
 		screen_x = L.WidgetManager.get_screen_size()[0]
 		screen_y = L.WidgetManager.get_screen_size()[1]
 		L.WidgetManager.update_screen()
 
-	# update the canvas when a redraw is required
 	def update(self):
+		'''updates canvas when required'''
 		# update list of visible tiles inside the screen
-		if self.tiles_visible_incomplete:
-			self._update_visible_tiles()
 		# update map entities
 		if self.has_changed:
 			self.draw_map()
 		# set has_changed back to False
 		self.has_changed = False
 
-	# trigger a redraw of the map
 	def trigger_redraw(self):
+		'''triggers map redraw'''
 		self.has_changed = True
 
-	# initialize viewport collections
 	def _fill_viewport(self):
+		'''initializes viewport tiles'''
+		# the viewport is the representation of tile position that are actually shown on the screen
 		pseudotiles = []
 		# get actual scrolling relative to 0|0
-		print("fill vp scrolling=" + repr(L.MapManager.get_scrolling()))
-		scrolling_x = L.MapManager.get_scrolling()["x"]
-		scrolling_y = L.MapManager.get_scrolling()["y"]
+		scrolling_x = abs(L.WidgetManager.get_scrolling()["x"])
+		scrolling_y = abs(L.WidgetManager.get_scrolling()["y"])
 		# get actual grid size fitting on monitor
-		print("fill vp grid=" + repr(L.Grid))
 		limit_x = scrolling_x + L.Grid["width"]
 		limit_y = scrolling_y + L.Grid["height"]
+		self.viewport = []
 		# fill viewport
-		for pos_x in range(0, L.Grid["width"]):
-			for pos_y in range(0, L.Grid["height"]):
+		for pos_x in range(scrolling_x, limit_x):
+			for pos_y in range(scrolling_y, limit_y):
 				pseudotile = Tile(pos_x, pos_y)
 				# append pseudtile to self.viewport
 				self.viewport.append(pseudotile)
 		# print result
 		updated_tiles = len(self.viewport)
-		print(self._tag + " filled viewport pseudotile cache with "+ str(updated_tiles) + " elements.")
 
-	# removes a single grid row formerly indexed under index
+	def shift_visible_tiles(self, plus_x=0, plus_y=0):
+		pass
+
 	def _remove_tile_row_in_viewport(self, index):
+		'''removes a single grid row formerly indexed under index'''
 		counter = 0
 		max_tiles = L.Grid["height"] -1
 		# clear from tiles_visible
@@ -97,8 +98,8 @@ class MapWidget(Widget):
 		self.tiles_visible
 		print(self._tag + "removed " + str(counter) + " tiles from viewport cache")
 
-	# removes a single grid column formerly indexed under index
 	def _remove_tile_col_in_viewport(self, index):
+		'''removes a single grid column formerly indexed under index'''
 		counter = 0
 		max_tiles = L.Grid["width"] -1
 		# clear from tiles_visible
@@ -108,9 +109,9 @@ class MapWidget(Widget):
 		self.tiles_visible
 		print(self._tag + "removed " + str(counter) + " tiles from viewport cache")
 
-	# update tiles in viewport
-	# fill it with new one from TileMap when its not already loaded
 	def _update_visible_tiles(self):
+		'''update tiles in viewport'''
+		# fill it with new one from TileMap when its not already loaded
 		self._fill_viewport()
 		counter = 0
 		# for any pseudotile in self.viewport
@@ -118,30 +119,28 @@ class MapWidget(Widget):
 			pos_x = pseudotile.get_position()[0]
 			pos_y = pseudotile.get_position()[1]
 			# check if tile is already loaded in viewport tile cache
-			tile_cached = self._get_visible_tile(pos_x, pos_y)
+			# tile_cached = self._get_visible_tile(pos_x, pos_y)
+			tile_cached = None
 			if tile_cached == None:
 				self._fill_visible_tile((pos_x, pos_y))
 				counter += 1
-		# print result
-		print(self._tag + "updated " + str(counter) + " tiles visibe")
 
-	# fill a single tile in viewport tile cache at (pos_x, pos_y)
 	def _fill_visible_tile(self, (pos_x, pos_y)):
+		'''fill a single tile in viewport tile cache at (pos_x, pos_y)'''
 		# get a complete tile from MapManager
 		tile_at = L.MapManager.get_tile_at((pos_x, pos_y))
 		if tile_at != None:
 			# add it to tiles_visible when not none
 			self.tiles_visible[pos_x, pos_y] = tile_at
 
-	# update tiles_visible on already updated viewport positions
 	# = update tiles visible on screen
 	def _update_viewport(self, rel_x, rel_y):
+		'''updates viewport'''
 		for pseudotile in self.viewport:
 			new_x = pseudotile.get_position()[0] + rel_x
 			new_y = pseudotile.get_position()[1] + rel_y
 			pseudotile.set_position(new_x, new_y)
 		self._update_visible_tiles()
-		print(self._tag + "filled viewport tile cache")
 
 	# TODO implement
 	def _add_rect(self, (grid_x, grid_y), texture_name="none"):
@@ -149,20 +148,20 @@ class MapWidget(Widget):
 		gui_pos = L.WidgetManager.to_gui(L.WidgetManagerto_scrolled((city.pos_x, city.pos_y)))
 		texture = FileManager.get_texture(texture_name)
 
-	# returns any Tile inside this widgets grid viewport (pseudotile)
 	def _get_viewport(self):
+		'''returns list of pseutiles inside viewport'''
 		return self.viewport
 
-	# returns a Tile from tiles_visible at position pos_x|pos_y
 	def _get_visible_tile(self, pos_x, pos_y):
+		'''returns a Tile from tiles_visible at position pos_x|pos_y'''
 		tile_at = None
 		try:
 			tile_at = self.tiles_visible[pos_x, pos_y]
 		finally:
 			return tile_at
 
-	# checks if a grid position is inside the screen considering the actual map scrolling
 	def is_in_viewport(self, (pos_x, pos_y)):
+		'''checks if position is inside the viewport'''
 		try:
 			if self.tiles_visible[pos_x, pos_y] != None:
 				return self.tiles_visible[pos_x, pos_y]
@@ -179,42 +178,36 @@ class MapWidget(Widget):
 		if name != None:
 			return FileManager.get_texture(name)
 
-	# draw the map on the widget canvas
 	def draw_map(self):
+		'''draw tilemap on widget canvas'''
 		self._clean_canvas()
 		self._draw_tiles()
 		self._draw_cities()
 		self._draw_units()
 
 	def _clean_canvas(self):
+		'''clear widget canvas'''
 		self.canvas.clear()
 
-	# draw any tiles that are inside the map viewport
 	def _draw_tiles(self):
+		''''draws tiles on widget canvas'''
 		print(self._tag + "DRAW")
 		# get all tiles inside the viewport when scroll position has changed
-		if self.scrolling != self.last_scrolling:
+		if self.scrolling != self.prev_scrolling:
 			self.position_changed = True
-		#when position is unchanged
-		if not self.position_changed:
-			print(self._tag + " scrolling unchanged. Pause.")
-		# when map was scrolled
-		else:
-			print(self._tag + "scrolling changed. Map will be updated")
 		# draw tiles in vp
 		with self.canvas:
 			for tile in self.tiles_visible.values():
 				# calculate position on scrolled map
-				pos_x = tile.get_position()[0]
-				pos_y = tile.get_position()[1]
-				scrolled_pos = L.WidgetManager.to_scrolled_pos((pos_x, pos_y))
+				pos = (tile.get_position()[0], tile.get_position()[1])
+				scrolled_pos = L.WidgetManager.to_scrolled_pos(pos)
 				gui_pos = L.WidgetManager.to_gui_pos(scrolled_pos)
 				# get texture & draw Rectangle
 				texture = self._get_texture(name=tile.get_texture_name())
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
-	# draw any city and building inside the viewport
 	def _draw_cities(self):
+		'''draws cities on canvas'''
 		# holder list for cities & buildings inside the viewport
 		cities_in_viewport = []
 		buildings_in_viewport = []
@@ -224,12 +217,15 @@ class MapWidget(Widget):
 			all_buildings.extend(city.get_buildings())
 		with self.canvas:
 			# draw every city from CityManager
+			print(self._tag + "draw {} cities".format(len(L.CityManager.get_cities())))
 			for city in L.CityManager.get_cities():
 				texture = self._get_texture(name=city.get_image_path())
+				flag_texture = self._get_texture(name=city.flag_source())
 				pos_x = city.get_position()[0]
 				pos_y = city.get_position()[1]
 				scrolled_pos = L.WidgetManager.to_scrolled_pos((pos_x, pos_y))
 				gui_pos = L.WidgetManager.to_gui_pos(scrolled_pos)
+				Rectangle(texture=flag_texture, pos=gui_pos, size=(40, 80))
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 80))
 			# draw buildings
 			for building in all_buildings:
@@ -239,7 +235,7 @@ class MapWidget(Widget):
 				scrolled_pos = L.WidgetManager.to_scrolled_pos((pos_x, pos_y))
 				gui_pos = L.WidgetManager.to_gui_pos(scrolled_pos)
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
-
+			# at least draw selected tile
 			if L.MapManager.has_selected_tile == True:
 				texture = self._get_texture(name="tile_selected")
 				pos_x = L.MapManager.get_selected_tile().get_position()[0]
@@ -248,8 +244,8 @@ class MapWidget(Widget):
 				gui_pos = L.WidgetManager.to_gui_pos(scrolled_pos)
 				Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
-	# draw any unit inside the viewport
 	def _draw_units(self):
+		'''draws units on canvas'''
 		units_in_viewport = []
 		# get all units inside the viewport
 		for unit in L.UnitManager.get_units():
@@ -277,18 +273,19 @@ class MapWidget(Widget):
 					gui_pos = L.WidgetManager.to_gui_pos(L.WidgetManager.to_scrolled_pos((pseudotile.pos_x, pseudotile.pos_y)))
 					Rectangle(texture=texture, pos=gui_pos, size=(40, 40))
 
-	# fire tiles_visiblePressedEvent when the user clicks on keyboard
 	def on_key_down(self, keyboard, keycode, text, mods):
+		'''triggered when keyboard was pressed'''
 		key_pressed = keycode[1]
 		ey_key_down = KeyPressedEvent(key_pressed)
 		EventManager.fire(ey_key_down)
 
-	# close keyboard while finishing proccess
 	def _keyboard_closed(self):
+		'''closes keyboard connection'''
 		self._keyboard.unbind(on_key_down=self.on_key_down)
 		self._keyboard = None
 
 	def on_touch_down(self, touch):
+		'''triggered when the mouse is pressed'''
 		touch_inv_y = Window.height - touch.y
 		# on left click
 		if touch.button == "left":
@@ -298,8 +295,8 @@ class MapWidget(Widget):
 			# get the grid position that's clicked
 			grid_pos = L.WidgetManager.to_grid_pos((touch.x, touch_inv_y))
 			# calculate the real position in by adding the map scrolling
-			scrolled_x = self.scrolling["x"] + grid_pos[0]
-			scrolled_y = self.scrolling["y"] + grid_pos[1]
+			scrolled_x = grid_pos[0] - self.scrolling["x"]
+			scrolled_y = grid_pos[1] - self.scrolling["y"]
 			# select correct tile in MapManager
 			L.MapManager.select_tile_at((scrolled_x, scrolled_y))
 		# on right click
@@ -308,6 +305,7 @@ class MapWidget(Widget):
 			EventManager.fire(ev_mouse_rightclicked)
 
 	def on_touch_up(self, touch):
+		'''triggered wehn the mouse was released'''
 		# get touch position & position in grid
 		touch_inv_y = Window.height - touch.y
 		touch_pos = (touch.x, touch_inv_y)
@@ -324,6 +322,7 @@ class MapWidget(Widget):
 			# update scrolling
 
 	def scroll(self, (plus_x, plus_y)):
+		'''scrolls map by relative position'''
 		# backup recent scrolling state
 		scr_prev = copy.deepcopy(self.scrolling)
 		# make new scrolling state
@@ -338,12 +337,27 @@ class MapWidget(Widget):
 		self._update_visible_tiles()
 		self.trigger_redraw()
 
-	# scroll horizontally
+	def scroll_at(self, (grid_x, grid_y)):
+		'''center map on position'''
+		# get half of the grids dimension
+		half_x = int(L.WidgetManager.get_grid()["width"] /2)
+		half_y = int(L.WidgetManager.get_grid()["height"] /2)
+		# scroll to 0|0
+		null_x = -1 * L.MapManager.get_scrolling()["x"]
+		null_y = -1 * L.MapManager.get_scrolling()["y"]
+		self.scroll((null_x, null_y))
+		# get scrolling centered on given position
+		mid_x = half_x - grid_x
+		mid_y = half_y - grid_y
+		# update actual scrolling
+		self.scroll((mid_x, mid_y))
+
 	def scroll_x(self, plus_x):
+		'''scroll horizontally'''
 		self.scroll((plus_x, 0))
 
-	# scroll vertically
 	def scroll_y(self, plus_y):
+		'''scroll vertically'''
 		self.scroll((0, plus_y))
 
 	def on_event(self, event):
@@ -369,15 +383,21 @@ class MapWidget(Widget):
 			elif event.key == "right":
 				self.scroll_x(1)
 
-		# redraw the map on various events
+		# redraw the map when an entity is (un-)selected
 		if isinstance(event, TileSelectedEvent):
 			self.trigger_redraw()
-
 		if isinstance(event, UnitSelectedEvent):
 			self.trigger_redraw()
-
 		if isinstance(event, UnitMovedEvent):
 			self.trigger_redraw()
-
 		if isinstance(event, UnitSpawnedEvent):
 			self.trigger_redraw()
+
+		# map was scrolled after user input
+		if isinstance(event, MapScrolledEvent):
+			# cache previous scrolling offset
+			prev_scrolling = {"x": int(event.prev_x), "y": int(event.prev_y)}
+			self.prev_scrolling = prev_scrolling
+			# update actual scrolling offset
+			new_scrolling = {"x": int(event.new_x), "y": int(event.new_y)}
+			self.scrolling = new_scrolling
