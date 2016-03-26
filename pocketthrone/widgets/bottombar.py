@@ -8,7 +8,7 @@ from kivy.core.image import Image as CoreImage
 from kivy.uix.image import Image
 from kivy.graphics import *
 
-from pocketthrone.managers.locator import L
+from pocketthrone.managers.pipe import L
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.widgets.gamebutton import GameButton
@@ -25,8 +25,9 @@ class BottomBar(BoxLayout):
 		EventManager.register(self)
 
 		# make GameButtons
-		actionbutton = GameButton(size_hint=(.1, 1), link="actionbutton", action=WidgetAction.ACTION_BUILD)
-		nextturnbutton = GameButton(size_hint=(.1, 1), link="nextturnbutton", action=WidgetAction.ACTION_NEXTTURN)
+		actionbutton = GameButton(size_hint=(.1, 1), link="actionbutton")
+		actionbutton.set_source("actionbutton_bg_default.png")
+		nextturnbutton = GameButton(size_hint=(.1, 1), link="nextturnbutton")
 
 		# make label widgets
 		labels = BoxLayout(orientation="vertical", halign="left", valign="top", size_hint=(1, .75))
