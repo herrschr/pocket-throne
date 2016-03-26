@@ -4,7 +4,7 @@ from kivy.graphics import Rectangle, Color
 from kivy.core.text import Label as CoreLabel
 from kivy.uix.label import Label
 
-from pocketthrone.managers.locator import L
+from pocketthrone.managers.pipe import L
 from pocketthrone.managers.eventmanager import EventManager
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.entities.event import *

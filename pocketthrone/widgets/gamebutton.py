@@ -9,7 +9,7 @@ from kivy.graphics import Rectangle
 from kivy.core.window import Window
 from kivy.core.text import Label as CoreLabel
 
-from pocketthrone.managers.locator import L
+from pocketthrone.managers.pipe import L
 from pocketthrone.managers.filemanager import FileManager
 from pocketthrone.managers.eventmanager import EventManager
 
@@ -19,8 +19,6 @@ from pocketthrone.entities.enum import WidgetState, WidgetAction
 class GameButton(Image):
 	# widget constants
 	ID_DEFAULT = "NO_ID"
-
-	_tag = "[GameButton] "
 
 	# widget state (DEFAULT, PRESSED, DISABLED, INVALID, INVISIBLE)
 	state = WidgetState(initial=WidgetState.STATE_DEFAULT)
@@ -34,75 +32,80 @@ class GameButton(Image):
 	_corelabel = None
 
 	_dirty = True
+	_tag = "[GameButton] "
 
 	def __init__(self, link=None, state=state,  action=action, extra=extra ,**kwargs):
 		super(GameButton, self).__init__(**kwargs)
+		self.link = link
 		EventManager.register(self)
 		L.WidgetManager.register(link, self)
 		# set optional properties
-		image_dir = L.RootDirectory + "/img/"
-		self.source = image_dir + str(link) + "_bg_" + str(action) + ".png"
-		self.link = link
 		self.button_tag = string.upper(link)
 		self.extra = extra
-		print(self._tag + "init start source=" + self.source)
+		self.update()
 
 	def update(self):
+		'''update text and background image when neccessary'''
 		if self._dirty == True:
 			self.update_source()
 			self.update_label()
 		self._dirty = False
 
 	def on_touch_down(self, touch):
-		if touch.button == "left":
-			# translate y pos (0|0 is on top left of the window)
-			touch_inv_y = Window.height - touch.y
-			# fire MouseClickedEvent
-			ev_button_clicked = ButtonTouchedEvent(self.link, state=self.get_state(), action=self.get_action(), extra=self.get_extra())
-			EventManager.fire(ev_button_clicked)
+		'''triggerd when button was pressed'''
+		# check if touch collides with button
+		if self.collide_point(*touch.pos):
+			if touch.button == "left":
+				# translate y pos (0|0 is on top left of the window)
+				touch_inv_y = Window.height - touch.y
+				# fire MouseClickedEvent
+				ev_button_clicked = ButtonTouchedEvent(self.link, state=self.get_state(), action=self.get_action(), extra=self.get_extra())
+				EventManager.fire(ev_button_clicked)
 
-	# set image root related path as background icon
 	def set_source(self, icon_source):
-		self.source = L.RootDirectory + "img/" + icon_source
-		self.update()
-		print(self._tag + "button icon is " + icon_source)
+		'''set image root related path as background icon'''
+		self.source = L.RootDirectory + "/img/" + icon_source
+		self.update_source()
 
-	# set the widgets identifier for WidgetManager and click handling
-	# TODO: remove link
-
-	# set the ActionButtons state ("sub-tag")
 	def set_state(self, state):
+		'''sets the ActionButtons state ("sub-tag")'''
 		self.state = state
 		self.update()
 		print(self._tag + "button state is now "+ repr(state))
 
-	# get the ActionButtons GameButtonState ("sub-tag")
 	def get_state(self):
+		'''returns ActionButtons GameButtonState ("sub-tag")'''
 		return self.state
 
 	def set_action(self, value):
+		'''sets buttons action (what it does)'''
 		self.action = value
+		self.update()
 
 	def get_action(self):
+		'''returns buttons action (what it does)'''
 		return self.action
 
-	# automatically update background iconresource
 	def update_source(self):
-		background_src = L.RootDirectory + "/img/" + self.link + "_bg_" + str(self.get_action()).lower() +  ".png"
-		print(self._tag + "background image is " + background_src)
-		texture = Image(src=background_src).texture
+		'''update buttons background resource'''
+		image_dir = L.RootDirectory + "/img/"
+		action_str = str(self.get_action()).lower()
+		# background image name is <link>_bg_<action>.png
+		background_src = image_dir + self.link + "_bg_" + action_str +  ".png"
 		self.source = background_src
-		with self.canvas:
-			Rectangle(texture=texture, size=(self.width, self.height))
+		# print icon image path
+		print(self._tag + "background image is " + background_src + " for " + str(self.link))
 
 	def get_extra(self):
+		'''returns buttons extra information'''
 		return self.extra
 
 	def set_extra(self, value):
+		'''sets buttons extra information'''
 		self.extra = value
 
-	# update the label text
 	def update_label(self):
+		'''update buttons text'''
 		if self.label == None:
 			# create new label
 			label = CoreLabel(text=self.get_text(), font_size=12, color=(0, 0, 1))
@@ -113,21 +116,24 @@ class GameButton(Image):
 		# self.canvas.add(Rectangle(texture=labeltexture, size=(self.width, self.height)))
 
 	def set_text(self, value):
+		'''sets buttons text'''
 		self.text = value
 		self.update()
 
 	def get_text(self):
+		'''returns buttons text'''
 		return self.text
 
-	# get absolute path of this ActionButtons background icon
 	def get_source(self):
+		'''returns absolute path of this ActionButtons background icon'''
 		return self.source
 
-	# trigger a widget full redraw
 	def trigger_redraw(self):
+		'''trigger a widget full redraw'''
 		self._dirty = True
 
 	def on_event(self, event):
 		# redraw the map when required each TickEvent
 		if isinstance(event, TickEvent):
-			self.update()
+			# self.update()
+			pass
