@@ -1,3 +1,5 @@
+__all__ = ('Buildign')
+
 class Building:
 	# engine properties
 	_id = -1
@@ -8,7 +10,7 @@ class Building:
 	# building type
 	_type = None
 	# possible building types & names
-	_types = ["wall", "tower", "blacksmith", "bordel", "stables", "harbour", "tunnels", "siege_workshop", "mansion", "market"]
+	_types = ["wall", "tower", "blacksmith", "bordel", "stables", "harbor", "tunnels", "siege_workshop", "mansion", "market"]
 	_names = {
 		"wall": "Wall",
 		"tower": "Tower",
@@ -51,32 +53,32 @@ class Building:
 		self.city = city
 		self.player_num = city.get_player_num()
 
-	# returns the type of this building
 	def get_type(self):
+		'''returns the type of this building'''
 		return self._type
 
-	# returns the number of buildings owner
 	def get_player_num(self):
+		'''returns the number of buildings owner'''
 		return self.player_num
 
-	# return the english name of this building
 	def get_name(self):
+		'''return the english name of this building'''
 		building_name = self._names[self.get_type()]
 		return building_name
 
-	# returns the parent city
 	def get_city(self):
+		'''returns the parent city'''
 		return self.city
 
-	# return the image file name of this building
 	def get_image_path(self):
+		'''return the image file name of this building'''
 		if self.image_override:
 			return self.image_override
 		else:
-			return "city_" + self.get_type() + ".png"
+			return "bld_" + self.get_type()
 
-	# set the absolute position of this building
 	def set_position(self, (pos_x, pos_y)):
+		'''set the absolute position of this building'''
 		# set absolute position
 		self.pos_x = pos_x
 		self.pos_y = pos_y
@@ -85,8 +87,8 @@ class Building:
 		self.rel_x = city_pos[0] - pos_x
 		self.rel_y = city_pos[1] - pos_y
 
-	# set the relative position of this building towards it city
 	def set_relative_position(self, (rel_x, rel_y)):
+		'''sets the relative position of this building towards it city'''
 		# set relative position
 		self.rel_x = rel_x
 		self.rel_y = rel_y
@@ -95,12 +97,13 @@ class Building:
 		self.pos_x = city_pos[0] + pos_x
 		self.pos_y = city_pos[1] + pos_y
 
-	# get the absolute position of this building
 	def get_position(self):
+		'''returns absolute position of this building'''
 		return (self.pos_x, self.pos_y)
 
-	# get the relative position of this building
 	def get_relative_position(self):
+		'''get the relative position of this building'''
 		return (self.rel_x, self.rel_y)
 
-
+	def __repr__(self):
+		return "<building city=" + self.get_city().get_name() + " type=" + self.get_type() + " pos=" + str(self.get_relative_position()) + ">"
