@@ -23,6 +23,16 @@ class MapLoadedEvent(Event):
 		self.name = "MapLoadedEvent: " + str(tilemap)
 		self.tilemap = tilemap
 
+class MapScrolledEvent(Event):
+	def __init__(self, scr_new, scr_prev):
+		self.name = "MapScrolledEvent x=" + str(scr_new["x"]) + " y=" + str(scr_new["y"])
+		# new scrolling offset
+		self.new_x = int(scr_new["x"])
+		self.new_y = int(scr_new["y"])
+		# previous scrolling offset
+		self.prev_x = int(scr_prev["x"])
+		self.prev_y = int(scr_prev["y"])
+
 class TileSelectedEvent(Event):
 	def __init__(self, selected_tile, pos):
 		self.name = "TileSelectedEvent: " + str(selected_tile)
@@ -122,6 +132,12 @@ class BuildingSelectedEvent(Event):
 		self.name = "BuildingSelectedEvent: type=" + building._type + " pos=" + building.get_position()
 		self.building = building
 
+class ProductionFinishedEvent(Event):
+	def __init__(self, city, item):
+		self.name = "ProductionFinishedEvent: city=" + city.get_name() + " item=" + repr(item)
+		self.city = city
+		self.item = item
+
 # INPUT EVENTS
 class MouseMovedEvent(Event):
 	def __init__(self, pos):
@@ -150,13 +166,13 @@ class KeyPressedEvent(Event):
 		self.key = key
 
 # BUTTON CALLBACK EVENTS
-class GuiButtonClickedEvent(Event):
-	def __init__(self, widget_id, action, widget=None, extra=None):
-		self.name = "ButtonClickedEvent: widget_id=" + widget_id + " button_state=" + button_state.get()
+class ButtonTouchedEvent(Event):
+	def __init__(self, link, action, widget=None, extra=None, state=None):
+		self.name = "ButtonTouchedEvent: link=" + link + " action=" + str(action)
 		self.widget = widget
-		self.widget_id = widget_id
+		self.link = link
 		self.action = action
-		self.button_state = button_state
+		self.button_state = state
 		self.extra = extra
 
 # GUI EVENTS
@@ -169,3 +185,27 @@ class RootWidgetReadyEvent(Event):
 	def __init__(self, root):
 		self.name = "RootWidgetReadyEvent root=" + repr(root)
 		self.root = root
+
+# SIDEBAR EVENTS
+class ShowSideBarEvent(Event):
+	def __init__(self, sidebar_type):
+		self.name = "ShowSideBarEvent type=" + str(sidebar_type)
+		self.type = sidebar_type
+
+class SideBarWaitingEvent(Event):
+	def __init__(self, sidebar_type):
+		self.name = "SideBarWaitingEvent type=" + str(sidebar_type)
+		self.type = sidebar_type
+
+class SideBarOptionSelectedEvent(Event):
+	def __init__(self, num):
+		self.name = "SideBarOptionSelectedEvent num=" + str(num)
+		self.num = num
+
+class RemoveSideBarEvent(Event):
+	def __init__(self):
+		self.name = "RemoveSideBarEvent"
+
+class SideBarRemovedEvent(Event):
+	def __init__(self):
+		self.name = "SideBarRemovedEvent"
